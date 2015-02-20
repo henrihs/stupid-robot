@@ -1,6 +1,6 @@
 package edu.wsu.sensors;
 
 
-public enum SensorStates {
+public enum ESensorStates {
 	CLEAR, OBSTACLE, UNKNOWN;
 }

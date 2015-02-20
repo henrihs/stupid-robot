@@ -2,18 +2,18 @@ package edu.wsu.sensors;
 
 import java.util.Observable;
 
-import edu.wsu.robot.Navigating;
+import edu.wsu.robot.Robot;
 
 
 public class ObservableSensor extends Observable implements Runnable {
 
-	private final Navigating robot;
+	private final Robot robot;
 	private final ESensor sensor;	
 
 	private ISensorStates state;
 
 	// Observer pattern
-	public ObservableSensor(Navigating robot, ESensor sensor) {
+	public ObservableSensor(Robot robot, ESensor sensor) {
 		this.robot = robot;
 		this.sensor = sensor;
 		state = new SensorState_Unknown();

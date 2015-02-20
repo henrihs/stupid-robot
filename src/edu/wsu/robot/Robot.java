@@ -5,14 +5,14 @@ import java.util.Observer;
 
 import edu.wsu.KheperaSimulator.RobotController;
 
-public class Navigating extends RobotController implements Observer {
+public class Robot extends RobotController implements Observer {
 	
 	private long rightWheelEnd, leftWheelEnd;
 	
 	// State pattern
 	private static IRobotStates state;
 
-	public Navigating() {
+	public Robot() {
 		// State pattern
 		state = new RobotState_InitSensors();
 	}

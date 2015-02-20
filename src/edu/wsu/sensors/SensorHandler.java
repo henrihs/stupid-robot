@@ -5,7 +5,7 @@ import java.util.Observer;
 import java.util.Random;
 
 import edu.wsu.robot.IRobotStates;
-import edu.wsu.robot.Navigating;
+import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Turn;
@@ -17,7 +17,7 @@ public class SensorHandler extends Observable implements Observer {
 	private final static SensorHandler INSTANCE = new SensorHandler();
 	private final static int TURN_BOUNDARY = 300;
 	
-	private Navigating robot;
+	private Robot robot;
 	
 	private SensorHandler() {
 	}
@@ -33,7 +33,7 @@ public class SensorHandler extends Observable implements Observer {
 		}
 	}
 	
-	public void setRobot(Navigating robot) {
+	public void setRobot(Robot robot) {
 		// Observer pattern
 		addObserver(robot);
 		this.robot = robot;

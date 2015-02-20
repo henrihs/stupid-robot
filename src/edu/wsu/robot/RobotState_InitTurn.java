@@ -5,7 +5,7 @@ import edu.wsu.sensors.SensorHandler;
 public class RobotState_InitTurn implements IRobotStates {
 
 	@Override
-	public void doWork(Navigating robot) {
+	public void doWork(Robot robot) {
 		SensorHandler sensorHandler = SensorHandler.getInstance();
 		robot.stop();
 		int angle = sensorHandler.calculateTurn();

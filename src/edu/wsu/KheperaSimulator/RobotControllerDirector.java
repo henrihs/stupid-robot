@@ -125,7 +125,7 @@ public class RobotControllerDirector {
     {
 //      Class c = Class.forName(controllerName, true, new DirectoryClassLoader(controllerPathName));
 //      controller = (RobotController)c.newInstance();
-      controller = new edu.wsu.robot.Navigating();
+      controller = new edu.wsu.robot.Robot();
       controllers.put(controllerName, controller);
       controller.initialize(controllerName, currentRobotState, controllerThreadWaitTime );
       controller.simStart();

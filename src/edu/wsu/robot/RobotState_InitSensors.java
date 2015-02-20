@@ -7,7 +7,7 @@ import edu.wsu.sensors.SensorHandler;
 public class RobotState_InitSensors implements IRobotStates {
 
 	@Override
-	public void doWork(Navigating robot) {
+	public void doWork(Robot robot) {
 		SensorHandler sensorHandler = SensorHandler.getInstance();
 		sensorHandler.setRobot(robot);
 		for (ESensor sensor : ESensor.values()) {

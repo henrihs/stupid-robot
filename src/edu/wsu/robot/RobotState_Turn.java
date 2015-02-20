@@ -2,10 +2,10 @@ package edu.wsu.robot;
 
 public class RobotState_Turn implements IRobotStates {
 
-	private Navigating robot;
+	private Robot robot;
 
 	@Override
-	public void doWork(Navigating robot) {
+	public void doWork(Robot robot) {
 		if (this.robot == null)
 			this.robot = robot;
 		turnRobot();

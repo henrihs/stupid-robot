@@ -1,5 +1,5 @@
 package edu.wsu.robot;
 
-public enum RobotStates {
+public enum ERobotStates {
 	INIT_SENSORS, DRIVE, INIT_TURN, TURN, REVERSE, STOP, MAPPING;
 }
