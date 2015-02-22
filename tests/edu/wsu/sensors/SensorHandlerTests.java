@@ -1,5 +1,6 @@
 package edu.wsu.sensors;
 
+import java.util.Observable;
 import java.util.Observer;
 
 import org.junit.After;
@@ -11,18 +12,23 @@ import static org.mockito.Mockito.*;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
+import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.robot.RobotState_Turn;
 
 
 public class SensorHandlerTests {
 	
 	private SensorHandler handler;
 	private Robot fakeRobot;
+	private ESensor frontSensor;
 
 	@Before
 	public void initialize(){
 		handler = SensorHandler.getInstance();
 //		fakeRobot = Mockito.mock(Robot.class);
-		fakeRobot = new Robot();
+		fakeRobot = mock(Robot.class);
+		handler.setRobot(fakeRobot);
+		frontSensor = ESensor.FRONTR;
 	}
 	
 	@After
@@ -35,27 +41,102 @@ public class SensorHandlerTests {
 	public void getInstance_firedTwice_onlyHasOneInstance(){
 		SensorHandler handler2 = SensorHandler.getInstance();
 		
-		assertEquals(handler, handler2);
+		assertSame(handler, handler2);
 	}
 	
 	@Test
 	public void getNextState_isClearInFront_returnsDriveState(){
-		ESensor sensor = ESensor.FRONTL;
-		ISensorStates sensorState = new SensorState_Clear();
-		
-		IRobotStates nextState = handler.getNextState(sensor, sensorState);
+		IRobotStates nextState = handler.getNextState(frontSensor, new SensorState_Clear());
 		
 		assertTrue(nextState instanceof RobotState_Drive);
-		
-//		Observer fakeObserver = mock(Observer.class);
-//		handler.addObserver(fakeObserver);
-//		ObservableSensor fakeSensor = mock(ObservableSensor.class);
-//		when(fakeSensor.getSensor()).thenReturn(ES)
-//		ISensorStates fakeSensorState = mock(ISensorStates.class);
-//		
-//		handler.update(fakeSensor, fakeSensorState);
-		
-//		verify(fakeObserver, times(1)).update(handler, isA(IRobotStates.class));
 	}
+	
+	@Test
+	public void getNextState_isBlockedInFront_returnsInitTurnState(){
+		IRobotStates nextState = handler.getNextState(frontSensor, new SensorState_Obstacle());
+		
+		assertTrue(nextState instanceof RobotState_InitTurn);
+	}
+	
+	@Test
+	public void getNextState_isBlockedOnSide_returnsDriveState(){
+		ESensor sensor = ESensor.RIGHT;
+		
+		IRobotStates nextState = handler.getNextState(sensor, new SensorState_Obstacle());
+		
+		assertTrue(nextState instanceof RobotState_Drive);
+	}
+	
+	@Test
+	public void update_robotInInitTurnState_doesNotNotifyObservers(){
+		IRobotStates fakeRobotState = new RobotState_InitTurn();
+		when(fakeRobot.getState()).thenReturn(fakeRobotState);
+		SensorHandler spyHandler = spy(handler);
+		
+		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
 
+		verify(spyHandler, never()).notifyObservers(any());
+	}
+	
+	@Test
+	public void update_robotInTurnState_doesNotNotifyObservers(){
+		IRobotStates fakeRobotState = new RobotState_Turn();
+		when(fakeRobot.getState()).thenReturn(fakeRobotState);
+		SensorHandler spyHandler = spy(handler);
+		
+		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
+
+		verify(spyHandler, never()).notifyObservers(any());
+	}
+	
+	@Test
+	public void update_robotInDriveState_notifiesObservers(){
+		IRobotStates fakeRobotState = new RobotState_Drive();
+		when(fakeRobot.getState()).thenReturn(fakeRobotState);
+		SensorHandler spyHandler = spy(handler);
+		
+		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
+
+		verify(spyHandler, times(1)).notifyObservers(any());
+	}
+	
+	@Test
+	public void calculateTurn_mustTurnAround_returns180(){
+		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
+		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
+		
+		int turnToMake = handler.calculateTurn();
+		
+		assertEquals(180, turnToMake);
+	}
+	
+	@Test
+	public void calculateTurn_mustTurnRight_returns90(){
+		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(0);
+		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
+		
+		int turnToMake = handler.calculateTurn();
+		
+		assertEquals(90, turnToMake);
+	}
+	
+	@Test
+	public void calculateTurn_mustTurnLeft_returnsMinus90(){
+		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
+		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
+		
+		int turnToMake = handler.calculateTurn();
+		
+		assertEquals(-90, turnToMake);
+	}	
+	
+	@Test
+	public void calculateTurn_mustTurnEitherWay_returnsAbs90(){
+		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
+		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
+		
+		int turnToMake = handler.calculateTurn();
+		
+		assertEquals(90, Math.abs(turnToMake));
+	}
 }
