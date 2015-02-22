@@ -1,8 +1,8 @@
 package edu.wsu.robot;
 
-public class NavigatingTests {
+public class RobotTests {
 
-	public NavigatingTests() {
+	public RobotTests() {
 		// TODO Auto-generated constructor stub
 	}
 

@@ -10,6 +10,7 @@ public class RobotState_InitSensors implements IRobotStates {
 	public void doWork(Robot robot) {
 		SensorHandler sensorHandler = SensorHandler.getInstance();
 		sensorHandler.setRobot(robot);
+		sensorHandler.addObserver(robot);
 		for (ESensor sensor : ESensor.values()) {
 			ObservableSensor observableSensor = new ObservableSensor(robot, sensor);
 			observableSensor.addObserver(sensorHandler);

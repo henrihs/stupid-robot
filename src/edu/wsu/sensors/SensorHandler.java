@@ -35,7 +35,6 @@ public class SensorHandler extends Observable implements Observer {
 	
 	public void setRobot(Robot robot) {
 		// Observer pattern
-		addObserver(robot);
 		this.robot = robot;
 	}
 	
