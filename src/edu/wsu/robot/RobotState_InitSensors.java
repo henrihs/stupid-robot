@@ -1,21 +1,25 @@
 package edu.wsu.robot;
 
-import edu.wsu.sensors.ObservableSensor;
+import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.SensorHandler;
+import edu.wsu.sensors.ObservableSensorFactory;
 
 public class RobotState_InitSensors implements IRobotStates {
+	
+	private ISensorHandler sensorHandler;
+	
+	public RobotState_InitSensors(ISensorHandler sensorHandler) {
+		this.sensorHandler = sensorHandler;
+	}
 
 	@Override
 	public void doWork(Robot robot) {
-		SensorHandler sensorHandler = SensorHandler.getInstance();
-		sensorHandler.setRobot(robot);
-		sensorHandler.addObserver(robot);
+		doWork(robot, new ObservableSensorFactory(robot, sensorHandler));
+	}
+	
+	protected void doWork(Robot robot, ObservableSensorFactory factory){
 		for (ESensor sensor : ESensor.values()) {
-			ObservableSensor observableSensor = new ObservableSensor(robot, sensor);
-			observableSensor.addObserver(sensorHandler);
-			Thread thread = new Thread(observableSensor);
-			thread.start();
+			factory.create(sensor);
 		}
 		robot.setState(new RobotState_Stop());
 	}

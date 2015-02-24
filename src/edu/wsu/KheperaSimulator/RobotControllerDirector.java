@@ -28,7 +28,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
+
 import javax.swing.JOptionPane;
+
+import edu.wsu.robot.Robot;
 
 /**
  * A <code>RobotControllerDirector</code> is a utility class used to load,
@@ -49,7 +52,7 @@ public class RobotControllerDirector {
    * then the controller class files would be located in
    * "c:\KheperaSimulator\controllers\".
    */
-  private final String controllerPathName = "./controllers/edu/wsu/KheperaSimulator/robot//";
+  private final String controllerPathName = "./controllers/edu/wsu/robot/";
 
   /**
    * A <code>String</code> array of all controllers available.
@@ -125,7 +128,7 @@ public class RobotControllerDirector {
     {
 //      Class c = Class.forName(controllerName, true, new DirectoryClassLoader(controllerPathName));
 //      controller = (RobotController)c.newInstance();
-      controller = new edu.wsu.robot.Robot();
+      controller = new Robot();
       controllers.put(controllerName, controller);
       controller.initialize(controllerName, currentRobotState, controllerThreadWaitTime );
       controller.simStart();

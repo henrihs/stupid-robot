@@ -1,8 +1,5 @@
 package edu.wsu.sensors;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,24 +21,14 @@ public class SensorHandlerTests {
 
 	@Before
 	public void initialize(){
-		handler = SensorHandler.getInstance();
-//		fakeRobot = Mockito.mock(Robot.class);
+		handler = new SensorHandler();
 		fakeRobot = mock(Robot.class);
-		handler.setRobot(fakeRobot);
 		frontSensor = ESensor.FRONTR;
 	}
 	
 	@After
 	public void cleanup(){
-		handler.setRobot(null);
 		fakeRobot = null;
-	}
-	
-	@Test
-	public void getInstance_firedTwice_onlyHasOneInstance(){
-		SensorHandler handler2 = SensorHandler.getInstance();
-		
-		assertSame(handler, handler2);
 	}
 	
 	@Test
@@ -98,45 +85,5 @@ public class SensorHandlerTests {
 		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
 
 		verify(spyHandler, times(1)).notifyObservers(any());
-	}
-	
-	@Test
-	public void calculateTurn_mustTurnAround_returns180(){
-		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
-		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
-		
-		int turnToMake = handler.calculateTurn();
-		
-		assertEquals(180, turnToMake);
-	}
-	
-	@Test
-	public void calculateTurn_mustTurnRight_returns90(){
-		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(0);
-		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
-		
-		int turnToMake = handler.calculateTurn();
-		
-		assertEquals(90, turnToMake);
-	}
-	
-	@Test
-	public void calculateTurn_mustTurnLeft_returnsMinus90(){
-		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
-		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
-		
-		int turnToMake = handler.calculateTurn();
-		
-		assertEquals(-90, turnToMake);
-	}	
-	
-	@Test
-	public void calculateTurn_mustTurnEitherWay_returnsAbs90(){
-		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
-		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
-		
-		int turnToMake = handler.calculateTurn();
-		
-		assertEquals(90, Math.abs(turnToMake));
 	}
 }
