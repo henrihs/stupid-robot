@@ -55,25 +55,25 @@ public class SensorHandlerTests {
 	}
 	
 	@Test
-	public void update_robotInInitTurnState_doesNotNotifyObservers(){
+	public void update_robotInInitTurnState_notifiesObservers(){
 		IRobotStates fakeRobotState = new RobotState_InitTurn();
 		when(fakeRobot.getState()).thenReturn(fakeRobotState);
 		SensorHandler spyHandler = spy(handler);
 		
 		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
 
-		verify(spyHandler, never()).notifyObservers(any());
+		verify(spyHandler, times(1)).notifyObservers(any());
 	}
 	
 	@Test
-	public void update_robotInTurnState_doesNotNotifyObservers(){
+	public void update_robotInTurnState_notifiesObservers(){
 		IRobotStates fakeRobotState = new RobotState_Turn();
 		when(fakeRobot.getState()).thenReturn(fakeRobotState);
 		SensorHandler spyHandler = spy(handler);
 		
 		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
 
-		verify(spyHandler, never()).notifyObservers(any());
+		verify(spyHandler, times(1)).notifyObservers(any());
 	}
 	
 	@Test

@@ -4,8 +4,6 @@ import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.internal.matchers.Not;
 
 import edu.wsu.sensors.ESensor;
 
@@ -60,14 +58,21 @@ public class RobotState_InitTurnTests {
 	
 	@Test
 	public void doWork_mustTurnEitherWay_returnsAbs90(){
-		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
+		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(0);
 		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
 		
 		state.doWork(fakeRobot);
 		
-		verify(fakeRobot).setRightWheelEnd(eq((long)90*3));
-		verify(fakeRobot).setLeftWheelEnd(eq((long)90*3));
-		verify(fakeRobot).setState(any(RobotState_Turn.class));
+		if (state.wasLastTurnPositive()){
+			verify(fakeRobot).setRightWheelEnd(eq(-(long)90*3));
+			verify(fakeRobot).setLeftWheelEnd(eq((long)90*3));
+		}
+		else {
+			verify(fakeRobot).setRightWheelEnd(eq((long)90*3));
+			verify(fakeRobot).setLeftWheelEnd(eq(-(long)90*3));
+		}
+		
+		verify(fakeRobot).setState(any(RobotState_Turn.class));		
 	}
 
 }

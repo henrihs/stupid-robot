@@ -2,13 +2,10 @@ package edu.wsu.sensors;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
 
 import edu.wsu.robot.IRobotStates;
-import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
-import edu.wsu.robot.RobotState_Turn;
 
 
 public class SensorHandler extends Observable implements Observer, ISensorHandler {

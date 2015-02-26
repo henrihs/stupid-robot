@@ -8,6 +8,7 @@ public class RobotState_InitTurn implements IRobotStates {
 	
 	private final static int TURN_BOUNDARY = 300;
 	private Robot robot;
+	private boolean positiveLastTurn;
 	
 	@Override
 	public void doWork(Robot robot) {
@@ -36,6 +37,11 @@ public class RobotState_InitTurn implements IRobotStates {
 		}
 	}
 	
+	// For testing purposes only
+	protected boolean wasLastTurnPositive(){
+		return positiveLastTurn;
+	}
+	
 	private boolean shouldTurnAround() {
 		return (robot.getDistanceValue(ESensor.LEFT.val()) > TURN_BOUNDARY &&
 				robot.getDistanceValue(ESensor.RIGHT.val()) > TURN_BOUNDARY);
@@ -55,10 +61,14 @@ public class RobotState_InitTurn implements IRobotStates {
 	}
 	
 	private int randomTurn() {
-		if (randInt(0, 1) == 0)
+		if (randInt(0, 1) == 0){
+			positiveLastTurn = true;
 			return 90;
-		else
+		}
+		else{
+			positiveLastTurn = false;
 			return -90;
+		}
 	}
 
 }
