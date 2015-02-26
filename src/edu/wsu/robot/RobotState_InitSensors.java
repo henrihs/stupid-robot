@@ -14,7 +14,7 @@ public class RobotState_InitSensors implements IRobotStates {
 
 	@Override
 	public void doWork(Robot robot) {
-		doWork(robot, new ObservableSensorFactory(robot, sensorHandler));
+		doWork(robot, new ObservableSensorFactory(robot, sensorHandler, ESensor.values().length));
 	}
 	
 	protected void doWork(Robot robot, ObservableSensorFactory factory){

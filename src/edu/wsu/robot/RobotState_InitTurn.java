@@ -1,7 +1,6 @@
 package edu.wsu.robot;
 
 import java.util.Random;
-
 import edu.wsu.sensors.ESensor;
 
 public class RobotState_InitTurn implements IRobotStates {

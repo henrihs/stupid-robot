@@ -19,55 +19,21 @@ public class ObservableSensor extends Observable implements Runnable {
 		state = new SensorState_Unknown();
 	}
 	
-	@Override
-	protected void setChanged() {
-		super.setChanged();
-	}
-	
 	public void setState(ISensorStates state) {
 		this.state = state;
+	}
+	
+	public ISensorStates getState(){
+		return state;
 	}
 
 	@Override
 	public void run() {			
-		while (true) {
-			state.doWork(this, sensor, robot);
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			switch (state) {
-//			case CLEAR:
-//				if (robot.getDistanceValue(sensor.val()) > Sensor.UPPER_BOUNDARY.val()){
-//					state = SensorStates.OBSTACLE;
-//					setChanged();
-//					notifyObservers(state);
-//				}				
-//				break;
-//
-//			case OBSTACLE:
-//				if (robot.getDistanceValue(sensor.val()) <= Sensor.LOWER_BOUNDARY.val()){
-//					state = SensorStates.CLEAR;
-//					setChanged();
-//					notifyObservers(state);
-//				}				
-//				break;
-//			default:
-//				if (robot.getDistanceValue(sensor.val()) > Sensor.UPPER_BOUNDARY.val())
-//					state = SensorStates.OBSTACLE;
-//				else
-//					state = SensorStates.CLEAR;
-//				setChanged();
-//				notifyObservers(state);
-//				break;
-//			}
-//			try {
-//				Thread.sleep(10);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
+		ISensorStates nextState = state.doWork(robot, sensor);
+		if (nextState != null) {
+			setChanged();
+			notifyObservers(nextState);
+			setState(nextState);
 		}
 	}
 	

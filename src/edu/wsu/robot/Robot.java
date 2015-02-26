@@ -46,25 +46,6 @@ public class Robot extends RobotController implements Observer {
 		return super.getDistanceValue(sensorID);
 	}
 	
-	@Override
-	public void doWork() throws Exception {
-		// State pattern
-		state.doWork(this);
-	}
-	
-	@Override
-	public void close() throws Exception {
-		
-	}
-	
-	public void drive(){
-		setMotorSpeeds(5, 5);
-	}
-	
-	public void stop(){
-		setMotorSpeeds(0, 0);
-	}
-	
 	public void setRightWheelEnd(long rightWheelEnd){
 		this.rightWheelEnd = rightWheelEnd;
 	}
@@ -79,6 +60,25 @@ public class Robot extends RobotController implements Observer {
 	
 	public long getLeftWheelEnd(){
 		return leftWheelEnd;
+	}
+	
+	@Override
+	public void doWork() throws Exception { //TODO: why throw exception here?
+		// State pattern
+		state.doWork(this);
+	}
+	
+	@Override
+	public void close() throws Exception {//TODO: why throw exception here?
+		
+	}
+	
+	public void drive(){
+		setMotorSpeeds(5, 5);
+	}
+	
+	public void stop(){
+		setMotorSpeeds(0, 0);
 	}
 	
 	private boolean shouldUpdate() {

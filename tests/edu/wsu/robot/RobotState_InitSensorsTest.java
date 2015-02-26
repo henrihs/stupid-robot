@@ -11,15 +11,16 @@ public class RobotState_InitSensorsTest {
 
 	@Test
 	public void doWork_InitsWhatWeNeed(){
+		int numOfSensors = ESensor.values().length;
 		Robot fakeRobot = mock(Robot.class);
 		SensorHandler fakeHandler = mock(SensorHandler.class);
-		ObservableSensorFactory factory = new ObservableSensorFactory(fakeRobot, fakeHandler);
+		ObservableSensorFactory factory = new ObservableSensorFactory(fakeRobot, fakeHandler, numOfSensors);
 		ObservableSensorFactory fakeFactory = spy(factory); 
 		RobotState_InitSensors state = new RobotState_InitSensors(fakeHandler);
 		
 		state.doWork(fakeRobot, fakeFactory);
 		
-		verify(fakeFactory, times(8)).create(isA(ESensor.class));
+		verify(fakeFactory, times(numOfSensors)).create(isA(ESensor.class));
 	}
 
 }

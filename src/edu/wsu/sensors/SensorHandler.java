@@ -20,6 +20,7 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	}
 
 	// State pattern
+	@Override
 	public IRobotStates getNextState(ESensor sensor, ISensorStates sensorState) {
 		if (isObstacle(sensorState)) {
 			if (isFront(sensor)) {

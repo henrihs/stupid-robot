@@ -5,12 +5,9 @@ import edu.wsu.robot.Robot;
 public class SensorState_Clear implements ISensorStates {
 
 	@Override
-	public void doWork(ObservableSensor observableSensor, ESensor sensor, Robot robot) {
-		if (robot.getDistanceValue(sensor.val()) > EBoundary.UPPER.val()) {
-			ISensorStates state = new SensorState_Obstacle();
-			observableSensor.setChanged();
-			observableSensor.notifyObservers(state);
-			observableSensor.setState(state);
-		}
+	public ISensorStates doWork(Robot robot, ESensor sensor) {
+		if (robot.getDistanceValue(sensor.val()) > EBoundary.UPPER.val())
+			return new SensorState_Obstacle();
+		return null;
 	}
 }

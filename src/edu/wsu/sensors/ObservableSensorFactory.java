@@ -1,25 +1,30 @@
 package edu.wsu.sensors;
 
 import java.util.Observer;
-
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import edu.wsu.robot.Robot;
 
 public class ObservableSensorFactory {
 	
 	private final Robot robot;
 	private final ISensorHandler sensorHandler;
+	private final ScheduledExecutorService scheduler;
 
-	public ObservableSensorFactory(Robot robot, ISensorHandler sensorHandler) {
+	public ObservableSensorFactory(Robot robot, ISensorHandler sensorHandler, int totalSensors) {
 		this.robot = robot;
 		this.sensorHandler = sensorHandler;
+		scheduler = Executors.newScheduledThreadPool(totalSensors);
 	}
 	
-	public Thread create(ESensor sensor){
+	public void create(ESensor sensor){
 		ObservableSensor observableSensor = new ObservableSensor(robot, sensor);
 		observableSensor.addObserver((Observer) sensorHandler);
-		Thread thread = new Thread(observableSensor);
-		thread.start();
-		return thread;
+//		Thread thread = new Thread(observableSensor);
+		scheduler.scheduleAtFixedRate(observableSensor, 10, 10, TimeUnit.MILLISECONDS);
+//		thread.start();
+
 	}
 
 }
