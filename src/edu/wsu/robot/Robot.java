@@ -14,6 +14,7 @@ public class Robot extends RobotController implements Observer {
 	private long rightWheelEnd, leftWheelEnd;
 	private Properties prop;
 	private int driveSpeed;
+	private int leftTurn, rightTurn, turnAround;
 	
 	// State pattern
 	private static IRobotStates state;
@@ -28,7 +29,22 @@ public class Robot extends RobotController implements Observer {
 		sensorHandler.addObserver(this);
 		// State pattern
 		state = new RobotState_InitSensors(sensorHandler);
-		this.driveSpeed = Integer.parseInt(prop.getProperty("drivespeed"));
+	}
+	
+	public String getProperty(String property) {
+		return prop.getProperty(property);
+	}
+	
+	public int getLeftTurn() {
+		return leftTurn;
+	}
+	
+	public int getRightTurn() {
+		return rightTurn;
+	}
+	
+	public int getTurnAround() {
+		return turnAround;
 	}
 	
 	// Observer pattern
@@ -95,9 +111,18 @@ public class Robot extends RobotController implements Observer {
 	
 	private void readProperties() {
 		try {
-			this.prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+			prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+			leftTurn = Integer.parseInt(prop.getProperty("leftturn"));
+			rightTurn = Integer.parseInt(prop.getProperty("rightturn"));
+			turnAround = Integer.parseInt(prop.getProperty("turnaround"));
+			driveSpeed = Integer.parseInt(prop.getProperty("drivespeed"));
 		} catch (IOException e) {
 			System.out.println("Could not load the configuration file.");
+			try {
+				close();
+			} catch (Exception e1) {
+				System.out.println("Could not close the program");
+			}
 		}
 	}
 }

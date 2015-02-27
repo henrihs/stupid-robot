@@ -1,14 +1,15 @@
 package edu.wsu.robot;
 
 import java.util.Random;
+
+import edu.wsu.sensors.EBoundary;
 import edu.wsu.sensors.ESensor;
 
 public class RobotState_InitTurn implements IRobotStates {
 	
-	private final static int TURN_BOUNDARY = 300;
 	private Robot robot;
 	private boolean positiveLastTurn;
-	
+
 	@Override
 	public void doWork(Robot robot) {
 		if (this.robot == null)
@@ -23,13 +24,13 @@ public class RobotState_InitTurn implements IRobotStates {
 	
 	private int calculateTurn() {
 		if (shouldTurnAround()) {
-			return 180;
+			return robot.getTurnAround();
 		}
 		else if (shouldTurnRight()) {
-			return 90;
+			return robot.getRightTurn();
 		}
 		else if (shouldTurnLeft()) {
-			return -90;
+			return robot.getLeftTurn();
 		}
 		else {
 			return randomTurn();
@@ -42,16 +43,16 @@ public class RobotState_InitTurn implements IRobotStates {
 	}
 	
 	private boolean shouldTurnAround() {
-		return (robot.getDistanceValue(ESensor.LEFT.val()) > TURN_BOUNDARY &&
-				robot.getDistanceValue(ESensor.RIGHT.val()) > TURN_BOUNDARY);
+		return (robot.getDistanceValue(ESensor.LEFT.val()) > EBoundary.TURN_BOUNDARY.val() &&
+				robot.getDistanceValue(ESensor.RIGHT.val()) > EBoundary.TURN_BOUNDARY.val());
 	}
 	
 	private boolean shouldTurnRight() {
-		return (robot.getDistanceValue(ESensor.LEFT.val()) > TURN_BOUNDARY);
+		return (robot.getDistanceValue(ESensor.LEFT.val()) > EBoundary.TURN_BOUNDARY.val());
 	}
 	
 	private boolean shouldTurnLeft() {
-		return (robot.getDistanceValue(ESensor.RIGHT.val()) > TURN_BOUNDARY);
+		return (robot.getDistanceValue(ESensor.RIGHT.val()) > EBoundary.TURN_BOUNDARY.val());
 	}
 	
 	private int randInt(int min, int max) {
@@ -62,11 +63,11 @@ public class RobotState_InitTurn implements IRobotStates {
 	private int randomTurn() {
 		if (randInt(0, 1) == 0){
 			positiveLastTurn = true;
-			return 90;
+			return robot.getRightTurn();
 		}
 		else{
 			positiveLastTurn = false;
-			return -90;
+			return robot.getLeftTurn();
 		}
 	}
 
