@@ -3,36 +3,62 @@ package edu.wsu.robot;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Properties;
 
+import property.Reader;
 import edu.wsu.KheperaSimulator.RobotController;
 import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.SensorHandler;
 
 public class Robot extends RobotController implements Observer {
 	
+	private Reader reader;
+	
 	private long rightWheelEnd, leftWheelEnd;
-	private Properties prop;
+
 	private int driveSpeed;
 	private int turnSlowSpeed, turnFastSpeed;
 	private int leftTurn, rightTurn, turnAround;
 	private int scheduleRate;
 	
+	private int distanceLowerBoundary, distanceUpperBoundary;
+	private int lightLowerBoundary, lightUpperBoundary;
+	private int turnBoundary;
+	
 	// State pattern
 	private static IRobotStates state;
 	
-	public Robot() {
-		this(new SensorHandler());
+	public Robot() throws IOException {
+		this(new SensorHandler(), new Reader("config.properties"));
 	}
 
-	public Robot(ISensorHandler sensorHandler) {
-		this.prop = new Properties();
-		readProperties();
+	public Robot(ISensorHandler sensorHandler, Reader reader) {
+		this.reader = reader;
+		initializeProperties();
 		sensorHandler.addObserver(this);
 		// State pattern
 		state = new RobotState_InitSensors(sensorHandler);
 	}
 	
+	public int getDistanceLowerBoundary() {
+		return distanceLowerBoundary;
+	}
+
+	public int getDistanceUpperBoundary() {
+		return distanceUpperBoundary;
+	}
+
+	public int getLightLowerBoundary() {
+		return lightLowerBoundary;
+	}
+
+	public int getLightUpperBoundary() {
+		return lightUpperBoundary;
+	}
+
+	public int getTurnBoundary() {
+		return turnBoundary;
+	}
+
 	public int getScheduleRate() {
 		return scheduleRate;
 	}
@@ -119,23 +145,18 @@ public class Robot extends RobotController implements Observer {
 				!(getState() instanceof RobotState_Turn));
 	}
 	
-	private void readProperties() {
-		try {
-			prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
-			leftTurn = Integer.parseInt(prop.getProperty("leftTurn"));
-			rightTurn = Integer.parseInt(prop.getProperty("rightTurn"));
-			turnAround = Integer.parseInt(prop.getProperty("turnAround"));
-			driveSpeed = Integer.parseInt(prop.getProperty("driveSpeed"));
-			turnSlowSpeed = Integer.parseInt(prop.getProperty("turnSlowSpeed"));
-			turnFastSpeed = Integer.parseInt(prop.getProperty("turnFastSpeed"));
-			scheduleRate = Integer.parseInt(prop.getProperty("scheduleRate"));
-		} catch (IOException e) {
-			System.out.println("Could not load the configuration file.");
-			try {
-				close();
-			} catch (Exception e1) {
-				System.out.println("Could not close the program");
-			}
-		}
+	private void initializeProperties() {
+		leftTurn = reader.getLeftTurn();
+		rightTurn = reader.getRightTurn();
+		turnAround = reader.getTurnAround();
+		driveSpeed = reader.getDriveSpeed();
+		turnSlowSpeed = reader.getTurnSlowSpeed();
+		turnFastSpeed = reader.getTurnFastSpeed();
+		scheduleRate = reader.getScheduleRate();
+		distanceLowerBoundary = reader.getDistanceLowerBoundary();
+		distanceUpperBoundary = reader.getDistanceUpperBoundary();
+		lightLowerBoundary = reader.getLightLowerBoundary();
+		lightUpperBoundary = reader.getLightUpperBoundary();
+		turnBoundary = reader.getTurnBoundary();
 	}
 }

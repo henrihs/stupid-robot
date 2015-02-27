@@ -29,11 +29,16 @@ public class ObservableSensor extends Observable implements Runnable {
 
 	@Override
 	public void run() {			
-		ISensorStates nextState = state.doWork(robot, sensor);
-		if (nextState != null) {
-			setChanged();
-			notifyObservers(nextState);
-			setState(nextState);
+		try {
+			ISensorStates nextState = state.doWork(robot, sensor);
+			if (nextState != null) {
+				setChanged();
+				notifyObservers(nextState);
+				setState(nextState);
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 	
