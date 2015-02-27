@@ -22,7 +22,7 @@ public class ObservableSensorFactory {
 		ObservableSensor observableSensor = new ObservableSensor(robot, sensor);
 		observableSensor.addObserver((Observer) sensorHandler);
 //		Thread thread = new Thread(observableSensor);
-		scheduler.scheduleAtFixedRate(observableSensor, 10, 10, TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(observableSensor, robot.getScheduleRate(), robot.getScheduleRate(), TimeUnit.MILLISECONDS);
 //		thread.start();
 
 	}

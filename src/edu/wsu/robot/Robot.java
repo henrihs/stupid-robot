@@ -16,6 +16,7 @@ public class Robot extends RobotController implements Observer {
 	private int driveSpeed;
 	private int turnSlowSpeed, turnFastSpeed;
 	private int leftTurn, rightTurn, turnAround;
+	private int scheduleRate;
 	
 	// State pattern
 	private static IRobotStates state;
@@ -30,6 +31,10 @@ public class Robot extends RobotController implements Observer {
 		sensorHandler.addObserver(this);
 		// State pattern
 		state = new RobotState_InitSensors(sensorHandler);
+	}
+	
+	public int getScheduleRate() {
+		return scheduleRate;
 	}
 	
 	public int getLeftTurn() {
@@ -123,6 +128,7 @@ public class Robot extends RobotController implements Observer {
 			driveSpeed = Integer.parseInt(prop.getProperty("driveSpeed"));
 			turnSlowSpeed = Integer.parseInt(prop.getProperty("turnSlowSpeed"));
 			turnFastSpeed = Integer.parseInt(prop.getProperty("turnFastSpeed"));
+			scheduleRate = Integer.parseInt(prop.getProperty("scheduleRate"));
 		} catch (IOException e) {
 			System.out.println("Could not load the configuration file.");
 			try {
