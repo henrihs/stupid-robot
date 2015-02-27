@@ -1,7 +1,9 @@
 package edu.wsu.robot;
 
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Properties;
 
 import edu.wsu.KheperaSimulator.RobotController;
 import edu.wsu.sensors.ISensorHandler;
@@ -10,6 +12,8 @@ import edu.wsu.sensors.SensorHandler;
 public class Robot extends RobotController implements Observer {
 	
 	private long rightWheelEnd, leftWheelEnd;
+	private Properties prop;
+	private int driveSpeed;
 	
 	// State pattern
 	private static IRobotStates state;
@@ -19,9 +23,12 @@ public class Robot extends RobotController implements Observer {
 	}
 
 	public Robot(ISensorHandler sensorHandler) {
+		this.prop = new Properties();
+		readProperties();
 		sensorHandler.addObserver(this);
 		// State pattern
 		state = new RobotState_InitSensors(sensorHandler);
+		this.driveSpeed = Integer.parseInt(prop.getProperty("drivespeed"));
 	}
 	
 	// Observer pattern
@@ -74,7 +81,7 @@ public class Robot extends RobotController implements Observer {
 	}
 	
 	public void drive(){
-		setMotorSpeeds(5, 5);
+		setMotorSpeeds(driveSpeed, driveSpeed);
 	}
 	
 	public void stop(){
@@ -84,5 +91,13 @@ public class Robot extends RobotController implements Observer {
 	private boolean shouldUpdate() {
 		return (!(getState() instanceof RobotState_InitTurn) &&
 				!(getState() instanceof RobotState_Turn));
+	}
+	
+	private void readProperties() {
+		try {
+			this.prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
+		} catch (IOException e) {
+			System.out.println("Could not load the configuration file.");
+		}
 	}
 }

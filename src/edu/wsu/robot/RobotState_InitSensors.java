@@ -7,7 +7,7 @@ import edu.wsu.sensors.ObservableSensorFactory;
 public class RobotState_InitSensors implements IRobotStates {
 	
 	private ISensorHandler sensorHandler;
-	
+
 	public RobotState_InitSensors(ISensorHandler sensorHandler) {
 		this.sensorHandler = sensorHandler;
 	}
@@ -23,5 +23,4 @@ public class RobotState_InitSensors implements IRobotStates {
 		}
 		robot.setState(new RobotState_Stop());
 	}
-
 }

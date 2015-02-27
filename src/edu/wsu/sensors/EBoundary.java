@@ -1,7 +1,8 @@
 package edu.wsu.sensors;
 
 public enum EBoundary {
-	LOWER(500), UPPER(500);
+	LOWER(500), UPPER(500),
+	LIGHT_LOWER(250), LIGHT_UPPER(250);
 	
 	private int value;
 	
