@@ -14,6 +14,7 @@ public class Robot extends RobotController implements Observer {
 	private long rightWheelEnd, leftWheelEnd;
 	private Properties prop;
 	private int driveSpeed;
+	private int turnSlowSpeed, turnFastSpeed;
 	private int leftTurn, rightTurn, turnAround;
 	
 	// State pattern
@@ -31,12 +32,16 @@ public class Robot extends RobotController implements Observer {
 		state = new RobotState_InitSensors(sensorHandler);
 	}
 	
-	public String getProperty(String property) {
-		return prop.getProperty(property);
-	}
-	
 	public int getLeftTurn() {
 		return leftTurn;
+	}
+	
+	public int getTurnSlowSpeed() {
+		return turnSlowSpeed;
+	}
+	
+	public int getTurnFastSpeed() {
+		return turnFastSpeed;
 	}
 	
 	public int getRightTurn() {
@@ -112,10 +117,12 @@ public class Robot extends RobotController implements Observer {
 	private void readProperties() {
 		try {
 			prop.load(getClass().getClassLoader().getResourceAsStream("config.properties"));
-			leftTurn = Integer.parseInt(prop.getProperty("leftturn"));
-			rightTurn = Integer.parseInt(prop.getProperty("rightturn"));
-			turnAround = Integer.parseInt(prop.getProperty("turnaround"));
-			driveSpeed = Integer.parseInt(prop.getProperty("drivespeed"));
+			leftTurn = Integer.parseInt(prop.getProperty("leftTurn"));
+			rightTurn = Integer.parseInt(prop.getProperty("rightTurn"));
+			turnAround = Integer.parseInt(prop.getProperty("turnAround"));
+			driveSpeed = Integer.parseInt(prop.getProperty("driveSpeed"));
+			turnSlowSpeed = Integer.parseInt(prop.getProperty("turnSlowSpeed"));
+			turnFastSpeed = Integer.parseInt(prop.getProperty("turnFastSpeed"));
 		} catch (IOException e) {
 			System.out.println("Could not load the configuration file.");
 			try {

@@ -12,9 +12,9 @@ public class RobotState_Turn implements IRobotStates {
 	}
 
 	private void turnRobot() {
-		int wheelSpeed = 5;
+		int wheelSpeed = robot.getTurnFastSpeed();
 		if (almostDoneTurning())
-			wheelSpeed = 1;
+			wheelSpeed = robot.getTurnSlowSpeed();
 		
 		if (doneTurning()) {
 			robot.stop();
