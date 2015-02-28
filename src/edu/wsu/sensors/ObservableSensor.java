@@ -4,44 +4,20 @@ import java.util.Observable;
 
 import edu.wsu.robot.Robot;
 
+public abstract class ObservableSensor extends Observable implements Runnable {
 
-public class ObservableSensor extends Observable implements Runnable {
+	protected Robot robot;
+	protected ESensor sensor;
+	protected ISensorStates state;
 
-	private final Robot robot;
-	private final ESensor sensor;	
-
-	private ISensorStates state;
-
-	// Observer pattern
 	public ObservableSensor(Robot robot, ESensor sensor) {
 		this.robot = robot;
 		this.sensor = sensor;
-		state = new SensorState_Unknown();
 	}
 	
-	public void setState(ISensorStates state) {
-		this.state = state;
-	}
 	
-	public ISensorStates getState(){
-		return state;
-	}
-
-	@Override
-	public void run() {			
-		try {
-			ISensorStates nextState = state.doWork(robot, sensor);
-			if (nextState != null) {
-				setChanged();
-				notifyObservers(nextState);
-				setState(nextState);
-			}
-		} catch (Throwable e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	
+	public abstract void run();
+		
 	@Override
 	public String toString(){
 		return sensor.toString();
@@ -50,6 +26,14 @@ public class ObservableSensor extends Observable implements Runnable {
 	public ESensor getSensor(){
 		return sensor;
 	}
-
-
+	
+	protected void changeState(ISensorStates nextState) {
+		setChanged();
+		notifyObservers(nextState);
+		setState(nextState);
+	}
+	
+	private void setState(ISensorStates state) {
+		this.state = state;
+	}
 }

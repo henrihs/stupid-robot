@@ -12,16 +12,19 @@ public class ObservableSensorFactoryTests {
 		SensorHandler fakeHandler = mock(SensorHandler.class);
 		Robot fakeRobot = mock(Robot.class);
 		when(fakeRobot.getDistanceValue(anyInt())).thenReturn(0);
-		ObservableSensorFactory factory = new ObservableSensorFactory(fakeRobot, fakeHandler, 3);
+		int sensors = 3;
+		ObservableSensorFactory factory = new ObservableSensorFactory(fakeRobot, fakeHandler, sensors);
 		
-		factory.create(ESensor.BACKL);
-		factory.create(ESensor.ANGLEL);
-		factory.create(ESensor.FRONTL);
+		factory.createDistAndLightSensors(ESensor.BACKL);
+		factory.createDistAndLightSensors(ESensor.ANGLEL);
+		factory.createDistAndLightSensors(ESensor.FRONTL);
 		Thread.sleep(50);
-		verify(fakeHandler, times(3)).update(any(ObservableSensor.class), any());
+		verify(fakeHandler, times(sensors)).update(any(DistanceSensor.class), any());
+		verify(fakeHandler, times(sensors)).update(any(LightSensor.class), any());
 		when(fakeRobot.getDistanceValue(anyInt())).thenReturn(1300);
 		Thread.sleep(50);
-		verify(fakeHandler, times(6)).update(any(ObservableSensor.class), any());
+		verify(fakeHandler, times(sensors*2)).update(any(DistanceSensor.class), any());
+		verify(fakeHandler, times(sensors*2)).update(any(LightSensor.class), any());
 	}
 
 }

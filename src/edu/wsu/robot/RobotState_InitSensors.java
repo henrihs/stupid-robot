@@ -19,7 +19,7 @@ public class RobotState_InitSensors implements IRobotStates {
 	
 	protected void doWork(Robot robot, ObservableSensorFactory factory){
 		for (ESensor sensor : ESensor.values()) {
-			factory.create(sensor);
+			factory.createDistAndLightSensors(sensor);
 		}
 		robot.setState(new RobotState_Stop());
 	}

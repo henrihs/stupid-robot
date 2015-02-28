@@ -33,14 +33,14 @@ public class SensorHandlerTests {
 	
 	@Test
 	public void getNextState_isClearInFront_returnsDriveState(){
-		IRobotStates nextState = handler.getNextState(frontSensor, new SensorState_Clear());
+		IRobotStates nextState = handler.getNextState(frontSensor, new DistanceState_Clear());
 		
 		assertTrue(nextState instanceof RobotState_Drive);
 	}
 	
 	@Test
 	public void getNextState_isBlockedInFront_returnsInitTurnState(){
-		IRobotStates nextState = handler.getNextState(frontSensor, new SensorState_Obstacle());
+		IRobotStates nextState = handler.getNextState(frontSensor, new DistanceState_Obstacle());
 		
 		assertTrue(nextState instanceof RobotState_InitTurn);
 	}
@@ -49,7 +49,7 @@ public class SensorHandlerTests {
 	public void getNextState_isBlockedOnSide_returnsDriveState(){
 		ESensor sensor = ESensor.RIGHT;
 		
-		IRobotStates nextState = handler.getNextState(sensor, new SensorState_Obstacle());
+		IRobotStates nextState = handler.getNextState(sensor, new DistanceState_Obstacle());
 		
 		assertTrue(nextState instanceof RobotState_Drive);
 	}
@@ -60,7 +60,7 @@ public class SensorHandlerTests {
 		when(fakeRobot.getState()).thenReturn(fakeRobotState);
 		SensorHandler spyHandler = spy(handler);
 		
-		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
+		spyHandler.update(new DistanceSensor(fakeRobot, frontSensor), new DistanceState_Clear());
 
 		verify(spyHandler, times(1)).notifyObservers(any());
 	}
@@ -71,7 +71,7 @@ public class SensorHandlerTests {
 		when(fakeRobot.getState()).thenReturn(fakeRobotState);
 		SensorHandler spyHandler = spy(handler);
 		
-		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
+		spyHandler.update(new DistanceSensor(fakeRobot, frontSensor), new DistanceState_Clear());
 
 		verify(spyHandler, times(1)).notifyObservers(any());
 	}
@@ -82,7 +82,7 @@ public class SensorHandlerTests {
 		when(fakeRobot.getState()).thenReturn(fakeRobotState);
 		SensorHandler spyHandler = spy(handler);
 		
-		spyHandler.update(new ObservableSensor(fakeRobot, frontSensor), new SensorState_Clear());
+		spyHandler.update(new DistanceSensor(fakeRobot, frontSensor), new DistanceState_Clear());
 
 		verify(spyHandler, times(1)).notifyObservers(any());
 	}

@@ -12,14 +12,26 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 
 	// Observer pattern
 	@Override
-	public void update(Observable arg0, Object arg1) {
-		ObservableSensor sensor = (ObservableSensor) arg0;
-		ISensorStates sensorState = (ISensorStates) arg1;
+	public void update(Observable sensor, Object state) {
+		if (sensor instanceof LightSensor)
+			update((LightSensor)sensor, (ISensorStates)state);
+		else if (sensor instanceof DistanceSensor)
+			update((DistanceSensor)sensor, (ISensorStates)state);
+	}
+	
+	public void update(LightSensor sensor, ISensorStates state){
 		setChanged();
-		notifyObservers(getNextState(sensor.getSensor(), sensorState));
+		notifyObservers(getNextState(sensor.getSensor(), state));
 	}
 
+	public void update(DistanceSensor sensor, ISensorStates state){
+		setChanged();
+		notifyObservers(getNextState(sensor.getSensor(), state));
+	}
+	
+
 	// State pattern
+	//TODO: Handle LightStates as well (alternatively in separate method)
 	@Override
 	public IRobotStates getNextState(ESensor sensor, ISensorStates sensorState) {
 		if (isObstacle(sensorState)) {
@@ -40,11 +52,11 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	}
 
 	private boolean isObstacle(ISensorStates sensorState) {
-		return (sensorState instanceof SensorState_Obstacle);
+		return (sensorState instanceof DistanceState_Obstacle);
 	}
 
 	private boolean isClear(ISensorStates sensorState) {
-		return (sensorState instanceof SensorState_Clear);
+		return (sensorState instanceof DistanceState_Clear);
 	}	
 }
 

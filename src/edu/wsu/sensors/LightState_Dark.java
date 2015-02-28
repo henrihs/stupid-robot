@@ -3,16 +3,14 @@ package edu.wsu.sensors;
 import edu.wsu.robot.Robot;
 import static property.PropertyReader.*;
 
-public class LightState_Dark implements ILightStates {
+public class LightState_Dark implements ISensorStates, ILightStates {
 
 	@Override
-	public void doWork(LightSensor lightSensor, ESensor sensor, Robot robot) {
+	public ISensorStates doWork(Robot robot, ESensor sensor) {
 		if (robot.getLightValue(sensor.val()) < getLightLowerBoundary()) {
-			ILightStates state = new LightState_Light();
-			lightSensor.setChanged();
-			lightSensor.notifyObservers(state);
-			lightSensor.setState(state);
+			return new LightState_Light();
 		}
+		return null;
 		
 	}
 	

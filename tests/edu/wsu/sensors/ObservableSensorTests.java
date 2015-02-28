@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 
 public class ObservableSensorTests {
 	
-	public ObservableSensor observableSensor;
+	public DistanceSensor observableSensor;
 	private Robot fakeRobot;
 	private ESensor sensor;
 
@@ -17,7 +17,7 @@ public class ObservableSensorTests {
 	public void initialize(){
 		fakeRobot = mock(Robot.class);
 		sensor = ESensor.ANGLEL;
-		observableSensor = new ObservableSensor(fakeRobot, sensor);
+		observableSensor = new DistanceSensor(fakeRobot, sensor);
 	}
 	
 	@Test
@@ -32,26 +32,26 @@ public class ObservableSensorTests {
 	
 	@Test
 	public void run_doesNotChangeState_doesNotNotifyObservers(){
-		SensorState_Clear fakeState = mock(SensorState_Clear.class);
+		DistanceState_Clear fakeState = mock(DistanceState_Clear.class);
 		observableSensor.setState(fakeState);
-		ObservableSensor spySensor = spy(observableSensor);
+		DistanceSensor spySensor = spy(observableSensor);
 
 		spySensor.run();
 		
-		assertTrue(spySensor.getState() instanceof SensorState_Clear);
+		assertTrue(spySensor.getState() instanceof DistanceState_Clear);
 		verify(spySensor, never()).notifyObservers(any());
 	}
 	
 	@Test
 	public void run_changesState_notifiesObservers(){
-		SensorState_Clear fakeState = mock(SensorState_Clear.class);
-		when(fakeState.doWork(fakeRobot, sensor)).thenReturn(new SensorState_Obstacle());
+		DistanceState_Clear fakeState = mock(DistanceState_Clear.class);
+		when(fakeState.doWork(fakeRobot, sensor)).thenReturn(new DistanceState_Obstacle());
 		observableSensor.setState(fakeState);
-		ObservableSensor spySensor = spy(observableSensor);
+		DistanceSensor spySensor = spy(observableSensor);
 
 		spySensor.run();
 		
-		assertTrue(spySensor.getState() instanceof SensorState_Obstacle);
+		assertTrue(spySensor.getState() instanceof DistanceState_Obstacle);
 		verify(spySensor, times(1)).notifyObservers(any());
 	}
 
