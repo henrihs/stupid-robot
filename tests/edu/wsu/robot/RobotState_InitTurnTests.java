@@ -1,11 +1,10 @@
 package edu.wsu.robot;
 
-import static org.mockito.Mockito.*;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import edu.wsu.sensors.ESensor;
+import static org.mockito.Mockito.*;
+import static property.PropertyReader.*;
 
 public class RobotState_InitTurnTests {
 	
@@ -21,55 +20,55 @@ public class RobotState_InitTurnTests {
 	}
 
 	@Test
-	public void doWork_mustTurnAround_returns180(){
+	public void doWork_mustTurnAround_setsWheelEndsToThreeTimesTurnAround(){
 		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
 		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
 		
 		state.doWork(fakeRobot);
 		
-		verify(fakeRobot).setRightWheelEnd(-180*3);
-		verify(fakeRobot).setLeftWheelEnd(180*3);
+		verify(fakeRobot).setRightWheelEnd(-getTurnAround()*3);
+		verify(fakeRobot).setLeftWheelEnd(getTurnAround()*3);
 		verify(fakeRobot).setState(any(RobotState_Turn.class));
 	}
 	
 	@Test
-	public void doWork_mustTurnRight_returns90(){
+	public void doWork_mustTurnRight_setsWheelEndsToThreeTimesRightTurn(){
 		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(0);
 		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(1300);
 		
 		state.doWork(fakeRobot);
 		
-		verify(fakeRobot).setRightWheelEnd(-90*3);
-		verify(fakeRobot).setLeftWheelEnd(90*3);
+		verify(fakeRobot).setRightWheelEnd(-getRightTurn()*3);
+		verify(fakeRobot).setLeftWheelEnd(getRightTurn()*3);
 		verify(fakeRobot).setState(any(RobotState_Turn.class));
 	}
 	
 	@Test
-	public void doWork_mustTurnLeft_returnsMinus90(){
+	public void doWork_mustTurnLeft_setsWheelEndsToThreeTimesLeftTurn(){
 		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(1300);
 		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
 		
 		state.doWork(fakeRobot);
 		
-		verify(fakeRobot).setRightWheelEnd(90*3);
-		verify(fakeRobot).setLeftWheelEnd(-90*3);
+		verify(fakeRobot).setRightWheelEnd(-getLeftTurn()*3);
+		verify(fakeRobot).setLeftWheelEnd(getLeftTurn()*3);
 		verify(fakeRobot).setState(any(RobotState_Turn.class));
 	}	
 	
 	@Test
-	public void doWork_mustTurnEitherWay_returnsAbs90(){
+	public void doWork_mustTurnEitherWay_setsWheelEndsToThreeTimesEitherTurn(){
 		when(fakeRobot.getDistanceValue(ESensor.RIGHT.val())).thenReturn(0);
 		when(fakeRobot.getDistanceValue(ESensor.LEFT.val())).thenReturn(0);
 		
 		state.doWork(fakeRobot);
 		
 		if (state.wasLastTurnPositive()){
-			verify(fakeRobot).setRightWheelEnd(eq(-(long)90*3));
-			verify(fakeRobot).setLeftWheelEnd(eq((long)90*3));
+			verify(fakeRobot).setRightWheelEnd(-getLeftTurn()*3);
+			verify(fakeRobot).setLeftWheelEnd(getLeftTurn()*3);
 		}
 		else {
-			verify(fakeRobot).setRightWheelEnd(eq((long)90*3));
-			verify(fakeRobot).setLeftWheelEnd(eq(-(long)90*3));
+			verify(fakeRobot).setRightWheelEnd(-getLeftTurn()*3);
+			verify(fakeRobot).setLeftWheelEnd(getLeftTurn()*3);
 		}
 		
 		verify(fakeRobot).setState(any(RobotState_Turn.class));		

@@ -2,6 +2,7 @@ package edu.wsu.robot;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import edu.wsu.sensors.SensorHandler;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;

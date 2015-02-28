@@ -11,18 +11,20 @@ public class ObservableSensorFactory {
 	private final Robot robot;
 	private final ISensorHandler sensorHandler;
 	private final ScheduledExecutorService scheduler;
+	private final int scheduleInterval_ms;
 
 	public ObservableSensorFactory(Robot robot, ISensorHandler sensorHandler, int totalSensors) {
 		this.robot = robot;
 		this.sensorHandler = sensorHandler;
 		scheduler = Executors.newScheduledThreadPool(totalSensors);
+		scheduleInterval_ms = 10; //TODO: Bytt ut med property fra settings-fil
 	}
 	
 	public void create(ESensor sensor){
 		ObservableSensor observableSensor = new ObservableSensor(robot, sensor);
 		observableSensor.addObserver((Observer) sensorHandler);
 //		Thread thread = new Thread(observableSensor);
-		scheduler.scheduleAtFixedRate(observableSensor, 10, 10, TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(observableSensor, scheduleInterval_ms, scheduleInterval_ms, TimeUnit.MILLISECONDS);
 //		thread.start();
 
 	}

@@ -7,6 +7,7 @@ import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_Turn;
 import static org.mockito.Mockito.*;
+import static property.PropertyReader.*;
 
 public class RobotState_TurnTests {
 	
@@ -85,19 +86,19 @@ public class RobotState_TurnTests {
 	}
 	
 	private void verifyTurningRight(){
-		verify(fakeRobot, times(1)).setMotorSpeeds(5, -5);
+		verify(fakeRobot, times(1)).setMotorSpeeds(getTurnFastSpeed(), -getTurnFastSpeed());
 	}
 	
 	private void verifyTurningLeft(){
-		verify(fakeRobot, times(1)).setMotorSpeeds(-5, 5);
+		verify(fakeRobot, times(1)).setMotorSpeeds(-getTurnFastSpeed(), getTurnFastSpeed());
 	}
 	
 	private void verifyTurningSlowlyRight(){
-		verify(fakeRobot, times(1)).setMotorSpeeds(1, -1);
+		verify(fakeRobot, times(1)).setMotorSpeeds(getTurnSlowSpeed(), -getTurnSlowSpeed());
 	}
 	
 	private void verifyTurningSlowlyLeft(){
-		verify(fakeRobot, times(1)).setMotorSpeeds(-1, 1);
+		verify(fakeRobot, times(1)).setMotorSpeeds(-getTurnSlowSpeed(), getTurnSlowSpeed());
 	}
 	
 	private void initWheelPositionsAndEnds(TurningDirection direction, long distanceLeftToTurn){

@@ -1,5 +1,7 @@
 package edu.wsu.robot;
 
+import static property.PropertyReader.*;
+
 public class RobotState_Turn implements IRobotStates {
 
 	private Robot robot;
@@ -12,9 +14,9 @@ public class RobotState_Turn implements IRobotStates {
 	}
 
 	private void turnRobot() {
-		int wheelSpeed = robot.getTurnFastSpeed();
+		int wheelSpeed = getTurnFastSpeed();
 		if (almostDoneTurning())
-			wheelSpeed = robot.getTurnSlowSpeed();
+			wheelSpeed = getTurnSlowSpeed();
 		
 		if (doneTurning()) {
 			robot.stop();
