@@ -5,7 +5,6 @@ import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ISensorStates;
 import edu.wsu.sensors.ObservableSensor;
 
-
 public class DistanceSensor extends ObservableSensor {
 
 	// Observer pattern

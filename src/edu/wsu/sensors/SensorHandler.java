@@ -9,6 +9,7 @@ import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;
+import edu.wsu.sensors.light.LightSensor;
 
 
 public class SensorHandler extends Observable implements Observer, ISensorHandler {
@@ -18,6 +19,8 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	public void update(Observable sensor, Object state) {
 		if (sensor instanceof DistanceSensor)
 			update((DistanceSensor)sensor, (ISensorStates)state);
+//		else if (sensor instanceof LightSensor)
+//			update((LightSensor)sensor, (ISensorStates)state);
 	}
 	
 	//
