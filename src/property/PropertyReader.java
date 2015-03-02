@@ -1,87 +1,71 @@
 package property;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class PropertyReader {
 	
-	// Lazy initialization of singleton
-//	private static volatile IPropertyReader instance = null;
-	
-	private final static Map<String, Integer> propertyMap;
+	private static Properties properties;
 	
 	private PropertyReader(){}
 	
 	static {
-		propertyMap = getProperties("config.properties");
+		properties = loadProperties("config.properties");
 	}
-	
-//	private PropertyReader() throws IOException {
-//		this(new Properties(), "config.properties");
-//	}
-	
-//	@
-//	protected PropertyReader(Properties properties, String filename) throws IOException{
-//		properties.load(PropertyReader.class.getResourceAsStream(filename));
-//		propertyMap = getProperties(properties);
-//	}
-//	
-//	@Override
-//	public IPropertyReader getInstance() {
-//		if
-//	}
 
 	public static int getDistanceLowerBoundary() {
-		return propertyMap.get("distanceLowerBoundary");
+		return getProperty("distanceLowerBoundary");
 	}
 	
 	public static int getDistanceUpperBoundary() {
-		return propertyMap.get("distanceUpperBoundary");
+		return getProperty("distanceUpperBoundary");
 	}
 	
 	public static int getLightLowerBoundary() {
-		return propertyMap.get("lightLowerBoundary");
+		return getProperty("lightLowerBoundary");
 	}
 	
 	public static int getLightUpperBoundary() {
-		return propertyMap.get("lightUpperBoundary");
+		return getProperty("lightUpperBoundary");
 	}
 	
 	public static int getTurnBoundary() {
-		return propertyMap.get("turnBoundary");
+		return getProperty("turnBoundary");
 	}
 	
 	public static int getLeftTurn() {
-		return propertyMap.get("leftTurn");
+		return getProperty("leftTurn");
 	}
 	
 	public static int getRightTurn() {
-		return propertyMap.get("rightTurn");
+		return getProperty("rightTurn");
 	}
 	
 	public static int getTurnAround() {
-		return propertyMap.get("turnAround");
+		return getProperty("turnAround");
 	}
 	
 	public static int getDriveSpeed() {
-		return propertyMap.get("driveSpeed");
+		return getProperty("driveSpeed");
 	}
 	
 	public static int getTurnSlowSpeed() {
-		return propertyMap.get("turnSlowSpeed");
+		return getProperty("turnSlowSpeed");
 	}
 	
 	public static int getTurnFastSpeed() {
-		return propertyMap.get("turnFastSpeed");
+		return getProperty("turnFastSpeed");
 	}
 	
 	public static int getScheduleRate() {
-		return propertyMap.get("scheduleRate");
+		return getProperty("scheduleRate");
 	}
 	
-	private static Map<String, Integer> getProperties(String filename){
+	public static int getProperty(String propertyKey){
+		return Integer.parseInt(properties.getProperty(propertyKey));
+	}
+	
+	private static Properties loadProperties(String filename){
 		Properties properties = new Properties();
 		try {
 			properties.load(PropertyReader.class.getClassLoader().getResourceAsStream(filename));
@@ -90,12 +74,7 @@ public class PropertyReader {
 		} catch (NullPointerException e) {
 			e.printStackTrace();
 		}
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		for (String key: properties.stringPropertyNames()) {
-			int value = Integer.parseInt(properties.getProperty(key));
-			map.put(key, value);
-		}
-		return map;
+		return properties;
 	}
 
 }
