@@ -52,7 +52,7 @@ public class RobotControllerDirector {
    * then the controller class files would be located in
    * "c:\KheperaSimulator\controllers\".
    */
-  private final String controllerPathName = "./controllers/edu/wsu/robot/";
+  private final String controllerPathName = "./controllers/edu/wsu/motormanagement/";
 
   /**
    * A <code>String</code> array of all controllers available.
