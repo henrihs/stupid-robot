@@ -1,4 +1,4 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import java.util.Random;
 import edu.wsu.sensors.ESensor;

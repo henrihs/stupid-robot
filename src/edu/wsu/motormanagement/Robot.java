@@ -1,4 +1,4 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import java.io.IOException;
 import java.util.Observable;

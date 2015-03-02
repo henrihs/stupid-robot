@@ -1,11 +1,11 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.wsu.robot.Robot;
-import edu.wsu.robot.RobotState_Drive;
-import edu.wsu.robot.RobotState_Turn;
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_Drive;
+import edu.wsu.motormanagement.RobotState_Turn;
 import static org.mockito.Mockito.*;
 import static property.PropertyReader.*;
 

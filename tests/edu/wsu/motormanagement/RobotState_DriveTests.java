@@ -1,6 +1,9 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import org.junit.Test;
+
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_Drive;
 import static org.mockito.Mockito.*;
 
 public class RobotState_DriveTests {

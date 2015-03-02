@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
-import edu.wsu.robot.Robot;
+import edu.wsu.motormanagement.Robot;
 
 /**
  * A <code>RobotControllerDirector</code> is a utility class used to load,

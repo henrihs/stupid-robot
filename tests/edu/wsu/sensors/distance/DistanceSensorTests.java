@@ -1,9 +1,8 @@
-package edu.wsu.sensors;
+package edu.wsu.sensors.distance;
 
 import edu.wsu.motormanagement.Robot;
-import edu.wsu.sensors.distance.DistanceSensor;
-import edu.wsu.sensors.distance.DistanceState_Clear;
-import edu.wsu.sensors.distance.DistanceState_Obstacle;
+import edu.wsu.sensors.ESensor;
+import edu.wsu.sensors.ISensorStates;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +10,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class ObservableSensorTests {
+public class DistanceSensorTests {
 	
-	public DistanceSensor observableSensor;
+	public DistanceSensor distanceSensor;
 	private Robot fakeRobot;
 	private ESensor sensor;
 
@@ -21,15 +20,15 @@ public class ObservableSensorTests {
 	public void initialize(){
 		fakeRobot = mock(Robot.class);
 		sensor = ESensor.ANGLEL;
-		observableSensor = new DistanceSensor(fakeRobot, sensor);
+		distanceSensor = new DistanceSensor(fakeRobot, sensor);
 	}
 	
 	@Test
 	public void run_invokesStateObject(){
 		ISensorStates fakeState = mock(ISensorStates.class);
-		observableSensor.setState(fakeState);
+		distanceSensor.setState(fakeState);
 
-		observableSensor.run();
+		distanceSensor.run();
 		
 		verify(fakeState, times(1)).doWork(fakeRobot, sensor);
 	}
@@ -37,8 +36,8 @@ public class ObservableSensorTests {
 	@Test
 	public void run_doesNotChangeState_doesNotNotifyObservers(){
 		DistanceState_Clear fakeState = mock(DistanceState_Clear.class);
-		observableSensor.setState(fakeState);
-		DistanceSensor spySensor = spy(observableSensor);
+		distanceSensor.setState(fakeState);
+		DistanceSensor spySensor = spy(distanceSensor);
 
 		spySensor.run();
 		
@@ -50,8 +49,8 @@ public class ObservableSensorTests {
 	public void run_changesState_notifiesObservers(){
 		DistanceState_Clear fakeState = mock(DistanceState_Clear.class);
 		when(fakeState.doWork(fakeRobot, sensor)).thenReturn(new DistanceState_Obstacle());
-		observableSensor.setState(fakeState);
-		DistanceSensor spySensor = spy(observableSensor);
+		distanceSensor.setState(fakeState);
+		DistanceSensor spySensor = spy(distanceSensor);
 
 		spySensor.run();
 		

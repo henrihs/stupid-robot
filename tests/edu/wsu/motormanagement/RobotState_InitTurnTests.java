@@ -1,7 +1,11 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_InitTurn;
+import edu.wsu.motormanagement.RobotState_Turn;
 import edu.wsu.sensors.ESensor;
 import static org.mockito.Mockito.*;
 import static property.PropertyReader.*;

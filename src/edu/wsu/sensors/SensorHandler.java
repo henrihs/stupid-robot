@@ -3,9 +3,9 @@ package edu.wsu.sensors;
 import java.util.Observable;
 import java.util.Observer;
 
-import edu.wsu.robot.IRobotStates;
-import edu.wsu.robot.RobotState_Drive;
-import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.motormanagement.IRobotStates;
+import edu.wsu.motormanagement.RobotState_Drive;
+import edu.wsu.motormanagement.RobotState_InitTurn;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;
@@ -28,12 +28,11 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	//
 	public void update(DistanceSensor sensor, ISensorStates state){
 		setChanged();
-		notifyObservers(getNextState(sensor, state));
+		notifyObservers(getNextState(sensor.getSensor(), state));
 	}
 	
 	@Override
-	public IRobotStates getNextState(DistanceSensor s, ISensorStates sensorState) {
-		ESensor sensor = s.getSensor();
+	public IRobotStates getNextState(ESensor sensor, ISensorStates sensorState) {
 		if (isObstacle(sensorState)) {
 			if (isFront(sensor)) {
 				return new RobotState_InitTurn();

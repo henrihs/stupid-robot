@@ -1,9 +1,12 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
+
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_Stop;
 
 public class RobotState_StopTests {
 

@@ -1,4 +1,4 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import static property.PropertyReader.*;
 

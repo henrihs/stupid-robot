@@ -1,7 +1,9 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import org.junit.Test;
 
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_InitSensors;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ObservableSensorFactory;
 import edu.wsu.sensors.SensorHandler;

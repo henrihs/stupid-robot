@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import edu.wsu.robot.Robot;
+import edu.wsu.motormanagement.Robot;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.light.LightSensor;
 import static property.PropertyReader.getScheduleRate;

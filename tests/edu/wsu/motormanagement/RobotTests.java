@@ -1,8 +1,15 @@
-package edu.wsu.robot;
+package edu.wsu.motormanagement;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.wsu.motormanagement.IRobotStates;
+import edu.wsu.motormanagement.Robot;
+import edu.wsu.motormanagement.RobotState_Drive;
+import edu.wsu.motormanagement.RobotState_InitSensors;
+import edu.wsu.motormanagement.RobotState_InitTurn;
+import edu.wsu.motormanagement.RobotState_Stop;
+import edu.wsu.motormanagement.RobotState_Turn;
 import edu.wsu.sensors.SensorHandler;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;

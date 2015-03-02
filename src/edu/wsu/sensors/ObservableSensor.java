@@ -2,7 +2,7 @@ package edu.wsu.sensors;
 
 import java.util.Observable;
 
-import edu.wsu.robot.Robot;
+import edu.wsu.motormanagement.Robot;
 
 public abstract class ObservableSensor extends Observable implements Runnable {
 
@@ -33,7 +33,11 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 		setState(nextState);
 	}
 	
-	private void setState(ISensorStates state) {
+	protected void setState(ISensorStates state) {
 		this.state = state;
+	}
+	
+	protected ISensorStates getState() {
+		return state;
 	}
 }
