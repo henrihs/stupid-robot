@@ -11,6 +11,9 @@ import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Turn;
+import edu.wsu.sensors.distance.DistanceSensor;
+import edu.wsu.sensors.distance.DistanceState_Clear;
+import edu.wsu.sensors.distance.DistanceState_Obstacle;
 
 
 public class SensorHandlerTests {

@@ -1,6 +1,9 @@
-package edu.wsu.sensors;
+package edu.wsu.sensors.distance;
 
 import edu.wsu.robot.Robot;
+import edu.wsu.sensors.ESensor;
+import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ObservableSensor;
 
 
 public class DistanceSensor extends ObservableSensor {
@@ -14,7 +17,7 @@ public class DistanceSensor extends ObservableSensor {
 	public void run() {			
 		try {
 			ISensorStates nextState = state.doWork(robot, sensor);
-			if (nextState instanceof IDistanceStates)
+			if (nextState instanceof ISensorStates)
 				changeState(nextState);
 		} catch (Throwable e) {
 			e.printStackTrace();

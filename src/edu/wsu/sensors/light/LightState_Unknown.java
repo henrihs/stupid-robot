@@ -1,9 +1,11 @@
-package edu.wsu.sensors;
+package edu.wsu.sensors.light;
 
 import edu.wsu.robot.Robot;
+import edu.wsu.sensors.ESensor;
+import edu.wsu.sensors.ISensorStates;
 import static property.PropertyReader.*;
 
-public class LightState_Unknown implements ISensorStates, ILightStates {
+public class LightState_Unknown implements ISensorStates {
 
 	@Override
 	public ISensorStates doWork(Robot robot, ESensor sensor) {
@@ -14,5 +16,5 @@ public class LightState_Unknown implements ISensorStates, ILightStates {
 			state = new LightState_Light();
 		return state;
 	}
-
+	
 }

@@ -4,7 +4,10 @@ import java.util.Observer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import edu.wsu.robot.Robot;
+import edu.wsu.sensors.distance.DistanceSensor;
+import edu.wsu.sensors.light.LightSensor;
 import static property.PropertyReader.getScheduleRate;
 
 public class ObservableSensorFactory {
@@ -21,7 +24,7 @@ public class ObservableSensorFactory {
 	
 	public void createDistAndLightSensors(ESensor sensor){
 		schedule(createDistanceSensor(sensor));
-		schedule(createLighSensor(sensor));
+		schedule(createLightSensor(sensor));
 	}
 	
 	private void schedule(ObservableSensor observableSensor){
@@ -31,7 +34,7 @@ public class ObservableSensorFactory {
 														TimeUnit.MILLISECONDS);
 	}
 	
-	private LightSensor createLighSensor(ESensor sensor){
+	private LightSensor createLightSensor(ESensor sensor){
 		LightSensor lightSensor = new LightSensor(robot, sensor);
 		lightSensor.addObserver(sensorHandler);
 		return lightSensor;

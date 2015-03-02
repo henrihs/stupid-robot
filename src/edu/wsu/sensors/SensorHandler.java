@@ -6,6 +6,9 @@ import java.util.Observer;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.sensors.distance.DistanceSensor;
+import edu.wsu.sensors.distance.DistanceState_Clear;
+import edu.wsu.sensors.distance.DistanceState_Obstacle;
 
 
 public class SensorHandler extends Observable implements Observer, ISensorHandler {
@@ -13,27 +16,21 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	// Observer pattern
 	@Override
 	public void update(Observable sensor, Object state) {
-		if (sensor instanceof LightSensor)
-			update((LightSensor)sensor, (ISensorStates)state);
-		else if (sensor instanceof DistanceSensor)
+		if (sensor instanceof DistanceSensor)
 			update((DistanceSensor)sensor, (ISensorStates)state);
 	}
 	
-	public void update(LightSensor sensor, ISensorStates state){
-		setChanged();
-		notifyObservers(getNextState(sensor.getSensor(), state));
-	}
-
+	//
+	// Method listening for updates from the distance sensors.
+	//
 	public void update(DistanceSensor sensor, ISensorStates state){
 		setChanged();
-		notifyObservers(getNextState(sensor.getSensor(), state));
+		notifyObservers(getNextState(sensor, state));
 	}
 	
-
-	// State pattern
-	//TODO: Handle LightStates as well (alternatively in separate method)
 	@Override
-	public IRobotStates getNextState(ESensor sensor, ISensorStates sensorState) {
+	public IRobotStates getNextState(DistanceSensor s, ISensorStates sensorState) {
+		ESensor sensor = s.getSensor();
 		if (isObstacle(sensorState)) {
 			if (isFront(sensor)) {
 				return new RobotState_InitTurn();
@@ -57,6 +54,6 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 
 	private boolean isClear(ISensorStates sensorState) {
 		return (sensorState instanceof DistanceState_Clear);
-	}	
+	}
 }
 

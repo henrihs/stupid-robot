@@ -3,6 +3,7 @@ package edu.wsu.sensors;
 import org.junit.Test;
 
 import edu.wsu.robot.Robot;
+import edu.wsu.sensors.distance.DistanceSensor;
 import static org.mockito.Mockito.*;
 
 public class ObservableSensorFactoryTests {
