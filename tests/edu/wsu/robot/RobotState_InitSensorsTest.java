@@ -22,7 +22,7 @@ public class RobotState_InitSensorsTest {
 		
 		state.doWork(fakeRobot, fakeFactory);
 		
-		verify(fakeFactory, times(numOfSensors)).createDistAndLightSensors(isA(ESensor.class));
+		verify(fakeFactory, times(numOfSensors)).createSensors(isA(ESensor.class));
 	}
 
 }

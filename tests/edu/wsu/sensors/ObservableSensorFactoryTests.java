@@ -17,9 +17,9 @@ public class ObservableSensorFactoryTests {
 		int sensors = 3;
 		ObservableSensorFactory factory = new ObservableSensorFactory(fakeRobot, fakeHandler, sensors);
 		
-		factory.createDistAndLightSensors(ESensor.BACKL);
-		factory.createDistAndLightSensors(ESensor.ANGLEL);
-		factory.createDistAndLightSensors(ESensor.FRONTL);
+		factory.createSensors(ESensor.BACKL);
+		factory.createSensors(ESensor.ANGLEL);
+		factory.createSensors(ESensor.FRONTL);
 		Thread.sleep(50);
 		verify(fakeHandler, times(sensors)).update(any(DistanceSensor.class), any());
 		verify(fakeHandler, times(sensors)).update(any(LightSensor.class), any());

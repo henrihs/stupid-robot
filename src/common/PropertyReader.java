@@ -13,6 +13,10 @@ public class PropertyReader {
 		properties = loadProperties("config.properties");
 	}
 	
+	public static int getWheelInterval() {
+		return getProperty("wheelInterval");
+	}
+	
 	public static int getObstacleLowerBoundary() {
 		return getProperty("obstacleLowerBoundary");
 	}

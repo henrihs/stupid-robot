@@ -1,5 +1,6 @@
 package edu.wsu.sensors;
 
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -13,14 +14,42 @@ import edu.wsu.sensors.light.LightSensor;
 
 
 public class SensorHandler extends Observable implements Observer, ISensorHandler {
+	
+	private HashMap<ObservableSensor, Status> lightSensorStates;
+	private HashMap<ObservableSensor, Status> distanceSensorStates;
+	private int ticks;
+	
+	public SensorHandler() {
+		lightSensorStates = new HashMap<ObservableSensor, Status>();
+		distanceSensorStates = new HashMap<ObservableSensor, Status>();
+		ticks = 0;
+	}
 
 	// Observer pattern
 	@Override
-	public void update(Observable sensor, Object state) {
-		if (sensor instanceof DistanceSensor)
+	public synchronized void update(Observable sensor, Object state) {
+		if (sensor instanceof DistanceSensor) {
+			addOrCreate(distanceSensorStates, (ObservableSensor)sensor, (ISensorStates)state);
 			update((DistanceSensor)sensor, (ISensorStates)state);
+		}
 		else if (sensor instanceof LightSensor)
-			update((LightSensor)sensor, (ISensorStates)state);
+			addOrCreate(lightSensorStates, (ObservableSensor)sensor, (ISensorStates)state);
+		else if (sensor instanceof WheelSensor) {
+			ticks++;
+			System.out.println("Ticks completed: " + ticks);
+//			setChanged();
+//			notifyObservers(this);
+		}
+			
+	}
+
+	private void addOrCreate(HashMap<ObservableSensor, Status> map, ObservableSensor sensor, ISensorStates state) {
+		if (!map.containsKey(sensor)) {
+			map.put(sensor, new Status(state));
+		} else {
+			Status status = map.get(sensor);
+			status.addOrCreateState(state);
+		}
 	}
 	
 	//

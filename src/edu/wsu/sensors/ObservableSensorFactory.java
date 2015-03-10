@@ -22,16 +22,23 @@ public class ObservableSensorFactory {
 		scheduler = Executors.newScheduledThreadPool(totalSensors*2);
 	}
 	
-	public void createDistAndLightSensors(ESensor sensor){
+	public void createSensors(ESensor sensor){
 		schedule(createDistanceSensor(sensor));
 		schedule(createLightSensor(sensor));
+		schedule(createWheelSensor());
 	}
 	
-	private void schedule(ObservableSensor observableSensor){
+	private void schedule(Runnable observableSensor){
 		scheduler.scheduleAtFixedRate(observableSensor, 
 														getScheduleRate(), 
 														getScheduleRate(), 
 														TimeUnit.MILLISECONDS);
+	}
+	
+	private WheelSensor createWheelSensor() {
+		WheelSensor wheelSensor = new WheelSensor(robot);
+		wheelSensor.addObserver(sensorHandler);
+		return wheelSensor;
 	}
 	
 	private LightSensor createLightSensor(ESensor sensor){
