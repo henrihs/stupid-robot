@@ -15,7 +15,6 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 		this.sensor = sensor;
 	}
 	
-	
 	public abstract void run();
 		
 	@Override
@@ -37,7 +36,7 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 		this.state = state;
 	}
 	
-	protected ISensorStates getState() {
+	public ISensorStates getState() {
 		return state;
 	}
 }

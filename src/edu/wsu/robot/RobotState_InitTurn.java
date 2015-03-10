@@ -1,8 +1,9 @@
 package edu.wsu.robot;
 
 import java.util.Random;
+
 import edu.wsu.sensors.ESensor;
-import static property.PropertyReader.*;
+import static common.PropertyReader.*;
 
 public class RobotState_InitTurn implements IRobotStates {
 	

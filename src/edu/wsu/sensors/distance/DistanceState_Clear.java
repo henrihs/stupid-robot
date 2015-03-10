@@ -3,14 +3,18 @@ package edu.wsu.sensors.distance;
 import edu.wsu.robot.Robot;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ISensorStates;
-import static property.PropertyReader.*;
+import static common.PropertyReader.*;
+import static common.Methods.inInterval;
 
 public class DistanceState_Clear implements ISensorStates {
 
 	@Override
 	public ISensorStates doWork(Robot robot, ESensor sensor) {
-		if (robot.getDistanceValue(sensor.val()) > getDistanceUpperBoundary())
+		int distanceValue = robot.getDistanceValue(sensor.val());
+		
+		if (inInterval(distanceValue, getObstacleLowerBoundary(), getObstacleUpperBoundary()))
 			return new DistanceState_Obstacle();
-		return null;
+		else
+			return null;
 	}
 }

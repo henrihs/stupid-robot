@@ -1,6 +1,6 @@
 package edu.wsu.robot;
 
-import static property.PropertyReader.*;
+import static common.PropertyReader.*;
 
 public class RobotState_Turn implements IRobotStates {
 

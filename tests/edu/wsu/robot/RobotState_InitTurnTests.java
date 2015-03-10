@@ -7,8 +7,8 @@ import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Turn;
 import edu.wsu.sensors.ESensor;
+import static common.PropertyReader.*;
 import static org.mockito.Mockito.*;
-import static property.PropertyReader.*;
 
 public class RobotState_InitTurnTests {
 	

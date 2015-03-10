@@ -1,4 +1,4 @@
-package property;
+package common;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -12,23 +12,23 @@ public class PropertyReader {
 	static {
 		properties = loadProperties("config.properties");
 	}
-
-	public static int getDistanceLowerBoundary() {
-		return getProperty("distanceLowerBoundary");
+	
+	public static int getObstacleLowerBoundary() {
+		return getProperty("obstacleLowerBoundary");
 	}
 	
-	public static int getDistanceUpperBoundary() {
-		return getProperty("distanceUpperBoundary");
+	public static int getObstacleUpperBoundary() {
+		return getProperty("obstacleUpperBoundary");
 	}
 	
-	public static int getLightLowerBoundary() {
-		return getProperty("lightLowerBoundary");
+	public static int getClearLowerBoundary() {
+		return getProperty("clearLowerBoundary");
 	}
 	
-	public static int getLightUpperBoundary() {
-		return getProperty("lightUpperBoundary");
+	public static int getClearUpperBoundary() {
+		return getProperty("clearUpperBoundary");
 	}
-	
+		
 	public static int getTurnBoundary() {
 		return getProperty("turnBoundary");
 	}
@@ -59,6 +59,30 @@ public class PropertyReader {
 	
 	public static int getScheduleRate() {
 		return getProperty("scheduleRate");
+	}
+	
+	public static int getLightLowerBoundary() {
+		return getProperty("lightLowerBoundary");
+	}
+	
+	public static int getLightUpperBoundary() {
+		return getProperty("lightUpperBoundary");
+	}
+	
+	public static int getDuskyLowerBoundary() {
+		return getProperty("duskyLowerBoundary");
+	}
+	
+	public static int getDuskyUpperBoundary() {
+		return getProperty("duskyUpperBoundary");
+	}
+	
+	public static int getDarkLowerBoundary() {
+		return getProperty("darkLowerBoundary");
+	}
+	
+	public static int getDarkUpperBoundary() {
+		return getProperty("darkUpperBoundary");
 	}
 	
 	public static int getProperty(String propertyKey){

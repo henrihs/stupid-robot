@@ -7,7 +7,7 @@ import java.util.Observer;
 import edu.wsu.KheperaSimulator.RobotController;
 import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.SensorHandler;
-import static property.PropertyReader.*;
+import static common.PropertyReader.*;
 
 public class Robot extends RobotController implements Observer {
 	

@@ -6,8 +6,8 @@ import org.junit.Test;
 import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_Turn;
+import static common.PropertyReader.*;
 import static org.mockito.Mockito.*;
-import static property.PropertyReader.*;
 
 public class RobotState_TurnTests {
 	

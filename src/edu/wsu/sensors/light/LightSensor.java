@@ -22,13 +22,4 @@ public class LightSensor extends ObservableSensor {
 			throw e;
 		}
 	}
-	
-	@Override
-	public String toString() {
-		return sensor.toString();
-	}
-	
-	public ESensor getSensor() {
-		return sensor;
-	}
 }

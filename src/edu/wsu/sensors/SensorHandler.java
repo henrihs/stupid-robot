@@ -19,8 +19,8 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	public void update(Observable sensor, Object state) {
 		if (sensor instanceof DistanceSensor)
 			update((DistanceSensor)sensor, (ISensorStates)state);
-//		else if (sensor instanceof LightSensor)
-//			update((LightSensor)sensor, (ISensorStates)state);
+		else if (sensor instanceof LightSensor)
+			update((LightSensor)sensor, (ISensorStates)state);
 	}
 	
 	//
@@ -29,6 +29,12 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	public void update(DistanceSensor sensor, ISensorStates state){
 		setChanged();
 		notifyObservers(getNextState(sensor.getSensor(), state));
+	}
+	
+	public void update(LightSensor sensor, ISensorStates state) {
+		System.out.println(sensor.toString());
+//		setChanged();
+//		notifyObservers(sensor);
 	}
 	
 	@Override
