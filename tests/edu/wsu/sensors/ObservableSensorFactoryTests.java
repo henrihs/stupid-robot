@@ -2,7 +2,7 @@ package edu.wsu.sensors;
 
 import org.junit.Test;
 
-import edu.wsu.motormanagement.Robot;
+import edu.wsu.robot.Robot;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.light.LightSensor;
 import static org.mockito.Mockito.*;

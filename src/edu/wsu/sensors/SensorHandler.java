@@ -3,9 +3,9 @@ package edu.wsu.sensors;
 import java.util.Observable;
 import java.util.Observer;
 
-import edu.wsu.motormanagement.IRobotStates;
-import edu.wsu.motormanagement.RobotState_Drive;
-import edu.wsu.motormanagement.RobotState_InitTurn;
+import edu.wsu.robot.IRobotStates;
+import edu.wsu.robot.RobotState_Drive;
+import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;

@@ -1,6 +1,6 @@
 package edu.wsu.sensors;
 
-import edu.wsu.motormanagement.Robot;
+import edu.wsu.robot.Robot;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;

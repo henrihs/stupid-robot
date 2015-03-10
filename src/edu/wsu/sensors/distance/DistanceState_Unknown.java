@@ -1,6 +1,6 @@
 package edu.wsu.sensors.distance;
 
-import edu.wsu.motormanagement.Robot;
+import edu.wsu.robot.Robot;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ISensorStates;
 import static property.PropertyReader.*;

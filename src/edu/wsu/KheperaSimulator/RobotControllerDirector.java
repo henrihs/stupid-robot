@@ -31,7 +31,7 @@ import java.util.StringTokenizer;
 
 import javax.swing.JOptionPane;
 
-import edu.wsu.motormanagement.Robot;
+import edu.wsu.robot.Robot;
 
 /**
  * A <code>RobotControllerDirector</code> is a utility class used to load,
@@ -52,7 +52,7 @@ public class RobotControllerDirector {
    * then the controller class files would be located in
    * "c:\KheperaSimulator\controllers\".
    */
-  private final String controllerPathName = "./controllers/edu/wsu/motormanagement/";
+  private final String controllerPathName = "./controllers/edu/wsu/robot/";
 
   /**
    * A <code>String</code> array of all controllers available.

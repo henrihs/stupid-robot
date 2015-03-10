@@ -2,7 +2,7 @@ package edu.wsu.sensors;
 
 import java.util.Observable;
 
-import edu.wsu.motormanagement.Robot;
+import edu.wsu.robot.Robot;
 
 public abstract class ObservableSensor extends Observable implements Runnable {
 
