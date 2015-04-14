@@ -29,8 +29,7 @@ public class EnvModel implements IModel {
 	 * @param content The content of the cell
 	 */
 	public void setCell(int row, int col, ECellContent content){
-		if (envModelCells[row][col].getContent() != content)
-			setCell(row, col, content, envModelCells[row][col].getLightIntensity());
+		setCell(row, col, content, -1);
 	}
 
 	/**
@@ -40,8 +39,7 @@ public class EnvModel implements IModel {
 	 * @param lightIntensity The light intensity of the cell
 	 */
 	public void setCell(int row, int col, int lightIntensity){
-		if (envModelCells[row][col].getLightIntensity() != lightIntensity)
-			setCell(row, col, envModelCells[row][col].getContent(), lightIntensity);
+		setCell(row, col, null, lightIntensity);
 	}
 
 	/**
@@ -52,8 +50,13 @@ public class EnvModel implements IModel {
 	 * @param lightIntensity The light intensity of the cell
 	 */
 	public void setCell(int row, int col, ECellContent content, int lightIntensity){
-		envModelCells[row][col].setContent(content);
-		envModelCells[row][col].setLightIntensity(lightIntensity);
+		IndexPair indices = adjustIndicesAndModel(row, col);
+		row = indices.row();
+		col = indices.col();
+		if (content != null)
+			envModelCells[row][col].setContent(content);
+		if (lightIntensity != -1)
+			envModelCells[row][col].setLightIntensity(lightIntensity);
 		ModelEvent event = new ModelEvent(this, col, row);
 		for (ModelListener listener : listeners)
 			listener.modelChanged(event);
