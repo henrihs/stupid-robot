@@ -32,7 +32,7 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 		setState(nextState);
 	}
 	
-	protected void setState(ISensorStates state) {
+	public void setState(ISensorStates state) {
 		this.state = state;
 	}
 	
