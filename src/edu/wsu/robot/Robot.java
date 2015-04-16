@@ -10,6 +10,7 @@ import edu.wsu.KheperaSimulator.RobotController;
 import edu.wsu.modelling.Modeller;
 import edu.wsu.modelling.TurnListener;
 import edu.wsu.sensors.ISensorHandler;
+import edu.wsu.sensors.ISensorStates;
 import edu.wsu.sensors.SensorHandler;
 import static common.PropertyReader.*;
 

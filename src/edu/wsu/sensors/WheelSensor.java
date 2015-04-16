@@ -21,8 +21,9 @@ public class WheelSensor extends Observable implements Runnable {
 
 	@Override
 	public void run() {
-		if (robot.getState() instanceof RobotState_InitTurn 
-				|| robot.getState() instanceof RobotState_Turn) {
+		if (robot.getState() instanceof RobotState_Turn) {
+			ticks = 0;
+			last = robot.getLeftWheelPosition();
 			return;			
 		}
 		calculateTicks();

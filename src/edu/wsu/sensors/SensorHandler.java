@@ -16,9 +16,8 @@ import edu.wsu.sensors.light.LightSensor;
 
 public class SensorHandler extends Observable implements Observer, ISensorHandler {
 	
-	private HashMap<ObservableSensor, Status> lightSensorStates;
-	private HashMap<ObservableSensor, Status> distanceSensorStates;
-	private int ticks;
+	private HashMap<ObservableSensor, ISensorStates> lightSensorStates;
+	private HashMap<ObservableSensor, ISensorStates> distanceSensorStates;
 	
 	public SensorHandler() {
 		this(new Modeller());
@@ -26,41 +25,38 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	
 	public SensorHandler(Modeller modeller) {
 		addObserver(modeller);
-		lightSensorStates = new HashMap<ObservableSensor, Status>();
-		distanceSensorStates = new HashMap<ObservableSensor, Status>();
-		ticks = 0;
+		lightSensorStates = new HashMap<ObservableSensor, ISensorStates>();
+		distanceSensorStates = new HashMap<ObservableSensor, ISensorStates>();
 	}
 
+	public HashMap<ObservableSensor, ISensorStates> getLightSensorStates() {
+		return lightSensorStates;
+	}
+	
+	public HashMap<ObservableSensor, ISensorStates> getDistanceSensorStates() {
+		return distanceSensorStates;
+	}
+	
 	// Observer pattern
 	@Override
 	public synchronized void update(Observable sensor, Object data) {
 		if (sensor instanceof DistanceSensor) {
-			addOrCreate(distanceSensorStates, (ObservableSensor)sensor, (ISensorStates)data);
+			distanceSensorStates.put((ObservableSensor) sensor, (ISensorStates)data);
 			update((DistanceSensor)sensor, (ISensorStates)data);
 		}
 		else if (sensor instanceof LightSensor)
-			addOrCreate(lightSensorStates, (ObservableSensor)sensor, (ISensorStates)data);
+			lightSensorStates.put((ObservableSensor)sensor, (ISensorStates)data);
 		else if (sensor instanceof WheelSensor) {
-			ticks++;
 			setChanged();
 			notifyObservers(this);
 		}
 			
 	}
-
-	private void addOrCreate(HashMap<ObservableSensor, Status> map, ObservableSensor sensor, ISensorStates state) {
-		if (!map.containsKey(sensor)) {
-			map.put(sensor, new Status(state));
-		} else {
-			Status status = map.get(sensor);
-			status.addOrCreateState(state);
-		}
-	}
 	
 	//
 	// Method listening for updates from the distance sensors.
 	//
-	public void update(DistanceSensor sensor, ISensorStates state){
+	public void update(DistanceSensor sensor, ISensorStates state) {
 		setChanged();
 		notifyObservers(getNextState(sensor.getSensor(), state));
 	}

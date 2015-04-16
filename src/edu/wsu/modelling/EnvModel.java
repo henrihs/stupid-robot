@@ -2,9 +2,17 @@ package edu.wsu.modelling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.wsu.modelling.Modeller.EDirection;
+import edu.wsu.sensors.ESensor;
+import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ObservableSensor;
+import edu.wsu.sensors.SensorHandler;
+import edu.wsu.sensors.Status;
+import edu.wsu.sensors.distance.DistanceState_Clear;
+import edu.wsu.sensors.distance.DistanceState_Obstacle;
 
 public class EnvModel implements IModel {
 
@@ -30,26 +38,25 @@ public class EnvModel implements IModel {
 		moveRobotPresence(modelSize/2, modelSize/2);
 	}
 	
-	
 	/**
 	 * Moves robot's presence one step in the desired direction
-	 * @param eDirection to move robot
+	 * @param direction to move robot
 	 */
-	public void moveRobotPresence(EDirection eDirection){
+	public synchronized void moveRobotPresence(EDirection direction){
 		IndexPair currentPosition = locateRobot();
-		IndexPair nextPosition = findNextPosition(eDirection, currentPosition);
+		IndexPair nextPosition = findPositionInFront(direction, currentPosition);
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
 	}
 	
 	/**
 	 * Find which position is one step ahead
-	 * @param eDirection The direction of which way to look ahead
+	 * @param direction The direction of which way to look ahead
 	 * @param currentPosition The position to look from
 	 * @return
 	 */
-	private IndexPair findNextPosition(EDirection eDirection, IndexPair currentPosition){
+	private IndexPair findPositionInFront(EDirection direction, IndexPair currentPosition){
 		IndexPair nextPosition = null;
-		switch (eDirection) {
+		switch (direction) {
 		case UP:
 			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
 			break;
@@ -63,8 +70,171 @@ public class EnvModel implements IModel {
 			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
 			break;
 		}
-		nextPosition = adjustIndicesAndModel(nextPosition);
+//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
+	}
+		
+	/** 
+	 * Find which position is to the left
+	 * @param direction
+	 * @param currentPosition
+	 * @return
+	 */
+	private IndexPair findPositionToLeft(EDirection direction, IndexPair currentPosition) {
+		IndexPair nextPosition = null;
+		switch (direction) {
+		case UP:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
+			break;
+		case RIGHT:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
+			break;
+		}
+//		nextPosition = adjustIndicesAndModel(nextPosition);
+		return nextPosition;
+	}
+	
+	/**
+	 *  Find which position is to the right
+	 * @param direction
+	 * @param currentPosition
+	 * @return
+	 */
+	private IndexPair findPositionToRight(EDirection direction, IndexPair currentPosition) {
+		IndexPair nextPosition = null;
+		switch (direction) {
+		case UP:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
+			break;
+		case RIGHT:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
+			break;
+		}
+//		nextPosition = adjustIndicesAndModel(nextPosition);
+		return nextPosition;
+	}
+	
+	/**
+	 *  Find which position is to the left/front
+	 * @param direction
+	 * @param currentPosition
+	 * @return
+	 */
+	private IndexPair findPositionToLeftAngle(EDirection direction, IndexPair currentPosition) {
+		IndexPair nextPosition = null;
+		switch (direction) {
+		case UP:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col() - 1);
+			break;
+		case RIGHT:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col() + 1);
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col() + 1);
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col() - 1);
+			break;
+		}
+//		nextPosition = adjustIndicesAndModel(nextPosition);
+		return nextPosition;
+	}
+	
+	/**
+	 *  Find which position is to the right/front
+	 * @param direction
+	 * @param currentPosition
+	 * @return
+	 */
+	private IndexPair findPositionToRightAngle(EDirection direction, IndexPair currentPosition) {
+		IndexPair nextPosition = null;
+		switch (direction) {
+		case UP:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col() + 1);
+			break;
+		case RIGHT:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col() + 1);
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col() - 1);
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col() - 1);
+			break;
+		}
+//		nextPosition = adjustIndicesAndModel(nextPosition);
+		return nextPosition;
+	}
+	
+	/**
+	 *  Find which position is to the rear
+	 * @param direction
+	 * @param currentPosition
+	 * @return
+	 */
+	private IndexPair findPositionToRear(EDirection direction, IndexPair currentPosition) {
+		IndexPair nextPosition = null;
+		switch (direction) {
+		case UP:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
+			break;
+		case RIGHT:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
+			break;
+		}
+//		nextPosition = adjustIndicesAndModel(nextPosition);
+		return nextPosition;
+	}
+	
+	public IndexPair findPositionFromSensorEnum(EDirection direction, IndexPair currentPosition, ESensor sensor) {
+		IndexPair position = null;
+		switch (sensor) {
+		case FRONTL:
+			position =  findPositionInFront(direction, currentPosition);
+			break;
+		case FRONTR:
+			position = findPositionInFront(direction, currentPosition);
+			break;
+		case LEFT:
+			position = findPositionToLeft(direction, currentPosition);
+			break;
+		case RIGHT:
+			position = findPositionToRight(direction, currentPosition);
+			break;
+//		case ANGLEL:
+//			position = findPositionToLeftAngle(direction, currentPosition);
+//			break;
+//		case ANGLER:
+//			position = findPositionToRightAngle(direction, currentPosition);
+//			break;
+//		case BACKL:
+//			position = findPositionToRear(direction, currentPosition);
+//			break;
+//		case BACKR:
+//			position = findPositionToRear(direction, currentPosition);
+//			break;
+		default:
+			break;
+		}
+		return position;
 	}
 	
 	/**
@@ -75,15 +245,17 @@ public class EnvModel implements IModel {
 	private void moveRobotPresence(int row, int col){
 		IndexPair nextRobotPosition = adjustIndicesAndModel(row, col);
 		IndexPair currentRobotPosition = locateRobot();
-		if (currentRobotPosition != null)
+		if (currentRobotPosition != null) {
 			getCell(currentRobotPosition.row(), currentRobotPosition.col()).setRobotPresent(false);
+			setCell(currentRobotPosition.row(), currentRobotPosition.col(), ECellContent.CLEAR);
+		}
 		getCell(nextRobotPosition.row(), nextRobotPosition.col()).setRobotPresent(true);
 	}
 	
 	/**
 	 * @return IndexPair Row and column position of cell with robot's presence
 	 */
-	private IndexPair locateRobot(){
+	public IndexPair locateRobot(){
 		for (int row = 0; row < envModelCells.length; row++) {
 			for (int col = 0; col < envModelCells[row].length; col++) {
 				if (getCell(row, col).isRobotPresent)
@@ -92,7 +264,6 @@ public class EnvModel implements IModel {
 		}
 		return null;
 	}
-
 	
 	/**
 	 * Set the content of a <code>Cell</code>
@@ -122,7 +293,8 @@ public class EnvModel implements IModel {
 	 * @param lightIntensity The light intensity of the cell
 	 */
 	public void setCell(int row, int col, ECellContent content, int lightIntensity){
-		IndexPair indices = adjustIndicesAndModel(row, col);
+//		IndexPair indices = adjustIndicesAndModel(row, col);
+		IndexPair indices = new IndexPair(row, col); 
 		row = indices.row();
 		col = indices.col();
 		if (content != null)
@@ -165,25 +337,25 @@ public class EnvModel implements IModel {
 	 * @return 
 	 */
 	protected IndexPair adjustIndicesAndModel(int row, int col){
-		if (row >= envModelCells.length){
-			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
-			upShiftModel(row - (envModelCells.length - 1));
+		if (row >= envModelCells.length - 1){
+//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
+			upShiftModel(1);
 			row--;
 		}
-		else if (row < 0) {
-			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
-			downShiftModel(Math.abs(row));
+		else if (row < 1) {
+//			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
+			downShiftModel(1);
 			row++;
 		}
 
-		if (col >= envModelCells[row].length){
-			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
-			leftShiftModel(col - (envModelCells[row].length - 1));
+		if (col >= envModelCells[row].length - 1){
+//			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
+			leftShiftModel(1);
 			col--;
 		}
-		else if (col < 0) {
-			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
-			rightShiftModel(Math.abs(col));
+		else if (col < 1) {
+//			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
+			rightShiftModel(1);
 			col++;
 		}
 		return new IndexPair(row, col);
@@ -220,13 +392,12 @@ public class EnvModel implements IModel {
 	 * filling the blank cells with new Cells ("unknown" content)
 	 * @param stepSize number of steps to shift to the left
 	 */
-	private void leftShiftModel(int stepSize) {
-		Cell[] freshCells = new Cell[stepSize];
-		for (int i = 0; i < freshCells.length; i++) {
-			freshCells[i] = new Cell();
-		}
-		
+	private void leftShiftModel(int stepSize) {		
 		for (int i = 0; i < envModelCells.length; i++) {
+			Cell[] freshCells = new Cell[stepSize];
+			for (int j = 0; j < freshCells.length; j++) {
+				freshCells[j] = new Cell();
+			}
 			Cell[] tempCopy = Arrays.copyOfRange(envModelCells[i], stepSize, envModelCells[i].length);
 			System.arraycopy(tempCopy, 0, envModelCells[i], 0, envModelCells[i].length - stepSize);
 			System.arraycopy(freshCells, 0, envModelCells[i], envModelCells[i].length - stepSize, freshCells.length);
@@ -238,13 +409,12 @@ public class EnvModel implements IModel {
 	 * filling the blank cells with new Cells ("unknown" content)
 	 * @param stepSize number of steps to shift to the right
 	 */
-	private void rightShiftModel(int stepSize){
-		Cell[] freshCells = new Cell[stepSize];
-		for (int i = 0; i < freshCells.length; i++) {
-			freshCells[i] = new Cell();
-		}
-		
+	private void rightShiftModel(int stepSize){		
 		for (Cell[] row : envModelCells){
+			Cell[] freshCells = new Cell[stepSize];
+			for (int j = 0; j < freshCells.length; j++) {
+				freshCells[j] = new Cell();
+			}
 			Cell[] tempCopy = Arrays.copyOfRange(row, 0, row.length - stepSize);
 			System.arraycopy(tempCopy, 0, row, stepSize, row.length - stepSize);
 			System.arraycopy(freshCells, 0, row, 0, freshCells.length);
@@ -274,28 +444,7 @@ public class EnvModel implements IModel {
 		}
 		return s;
 	}
-	
-//	public static void main(String[] args){
-//		EnvModel e = new EnvModel(10);
-//		System.out.println(e.toString());
-//		for (int i = 0; i < 10; i++) {
-//			for (int j = 0; j < 10; j++) {
-//				e.setCell(i, j, ECellContent.OBSTACLE);
-//			}
-//		}
-//		System.out.println(e.toString());
-//		e.downShiftModel(1);
-//		System.out.println(e.toString());
-//		e.upShiftModel(1);
-//		System.out.println(e.toString());
-//		e.rightShiftModel(1);
-//		System.out.println(e.toString());
-//		e.leftShiftModel(1);
-//		System.out.println(e.toString());
-//		e.rightShiftModel(2);
-//		System.out.println(e.toString());
-//	}
-	
+		
 	/**
 	 * Class representing a single square (1000x1000 ticks) in "the real world"
 	 */
@@ -364,7 +513,10 @@ public class EnvModel implements IModel {
 		public int col(){
 			return col;
 		}
+		
+		@Override
+		public String toString(){
+			return "Row: " + String.valueOf(row) + ", Col: " + String.valueOf(col);
+		}
 	}
-
-
 }

@@ -41,6 +41,7 @@ public class EnvModelTests {
 	@Test
 	public void setCell_contenAndLightIntensitytIsGiven_BothAreSet(){
 		model.setCell(2, 2, ECellContent.OBSTACLE, 2);
+
 		
 		ECellContent content = model.getCell(2, 2).getContent();
 		int lightIntensity = model.getCell(2, 2).getLightIntensity();
@@ -51,19 +52,11 @@ public class EnvModelTests {
 	
 	@Test
 	public void adjustArray_rowTooHigh_adjustedUpwards(){
-		model.setCell(1, 1, ECellContent.OBSTACLE);
+		setMiddleCellToObstacleAndRobot();
 		
 		IndexPair indices = model.adjustIndicesAndModel(3, 2);
 		
-		assertEquals(ECellContent.OBSTACLE, model.getCell(0, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		checkCellWithRobotAndObstacleHasMovedTo(0, 1);
 		
 		assertEquals(2, indices.row());
 		assertEquals(2, indices.col());
@@ -71,19 +64,11 @@ public class EnvModelTests {
 	
 	@Test
 	public void adjustArray_rowTooLow_adjustedDownwards(){
-		model.setCell(1, 1, ECellContent.OBSTACLE);
+		setMiddleCellToObstacleAndRobot();
 		
 		IndexPair indices = model.adjustIndicesAndModel(-1, 2);
 		
-		assertEquals(ECellContent.OBSTACLE, model.getCell(2, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		checkCellWithRobotAndObstacleHasMovedTo(2, 1);
 		
 		assertEquals(0, indices.row());
 		assertEquals(2, indices.col());
@@ -91,41 +76,44 @@ public class EnvModelTests {
 	
 	@Test
 	public void adjustArray_ColTooHigh_adjustedLeftwards(){
-		model.setCell(1, 1, ECellContent.OBSTACLE);
+		setMiddleCellToObstacleAndRobot();
 		
 		IndexPair indices = model.adjustIndicesAndModel(2, 3);
 		
-		assertEquals(ECellContent.OBSTACLE, model.getCell(1, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
-		
+		checkCellWithRobotAndObstacleHasMovedTo(1, 0);
 		assertEquals(2, indices.row());
 		assertEquals(2, indices.col());
 	}
 	
 	@Test
 	public void adjustArray_ColTooLow_adjustedRightwards(){
-		model.setCell(1, 1, ECellContent.OBSTACLE);
+		setMiddleCellToObstacleAndRobot();
 		
 		IndexPair indices = model.adjustIndicesAndModel(2, -1);
 		
-		assertEquals(ECellContent.OBSTACLE, model.getCell(1, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
-		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		checkCellWithRobotAndObstacleHasMovedTo(1, 2);
 		
 		assertEquals(2, indices.row());
 		assertEquals(0, indices.col());
+	}
+	
+	private void setMiddleCellToObstacleAndRobot(){
+		model.setCell(1, 1, ECellContent.OBSTACLE);
+		model.getCell(1, 1).setRobotPresent(true);
+	}
+	
+	private void checkCellWithRobotAndObstacleHasMovedTo(int row, int col){
+		for (int i = 0; i < model.modelSize; i++) {
+			for (int j = 0; j < model.modelSize; j++) {
+				if (i == row && j == col) {
+					assertTrue(model.getCell(i,j).isRobotPresent());
+					assertEquals(ECellContent.OBSTACLE, model.getCell(i, j).getContent());
+				}
+				else {
+					assertFalse(model.getCell(i, j).isRobotPresent());
+					assertEquals(ECellContent.UNKNOWN, model.getCell(i, j).getContent());
+				}
+			}
+		}
 	}
 }
