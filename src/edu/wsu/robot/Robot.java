@@ -1,10 +1,14 @@
 package edu.wsu.robot;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import edu.wsu.KheperaSimulator.RobotController;
+import edu.wsu.modelling.Modeller;
+import edu.wsu.modelling.TurnListener;
 import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.SensorHandler;
 import static common.PropertyReader.*;
@@ -13,21 +17,26 @@ public class Robot extends RobotController implements Observer {
 	
 	private long rightWheelEnd, leftWheelEnd;
 	
+	private List<TurnListener> listeners = new ArrayList<TurnListener>();
+	
 	// State pattern
 	private static IRobotStates state;
 	
 	public Robot() throws IOException {
-		this(new SensorHandler());
+		this(new SensorHandler(), new Modeller());
 	}
 
-	public Robot(ISensorHandler sensorHandler) {
+	public Robot(ISensorHandler sensorHandler, Modeller modeller) {
 		sensorHandler.addObserver(this);
+		addListener(modeller);
 		state = new RobotState_InitSensors(sensorHandler);
 	}
 	
 	// Observer pattern
 	@Override
 	public void update(Observable arg0, Object arg1) {
+		if (!(arg1 instanceof IRobotStates))
+			return;
 		if (shouldUpdate())
 			state = (IRobotStates) arg1;
 	}
@@ -80,6 +89,15 @@ public class Robot extends RobotController implements Observer {
 	
 	public void stop(){
 		setMotorSpeeds(0, 0);
+	}
+	
+	public void addListener(TurnListener listener){
+		listeners.add(listener);
+	}
+	
+	protected void notifyListeners(int angle){
+		for (TurnListener listener : listeners)
+			listener.onTurnInitialized(angle);
 	}
 	
 	private boolean shouldUpdate() {

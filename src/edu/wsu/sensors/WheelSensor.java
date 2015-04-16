@@ -1,7 +1,10 @@
 package edu.wsu.sensors;
 
 import java.util.Observable;
+
 import edu.wsu.robot.Robot;
+import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.robot.RobotState_Turn;
 import static common.PropertyReader.*;
 
 public class WheelSensor extends Observable implements Runnable {
@@ -18,6 +21,10 @@ public class WheelSensor extends Observable implements Runnable {
 
 	@Override
 	public void run() {
+		if (robot.getState() instanceof RobotState_InitTurn 
+				|| robot.getState() instanceof RobotState_Turn) {
+			return;			
+		}
 		calculateTicks();
 		if (ticks >= getWheelInterval()) {
 			ticks = 0;

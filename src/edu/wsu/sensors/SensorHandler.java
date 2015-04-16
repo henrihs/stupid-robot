@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
+import edu.wsu.modelling.Modeller;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
@@ -20,6 +21,11 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 	private int ticks;
 	
 	public SensorHandler() {
+		this(new Modeller());
+	}
+	
+	public SensorHandler(Modeller modeller) {
+		addObserver(modeller);
 		lightSensorStates = new HashMap<ObservableSensor, Status>();
 		distanceSensorStates = new HashMap<ObservableSensor, Status>();
 		ticks = 0;
@@ -27,18 +33,17 @@ public class SensorHandler extends Observable implements Observer, ISensorHandle
 
 	// Observer pattern
 	@Override
-	public synchronized void update(Observable sensor, Object state) {
+	public synchronized void update(Observable sensor, Object data) {
 		if (sensor instanceof DistanceSensor) {
-			addOrCreate(distanceSensorStates, (ObservableSensor)sensor, (ISensorStates)state);
-			update((DistanceSensor)sensor, (ISensorStates)state);
+			addOrCreate(distanceSensorStates, (ObservableSensor)sensor, (ISensorStates)data);
+			update((DistanceSensor)sensor, (ISensorStates)data);
 		}
 		else if (sensor instanceof LightSensor)
-			addOrCreate(lightSensorStates, (ObservableSensor)sensor, (ISensorStates)state);
+			addOrCreate(lightSensorStates, (ObservableSensor)sensor, (ISensorStates)data);
 		else if (sensor instanceof WheelSensor) {
 			ticks++;
-			System.out.println("Ticks completed: " + ticks);
-//			setChanged();
-//			notifyObservers(this);
+			setChanged();
+			notifyObservers(this);
 		}
 			
 	}

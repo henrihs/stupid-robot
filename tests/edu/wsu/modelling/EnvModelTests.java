@@ -56,7 +56,15 @@ public class EnvModelTests {
 		IndexPair indices = model.adjustIndicesAndModel(3, 2);
 		
 		assertEquals(ECellContent.OBSTACLE, model.getCell(0, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
 		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		
 		assertEquals(2, indices.row());
 		assertEquals(2, indices.col());
 	}
@@ -68,7 +76,15 @@ public class EnvModelTests {
 		IndexPair indices = model.adjustIndicesAndModel(-1, 2);
 		
 		assertEquals(ECellContent.OBSTACLE, model.getCell(2, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
 		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		
 		assertEquals(0, indices.row());
 		assertEquals(2, indices.col());
 	}
@@ -80,7 +96,15 @@ public class EnvModelTests {
 		IndexPair indices = model.adjustIndicesAndModel(2, 3);
 		
 		assertEquals(ECellContent.OBSTACLE, model.getCell(1, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
 		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		
 		assertEquals(2, indices.row());
 		assertEquals(2, indices.col());
 	}
@@ -92,7 +116,15 @@ public class EnvModelTests {
 		IndexPair indices = model.adjustIndicesAndModel(2, -1);
 		
 		assertEquals(ECellContent.OBSTACLE, model.getCell(1, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(0, 2).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 1).getContent());
 		assertEquals(ECellContent.UNKNOWN, model.getCell(1, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 0).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 1).getContent());
+		assertEquals(ECellContent.UNKNOWN, model.getCell(2, 2).getContent());
+		
 		assertEquals(2, indices.row());
 		assertEquals(0, indices.col());
 	}

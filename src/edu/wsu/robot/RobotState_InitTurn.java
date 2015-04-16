@@ -17,6 +17,8 @@ public class RobotState_InitTurn implements IRobotStates {
 		robot.stop();
 		int angle = calculateTurn();
 		
+		robot.notifyListeners(angle);
+		
 		robot.setRightWheelEnd(robot.getRightWheelPosition() - angle * 3);
 		robot.setLeftWheelEnd(robot.getLeftWheelPosition() + angle * 3);
 		robot.setState(new RobotState_Turn());
