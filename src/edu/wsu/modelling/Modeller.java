@@ -37,7 +37,7 @@ public class Modeller implements Observer, TurnListener {
 	}
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public synchronized void update(Observable arg0, Object arg1) {
 		if (!(arg1 instanceof SensorHandler))
 			return;
 		envModel.moveRobotPresence(getDirectionEnum());

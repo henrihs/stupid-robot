@@ -2,17 +2,10 @@ package edu.wsu.modelling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.wsu.modelling.Modeller.EDirection;
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.ISensorStates;
-import edu.wsu.sensors.ObservableSensor;
-import edu.wsu.sensors.SensorHandler;
-import edu.wsu.sensors.Status;
-import edu.wsu.sensors.distance.DistanceState_Clear;
-import edu.wsu.sensors.distance.DistanceState_Obstacle;
 
 public class EnvModel implements IModel {
 
@@ -48,6 +41,143 @@ public class EnvModel implements IModel {
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
 	}
 	
+	public IndexPair findPositionFromSensorEnum(EDirection direction, IndexPair currentPosition, ESensor sensor) {
+		IndexPair position = null;
+		switch (sensor) {
+		case FRONTL:
+			position =  findPositionInFront(direction, currentPosition);
+			break;
+		case FRONTR:
+			position = findPositionInFront(direction, currentPosition);
+			break;
+		case LEFT:
+			position = findPositionToLeft(direction, currentPosition);
+			break;
+		case RIGHT:
+			position = findPositionToRight(direction, currentPosition);
+			break;
+//		case ANGLEL:
+//			position = findPositionToLeftAngle(direction, currentPosition);
+//			break;
+//		case ANGLER:
+//			position = findPositionToRightAngle(direction, currentPosition);
+//			break;
+//		case BACKL:
+//			position = findPositionToRear(direction, currentPosition);
+//			break;
+//		case BACKR:
+//			position = findPositionToRear(direction, currentPosition);
+//			break;
+		default:
+			break;
+		}
+		return position;
+	}
+	
+	/**
+	 * @return IndexPair Row and column position of cell with robot's presence
+	 */
+	public IndexPair locateRobot(){
+		for (int row = 0; row < envModelCells.length; row++) {
+			for (int col = 0; col < envModelCells[row].length; col++) {
+				if (getCell(row, col).isRobotPresent)
+					return new IndexPair(row, col);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Set the content of a <code>Cell</code>
+	 * @param row Index of cell row
+	 * @param col Index of cell column
+	 * @param content The content of the cell
+	 */
+	public void setCell(int row, int col, ECellContent content){
+		setCell(row, col, content, -1);
+	}
+
+	/**
+	 * Set the light intensity in a <code>Cell</code>
+	 * @param row Index of cell row
+	 * @param col Index of cell column
+	 * @param lightIntensity The light intensity of the cell
+	 */
+	public void setCell(int row, int col, int lightIntensity){
+		setCell(row, col, null, lightIntensity);
+	}
+
+	/**
+	 * Set the content and the light intensity in a <code>Cell</code>
+	 * @param row Index of cell row
+	 * @param col Index of cell column
+	 * @param content The content of the cell
+	 * @param lightIntensity The light intensity of the cell
+	 */
+	public void setCell(int row, int col, ECellContent content, int lightIntensity){
+//		IndexPair indices = adjustIndicesAndModel(row, col);
+		IndexPair indices = new IndexPair(row, col); 
+		row = indices.row();
+		col = indices.col();
+		if (content != null)
+			envModelCells[row][col].setContent(content);
+		if (lightIntensity != -1)
+			envModelCells[row][col].setLightIntensity(lightIntensity);
+		ModelEvent event = new ModelEvent(this, col, row);
+		for (ModelListener listener : listeners)
+			listener.modelChanged(event);
+	}
+	
+	/**
+	 * @param row Index of cell row
+	 * @param col Index of cell column
+	 * @return Cell in given position
+	 */
+	public Cell getCell(int row, int col){
+		return envModelCells[row][col];
+	}
+
+	@Override
+	public void addModelListener(ModelListener modelListener) {
+		listeners.add(modelListener);
+	}
+
+	@Override
+	public void removeModelListener(ModelListener modelListener) {
+		listeners.remove(modelListener);
+	}
+	
+	/**
+	 * Adjust the indices and the envModelCells so that it corresponds to the array size
+	 * @param row Row index
+	 * @param col Column index
+	 * @return 
+	 */
+	protected IndexPair adjustIndicesAndModel(int row, int col){
+		if (row >= envModelCells.length - 1){
+//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
+			upShiftModel(1);
+			row--;
+		}
+		else if (row < 1) {
+//			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
+			downShiftModel(1);
+			row++;
+		}
+
+		if (col >= envModelCells[row].length - 1){
+//			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
+			leftShiftModel(1);
+			col--;
+		}
+		else if (col < 1) {
+//			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
+			rightShiftModel(1);
+			col++;
+		}
+		return new IndexPair(row, col);
+	}
+
 	/**
 	 * Find which position is one step ahead
 	 * @param direction The direction of which way to look ahead
@@ -204,39 +334,6 @@ public class EnvModel implements IModel {
 		return nextPosition;
 	}
 	
-	public IndexPair findPositionFromSensorEnum(EDirection direction, IndexPair currentPosition, ESensor sensor) {
-		IndexPair position = null;
-		switch (sensor) {
-		case FRONTL:
-			position =  findPositionInFront(direction, currentPosition);
-			break;
-		case FRONTR:
-			position = findPositionInFront(direction, currentPosition);
-			break;
-		case LEFT:
-			position = findPositionToLeft(direction, currentPosition);
-			break;
-		case RIGHT:
-			position = findPositionToRight(direction, currentPosition);
-			break;
-//		case ANGLEL:
-//			position = findPositionToLeftAngle(direction, currentPosition);
-//			break;
-//		case ANGLER:
-//			position = findPositionToRightAngle(direction, currentPosition);
-//			break;
-//		case BACKL:
-//			position = findPositionToRear(direction, currentPosition);
-//			break;
-//		case BACKR:
-//			position = findPositionToRear(direction, currentPosition);
-//			break;
-		default:
-			break;
-		}
-		return position;
-	}
-	
 	/**
 	 * Moves robot's presence from old location to new one
 	 * @param row index of new position
@@ -252,115 +349,6 @@ public class EnvModel implements IModel {
 		getCell(nextRobotPosition.row(), nextRobotPosition.col()).setRobotPresent(true);
 	}
 	
-	/**
-	 * @return IndexPair Row and column position of cell with robot's presence
-	 */
-	public IndexPair locateRobot(){
-		for (int row = 0; row < envModelCells.length; row++) {
-			for (int col = 0; col < envModelCells[row].length; col++) {
-				if (getCell(row, col).isRobotPresent)
-					return new IndexPair(row, col);
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Set the content of a <code>Cell</code>
-	 * @param row Index of cell row
-	 * @param col Index of cell column
-	 * @param content The content of the cell
-	 */
-	public void setCell(int row, int col, ECellContent content){
-		setCell(row, col, content, -1);
-	}
-
-	/**
-	 * Set the light intensity in a <code>Cell</code>
-	 * @param row Index of cell row
-	 * @param col Index of cell column
-	 * @param lightIntensity The light intensity of the cell
-	 */
-	public void setCell(int row, int col, int lightIntensity){
-		setCell(row, col, null, lightIntensity);
-	}
-
-	/**
-	 * Set the content and the light intensity in a <code>Cell</code>
-	 * @param row Index of cell row
-	 * @param col Index of cell column
-	 * @param content The content of the cell
-	 * @param lightIntensity The light intensity of the cell
-	 */
-	public void setCell(int row, int col, ECellContent content, int lightIntensity){
-//		IndexPair indices = adjustIndicesAndModel(row, col);
-		IndexPair indices = new IndexPair(row, col); 
-		row = indices.row();
-		col = indices.col();
-		if (content != null)
-			envModelCells[row][col].setContent(content);
-		if (lightIntensity != -1)
-			envModelCells[row][col].setLightIntensity(lightIntensity);
-		ModelEvent event = new ModelEvent(this, col, row);
-		for (ModelListener listener : listeners)
-			listener.modelChanged(event);
-	}
-	
-	/**
-	 * @param row Index of cell row
-	 * @param col Index of cell column
-	 * @return Cell in given position
-	 */
-	public Cell getCell(int row, int col){
-		return envModelCells[row][col];
-	}
-
-	@Override
-	public void addModelListener(ModelListener modelListener) {
-		listeners.add(modelListener);
-	}
-
-	@Override
-	public void removeModelListener(ModelListener modelListener) {
-		listeners.remove(modelListener);
-	}
-	
-	private IndexPair adjustIndicesAndModel(IndexPair indices){
-		return adjustIndicesAndModel(indices.row(), indices.col());
-	}
-
-	
-	/**
-	 * Adjust the indices and the envModelCells so that it corresponds to the array size
-	 * @param row Row index
-	 * @param col Column index
-	 * @return 
-	 */
-	protected IndexPair adjustIndicesAndModel(int row, int col){
-		if (row >= envModelCells.length - 1){
-//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
-			upShiftModel(1);
-			row--;
-		}
-		else if (row < 1) {
-//			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
-			downShiftModel(1);
-			row++;
-		}
-
-		if (col >= envModelCells[row].length - 1){
-//			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
-			leftShiftModel(1);
-			col--;
-		}
-		else if (col < 1) {
-//			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
-			rightShiftModel(1);
-			col++;
-		}
-		return new IndexPair(row, col);
-	}
-
 	/**
 	 * Move the entire content of the envModelCells upwards,
 	 * filling the blank cells with new Cells ("unknown" content)
