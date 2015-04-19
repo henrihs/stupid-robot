@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import edu.wsu.modelling.EnvModel.IndexPair;
+import edu.wsu.modelling.IndexPair;
 import edu.wsu.sensors.ISensorStates;
 import edu.wsu.sensors.ObservableSensor;
 import edu.wsu.sensors.SensorHandler;

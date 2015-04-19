@@ -1,6 +1,6 @@
 package edu.wsu.modelling;
 
-enum ECellContent {
+public enum ECellContent {
 	OBSTACLE("#"), CLEAR(" "), UNKNOWN("?");
 	
 	private String symbol;

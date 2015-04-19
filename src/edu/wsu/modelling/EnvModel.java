@@ -9,7 +9,7 @@ import edu.wsu.sensors.ESensor;
 
 public class EnvModel implements IModel {
 
-	protected final int modelSize;
+	private final int modelSize;
 	private final Cell[][] envModelCells;
 	private final List<ModelListener> listeners = new ArrayList<ModelListener>();
 
@@ -22,6 +22,10 @@ public class EnvModel implements IModel {
 				envModelCells[row][col] = new Cell();
 			}
 		}
+	}
+	
+	public int getModelSize() {
+		return modelSize;
 	}
 	
 	/**
@@ -436,7 +440,7 @@ public class EnvModel implements IModel {
 	/**
 	 * Class representing a single square (1000x1000 ticks) in "the real world"
 	 */
-	class Cell {
+	public class Cell {
 
 		private ECellContent content;
 		private int lightIntensity;
@@ -484,27 +488,5 @@ public class EnvModel implements IModel {
 			return content.toString();
 		}
 
-	}
-	
-	class IndexPair {
-		private int row, col;
-		
-		public IndexPair(int row, int col){
-			this.row = row;
-			this.col = col;
-		}
-		
-		public int row(){
-			return row;
-		}
-		
-		public int col(){
-			return col;
-		}
-		
-		@Override
-		public String toString(){
-			return "Row: " + String.valueOf(row) + ", Col: " + String.valueOf(col);
-		}
 	}
 }

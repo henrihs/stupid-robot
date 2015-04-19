@@ -31,6 +31,9 @@ public class Robot extends RobotController implements Observer {
 		sensorHandler.addObserver(this);
 		addListener(modeller);
 		state = new RobotState_InitSensors(sensorHandler);
+
+		// TODO: Remove the line below
+		// state = new RobotState_Stop();
 	}
 	
 	// Observer pattern
