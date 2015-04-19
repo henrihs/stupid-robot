@@ -3,6 +3,7 @@ package edu.wsu.management;
 import java.util.Stack;
 
 import edu.wsu.modelling.ECellContent;
+import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
 
@@ -10,7 +11,6 @@ public class PathFinder {
 
 	private Stack<IndexPair> found;
 	private Stack<IndexPair> path;
-	private String[] directions;
 	private int[][] distanceMap;
 	private EnvModel envModel;
 	private IndexPair destination;
@@ -20,7 +20,6 @@ public class PathFinder {
 		found = new Stack<IndexPair>();
 		path = new Stack<IndexPair>();
 		initDistanceMap();
-		initDirections();
 	}
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
@@ -47,14 +46,6 @@ public class PathFinder {
 		return s;
 	}
 	
-	private void initDirections() {
-		directions = new String[4];
-		directions[0] = "top";
-		directions[1] = "right";
-		directions[2] = "bottom";
-		directions[3] = "left";		
-	}
-	
 	private void initDistanceMap() {
 		distanceMap = new int[envModel.getModelSize()][envModel.getModelSize()];
 		for (int col = 0; col < distanceMap.length; col++) {
@@ -70,15 +61,15 @@ public class PathFinder {
 	 * @param cell with coordinates
 	 * @return
 	 */
-	private IndexPair getNeighbour(String direction, IndexPair cell) {
+	private IndexPair getNeighbour(EDirection direction, IndexPair cell) {
 		switch (direction) {
-			case "top":
+			case UP:
 				return new IndexPair(cell.row(), cell.col() - 1);
-			case "right":
+			case RIGHT:
 				return new IndexPair(cell.row() + 1, cell.col());
-			case "bottom":
+			case DOWN:
 				return new IndexPair(cell.row(), cell.col() + 1);
-			case "left":
+			case LEFT:
 				return new IndexPair(cell.row() - 1, cell.col());
 			default:
 				return null;
@@ -146,7 +137,8 @@ public class PathFinder {
 	 */
 	private IndexPair checkNeighbours(IndexPair cell) {
 		int value = getDistanceCellValue(cell) + 1;
-		for (String dir: directions) {
+		
+		for (EDirection dir: EDirection.values()) {
 			IndexPair neighbour = getNeighbour(dir, cell);
 			if (!cellIsDiscovered(neighbour)) {
 				if (cellIsClear(neighbour)) {
@@ -156,7 +148,7 @@ public class PathFinder {
 			}
 			if (cellIsDestination(neighbour)) {
 				return neighbour;
-			}
+			}			
 		}
 		return null;
 	}
@@ -188,7 +180,7 @@ public class PathFinder {
 	private boolean checkLowestNeighbour(IndexPair neighbour) {
 		int lowest = 10000;
 		IndexPair lowest_neighbour = null;
-		for (String dir: directions) {
+		for (EDirection dir: EDirection.values()) {
 			IndexPair next_neighbour = getNeighbour(dir, neighbour);
 			int distance = getDistanceCellValue(next_neighbour);
 			if (distance < lowest && distance > -1) {

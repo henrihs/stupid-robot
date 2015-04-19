@@ -18,8 +18,6 @@ public class Modeller implements Observer, TurnListener {
 	private final EnvModel envModel;
 	private final RenderedModel rendModel;
 	
-	public enum EDirection {UP, RIGHT, DOWN, LEFT;}
-	
 	public Modeller(){
 		this(new EnvModel(51));
 	}

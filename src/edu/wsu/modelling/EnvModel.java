@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.wsu.modelling.Modeller.EDirection;
 import edu.wsu.sensors.ESensor;
 
 public class EnvModel implements IModel {
