@@ -24,18 +24,30 @@ public class Order {
 		return "Should travel " + length + " times " + direction + " and end up at " + expectedEnd;
 	}
 	
+	/**
+	 * @return int: Length of the order
+	 */
 	public int getLength() {
 		return length;
 	}
 	
+	/**
+	 * @return IndexPair: Expected end of the order
+	 */
 	public IndexPair getExpectedEnd() {
 		return expectedEnd;
 	}
 	
+	/**
+	 * @return EDirection: Direction of the order
+	 */
 	public EDirection getDiretion() {
 		return direction;
 	}
 	
+	/**
+	 * Generates the order based on the path given in constructor.
+	 */
 	private void generateOrder() {
 		ListIterator li = path.listIterator(path.size());
 	
@@ -60,6 +72,12 @@ public class Order {
 		this.expectedEnd = previous;
 	}
 	
+	/**
+	 * Finds what direction the path is going based on two coordinates
+	 * @param from
+	 * @param to
+	 * @return EDirection: Direction the path is moving
+	 */
 	private EDirection getDirection(IndexPair from, IndexPair to) {
 		if (from.row() < to.row())
 			return EDirection.DOWN;
@@ -73,6 +91,11 @@ public class Order {
 			return null;
 	}
 
+	/**
+	 * Checks if current position is same as expected position
+	 * @param currentPosition
+	 * @return
+	 */
 	public boolean Success(IndexPair currentPosition) {
 		return (currentPosition.row() == expectedEnd.row() &&
 				currentPosition.col() == expectedEnd.col());
