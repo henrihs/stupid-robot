@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
+import common.Methods;
+
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
@@ -14,7 +16,7 @@ import edu.wsu.robot.RobotState_Stop;
 
 public class GPS extends Observable implements Observer, StateCompleteListener {
 	
-	private EnvModel envModel;
+	private static EnvModel envModel;
 	private PathFinder pathFinder;
 	private LinkedList<IRobotStates> stateQueue;
 	private IndexPair destination;
@@ -24,7 +26,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	public void init(EnvModel envModel) {
-		this.envModel = envModel;
+		GPS.envModel = envModel;
 		pathFinder = new PathFinder(envModel);		
 	}
 	
@@ -46,7 +48,6 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		
 		setChanged();
 		notifyObservers(stateQueue.pollFirst());
-		System.out.println(envModel);
 	}
 	
 	public void setDestination(IndexPair destination) {
@@ -83,7 +84,11 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	private int getTurnAngle(Order order) {
 		int directionDiff = (order.getDiretion().value() - envModel.getRobotDirection().value());
-		return EDirection.moduloValue(directionDiff) * 90;
+		if (directionDiff < -1)
+			directionDiff +=4;
+		if (directionDiff > 2)
+			directionDiff -= 4;
+		return directionDiff * 90;
 	}
 
 	@Override
