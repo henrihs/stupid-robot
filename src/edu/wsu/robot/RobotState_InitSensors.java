@@ -1,6 +1,9 @@
 package edu.wsu.robot;
 
+import java.util.ArrayList;
+
 import edu.wsu.management.GPS;
+import edu.wsu.management.StateCompleteListener;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.ESensor;
@@ -11,7 +14,7 @@ public class RobotState_InitSensors implements IRobotStates {
 	
 	private SensorHandler sensorHandler;
 
-	public RobotState_InitSensors(SensorHandler sensorHandler) {
+	public RobotState_InitSensors(SensorHandler sensorHandler, GPS gps) {
 		this.sensorHandler = sensorHandler;
 		
 		// TODO: REMOVE GPS (REMEMBER IMPORTS)		
@@ -28,6 +31,7 @@ public class RobotState_InitSensors implements IRobotStates {
 		for (ESensor sensor : ESensor.values()) {
 			factory.createSensors(sensor);
 		}
-		robot.setState(new RobotState_Drive());
+		robot.setState(new RobotState_Stop());
+		robot.notifyStateCompleteListeners();
 	}
 }

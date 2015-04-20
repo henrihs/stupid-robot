@@ -34,13 +34,12 @@ public class SensorHandler extends Observable implements Observer {
 
 	// Observer pattern
 	@Override
-	public synchronized void update(Observable sensor, Object data) {
+	public void update(Observable sensor, Object data) {
 		if (sensor instanceof DistanceSensor) {
 			distanceSensorStates.put((ObservableSensor) sensor, (ISensorState) data);
 			// update((DistanceSensor)sensor, (ISensorStates)data);
 		} else if (sensor instanceof LightSensor)
-			lightSensorStates.put((ObservableSensor) sensor,
-					(ISensorState) data);
+			lightSensorStates.put((ObservableSensor) sensor,	(ISensorState) data);
 		else if (sensor instanceof WheelSensor) {
 			setChanged();
 			notifyObservers(this);

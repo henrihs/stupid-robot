@@ -12,7 +12,7 @@ import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Stop;
 
-public class GPS extends Observable implements Observer {
+public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	private EnvModel envModel;
 	private PathFinder pathFinder;
@@ -29,7 +29,7 @@ public class GPS extends Observable implements Observer {
 	}
 	
 	@Override
-	public void update(Observable o, Object arg) {
+	public synchronized void update(Observable o, Object arg) {
 		if (hasDestination()) {
 			if (robotAtDestination()) {
 				setDestination(null);
@@ -53,6 +53,8 @@ public class GPS extends Observable implements Observer {
 	}
 	
 	private void addToQueue(Order order) {
+		System.out.println(order);
+		System.out.println(envModel.locateRobot());
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
@@ -61,6 +63,7 @@ public class GPS extends Observable implements Observer {
 			stateQueue.add(new RobotState_Drive());
 		}
 		stateQueue.add(new RobotState_Stop());
+		System.out.println(stateQueue);
 	}
 	
 	private boolean hasDestination() {
@@ -68,6 +71,7 @@ public class GPS extends Observable implements Observer {
 	}
 	
 	private boolean robotAtDestination() {
+		System.out.println("At destination!");
 		return (destination.row() == envModel.locateRobot().row() &&
 				destination.col() == envModel.locateRobot().col());
 	}
@@ -84,5 +88,10 @@ public class GPS extends Observable implements Observer {
 	private int getTurnAngle(Order order) {
 		int directionDiff = (order.getDiretion().value() - envModel.getRobotDirection().value());
 		return EDirection.moduloValue(directionDiff) * 90;
+	}
+
+	@Override
+	public void onStateCompleted() {
+		update(null, null);
 	}
 }
