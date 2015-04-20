@@ -3,8 +3,13 @@ package edu.wsu.management;
 import java.util.Stack;
 
 import edu.wsu.modelling.ECellContent;
+import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
+import edu.wsu.robot.IRobotStates;
+import edu.wsu.robot.Robot;
+import edu.wsu.robot.RobotState_Drive;
+import edu.wsu.robot.RobotState_InitTurn;
 
 public class GPS {
 	
@@ -55,5 +60,16 @@ public class GPS {
 		for (int x = fromX; x < toX; x++) {
 			envModel.setCell(x, col, ECellContent.OBSTACLE);
 		}
+	}
+	
+	private void turnDirection(Order order, Robot robot) {
+		int directionDiff = (order.getDiretion().value() - envModel.getRobotDirection().value());
+		directionDiff = EDirection.moduloValue(directionDiff);
+		int angle = directionDiff * 90;
+		IRobotStates initTurnState = new RobotState_InitTurn(angle);
+		IRobotStates driveState = new RobotState_Drive();
+		robot.setNextState(initTurnState);
+		robot.appendStateToQueue(driveState);
+		robot.pollNextState();
 	}
 }
