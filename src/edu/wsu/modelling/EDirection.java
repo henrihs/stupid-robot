@@ -15,6 +15,8 @@ public enum EDirection {
 	
 	public static int moduloValue(int value){
 		value %= 4;
+		if (value < 0)
+			value += 4;
 		return value;
 	}
 }
