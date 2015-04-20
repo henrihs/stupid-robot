@@ -14,6 +14,7 @@ public class PathFinder {
 	private int[][] distanceMap;
 	private EnvModel envModel;
 	private IndexPair destination;
+	private boolean lookingForUnknown;
 
 	public PathFinder(EnvModel envModel) {
 		this.envModel = envModel;
@@ -24,6 +25,7 @@ public class PathFinder {
 	public Stack<IndexPair> pathTo(IndexPair destination) {
 		initDistanceMap();
 		this.destination = destination;
+		lookingForUnknown = false;
 		IndexPair robot = envModel.locateRobot();
 		setDistanceCell(robot, 0);
 		findShortestPath(findDestination(robot));
@@ -32,7 +34,13 @@ public class PathFinder {
 	
 	// TODO: Implement this
 	public Stack<IndexPair> pathToUnknown() {
-		return null;
+		initDistanceMap();
+		destination = null;
+		lookingForUnknown = true;
+		IndexPair robot = envModel.locateRobot();
+		setDistanceCell(robot, 0);
+		findShortestPath(findDestination(robot));
+		return path;
 	}
 	
 	@Override
@@ -109,6 +117,10 @@ public class PathFinder {
 				cell.col() == destination.col());
 	}
 	
+	private boolean cellIsUnknown(IndexPair cell) {
+		return (envModel.getCell(cell.row(), cell.col()).getContent() == ECellContent.UNKNOWN);
+	}
+	
 	/**
 	 * Returns the value of the given cell
 	 * @param cell
@@ -151,9 +163,15 @@ public class PathFinder {
 					addToFound(neighbour);
 				}
 			}
-			if (cellIsDestination(neighbour)) {
-				return neighbour;
-			}			
+			if (destination != null) {
+				if (cellIsDestination(neighbour)) {
+					return neighbour;
+				}					
+			} else if (lookingForUnknown) {
+				if (cellIsUnknown(neighbour)) {
+					return neighbour;
+				}
+			}
 		}
 		return null;
 	}
