@@ -30,38 +30,41 @@ public class GPS extends Observable implements Observer {
 	
 	@Override
 	public void update(Observable o, Object arg) {
-		if (stateQueue.isEmpty()) {
-			
+		if (hasDestination()) {
+			if (robotAtDestination()) {
+				setDestination(null);
+				stateQueue.clear();
+				stateQueue.add(new RobotState_Stop());
+			} else if (stateQueue.isEmpty()) {
+				addToQueue(pathToDestination());
+			}
 		} else {
-			
+			Order order = pathToUnknown();
+			setDestination(order.getExpectedEnd());
+			addToQueue(order);
 		}
 		
-		
-		
-//		IRobotStates nextState = null;
-//		if (destination != null) {
-//			if (robotAtDestination()) {
-//				destination = null;
-//				nextState = new RobotState_Stop();
-//			} else {
-//				Order order = pathToDestination();
-//				int angle = getTurnAngle(order);
-//				if (angle == 0) {
-//					nextState = new RobotState_Drive();
-//				} else {
-//					nextState = new RobotState_InitTurn(angle);
-//				}
-//			}
-//				
-//		}
-//		if (nextState != null) {
-//			setChanged();
-//			notifyObservers(nextState);
-//		}
+		setChanged();
+		notifyObservers(stateQueue.pollFirst());
 	}
 	
 	public void setDestination(IndexPair destination) {
 		this.destination = destination;
+	}
+	
+	private void addToQueue(Order order) {
+		int angle = getTurnAngle(order);
+		if (angle != 0) {
+			stateQueue.add(new RobotState_InitTurn(angle));
+		}
+		for (int i = 0; i < order.getLength(); i++) {
+			stateQueue.add(new RobotState_Drive());
+		}
+		stateQueue.add(new RobotState_Stop());
+	}
+	
+	private boolean hasDestination() {
+		return (destination != null);
 	}
 	
 	private boolean robotAtDestination() {
