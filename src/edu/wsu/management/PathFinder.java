@@ -19,6 +19,8 @@ public class PathFinder {
 
 	public PathFinder(EnvModel envModel) {
 		this.envModel = envModel;
+		found = new Stack<IndexPair>();
+		path = new Stack<IndexPair>();
 	}
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
@@ -44,8 +46,8 @@ public class PathFinder {
 	private void init() {
 		initDistanceMap();
 		initDirections();
-		found = new Stack<IndexPair>();
-		path = new Stack<IndexPair>();		
+		found.clear();
+		path.clear();		
 	}
 	
 	@Override
@@ -54,9 +56,9 @@ public class PathFinder {
 		for (int[] row: distanceMap) {
 			for (int col: row) {
 				if (col > -1) {
-					s += Integer.toString(col);
+					s += " " + Integer.toString(col);
 				} else {
-					s += " ";
+					s += "  ";
 				}
 			}
 			s += "\n";
@@ -110,7 +112,7 @@ public class PathFinder {
 	 * @return
 	 */
 	private boolean cellIsClear(IndexPair cell) {
-		return (envModel.getCell(cell.row(), cell.col()).getContent() != ECellContent.OBSTACLE);
+		return (envModel.getCell(cell.row(), cell.col()).getContent() == ECellContent.CLEAR);
 	}
 	
 	/**
