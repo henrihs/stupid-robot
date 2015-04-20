@@ -15,6 +15,7 @@ public class PathFinder {
 	private EnvModel envModel;
 	private IndexPair destination;
 	private boolean lookingForUnknown;
+	private Stack<EDirection> directions;
 
 	public PathFinder(EnvModel envModel) {
 		this.envModel = envModel;
@@ -24,6 +25,7 @@ public class PathFinder {
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
 		initDistanceMap();
+		initDirections();
 		this.destination = destination;
 		lookingForUnknown = false;
 		IndexPair robot = envModel.locateRobot();
@@ -35,6 +37,7 @@ public class PathFinder {
 	// TODO: Implement this
 	public Stack<IndexPair> pathToUnknown() {
 		initDistanceMap();
+		initDirections();
 		destination = null;
 		lookingForUnknown = true;
 		IndexPair robot = envModel.locateRobot();
@@ -57,6 +60,21 @@ public class PathFinder {
 			s += "\n";
 		}
 		return s;
+	}
+	
+	private void initDirections() {
+		directions = new Stack<EDirection>();
+		directions.add(envModel.getRobotDirection());
+		for (EDirection dir: EDirection.values()) {
+			if (!directions.contains(dir)) {
+				directions.add(dir);
+			}
+		}
+		
+		System.out.println("Checking directions in this order");
+		for (EDirection dir: directions) {
+			System.out.println(dir);
+		}
 	}
 	
 	private void initDistanceMap() {
@@ -155,7 +173,7 @@ public class PathFinder {
 	private IndexPair checkNeighbours(IndexPair cell) {
 		int value = getDistanceCellValue(cell) + 1;
 		
-		for (EDirection dir: EDirection.values()) {
+		for (EDirection dir: directions) {
 			IndexPair neighbour = getNeighbour(dir, cell);
 			if (!cellIsDiscovered(neighbour)) {
 				if (cellIsClear(neighbour)) {
@@ -203,7 +221,7 @@ public class PathFinder {
 	private boolean checkLowestNeighbour(IndexPair neighbour) {
 		int lowest = 10000;
 		IndexPair lowest_neighbour = null;
-		for (EDirection dir: EDirection.values()) {
+		for (EDirection dir: directions) {
 			IndexPair next_neighbour = getNeighbour(dir, neighbour);
 			int distance = getDistanceCellValue(next_neighbour);
 			if (distance < lowest && distance > -1) {
