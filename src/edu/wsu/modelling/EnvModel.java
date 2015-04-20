@@ -2,16 +2,26 @@ package edu.wsu.modelling;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Observable;
 
 import edu.wsu.sensors.ESensor;
+import edu.wsu.sensors.ISensorState;
+import edu.wsu.sensors.SensorHandler;
+import edu.wsu.sensors.distance.DistanceSensor;
+import edu.wsu.sensors.distance.DistanceState_Clear;
+import edu.wsu.sensors.distance.DistanceState_Obstacle;
+import edu.wsu.sensors.light.LightSensor;
+import edu.wsu.sensors.light.LightState_Dark;
+import edu.wsu.sensors.light.LightState_Dusky;
+import edu.wsu.sensors.light.LightState_Light;
 
-public class EnvModel implements IModel {
+public class EnvModel extends Observable {
 
 	private static EDirection currentRobotDirection;
 	protected final int modelSize;
 	private final Cell[][] envModelCells;
-	private final List<ModelListener> listeners = new ArrayList<ModelListener>();
 
 	public EnvModel(int modelSize){
 		this.modelSize = modelSize;
@@ -44,6 +54,7 @@ public class EnvModel implements IModel {
 		IndexPair currentPosition = locateRobot();
 		IndexPair nextPosition = findPositionInFront(getRobotDirection(), currentPosition);
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
+		setChanged();
 	}
 	
 	public EDirection getRobotDirection(){
@@ -96,12 +107,12 @@ public class EnvModel implements IModel {
 //		case ANGLER:
 //			position = findPositionToRightAngle(direction, currentPosition);
 //			break;
-//		case BACKL:
-//			position = findPositionToRear(direction, currentPosition);
-//			break;
-//		case BACKR:
-//			position = findPositionToRear(direction, currentPosition);
-//			break;
+		case BACKL:
+			position = findPositionToRear(direction, currentPosition);
+			break;
+		case BACKR:
+			position = findPositionToRear(direction, currentPosition);
+			break;
 		default:
 			break;
 		}
@@ -165,9 +176,6 @@ public class EnvModel implements IModel {
 			envModelCells[row][col].setContent(content);
 		if (lightIntensity != -1)
 			envModelCells[row][col].setLightIntensity(lightIntensity);
-		ModelEvent event = new ModelEvent(this, col, row);
-		for (ModelListener listener : listeners)
-			listener.modelChanged(event);
 	}
 	
 	/**
@@ -176,21 +184,14 @@ public class EnvModel implements IModel {
 	 * @return Cell in given position
 	 */
 	public Cell getCell(int row, int col){
+		if (row >= modelSize ||
+				col >= modelSize)
+			return null;
 		return envModelCells[row][col];
 	}
 	
 	public ECellContent getCellContent(IndexPair pair) {
 		return envModelCells[pair.row()][pair.col()].getContent();
-	}
-
-	@Override
-	public void addModelListener(ModelListener modelListener) {
-		listeners.add(modelListener);
-	}
-
-	@Override
-	public void removeModelListener(ModelListener modelListener) {
-		listeners.remove(modelListener);
 	}
 	
 	/**
@@ -199,7 +200,7 @@ public class EnvModel implements IModel {
 	 * @param col Column index
 	 * @return 
 	 */
-	protected IndexPair adjustIndicesAndModel(int row, int col){
+	private IndexPair adjustIndicesAndModel(int row, int col){
 		if (row >= envModelCells.length - 1){
 //			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
 			upShiftModel(1);
@@ -230,7 +231,7 @@ public class EnvModel implements IModel {
 	 * @param currentPosition The position to look from
 	 * @return
 	 */
-	private IndexPair findPositionInFront(EDirection direction, IndexPair currentPosition){
+	public IndexPair findPositionInFront(EDirection direction, IndexPair currentPosition){
 		IndexPair nextPosition = null;
 		switch (direction) {
 		case UP:
@@ -530,5 +531,45 @@ public class EnvModel implements IModel {
 			return content.toString();
 		}
 
+	}
+
+	protected void drawSurroundings(SensorHandler sensorHandler) {
+		HashMap<DistanceSensor, ISensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
+		HashMap<LightSensor, ISensorState> lightSensors = sensorHandler.getLightSensorStates();
+		IndexPair currentPosition = locateRobot();
+		
+		for (DistanceSensor sensor : distanceSensors.keySet()) {
+			drawObstacle(sensor, currentPosition);
+		}
+		
+		for (LightSensor sensor : lightSensors.keySet()) {
+			drawLight(sensor, currentPosition);
+		}
+		setChanged();
+		notifyObservers();
+	}
+	
+	private void drawObstacle(DistanceSensor sensor, IndexPair currentPosition) {
+		IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor.getSensor());
+		if (positionToDraw == null)
+			return;
+		if ((sensor.getState() instanceof DistanceState_Obstacle))
+			setCell(positionToDraw.row(), positionToDraw.col(), ECellContent.OBSTACLE);
+		else if ((sensor.getState() instanceof DistanceState_Clear))
+			setCell(positionToDraw.row(), positionToDraw.col(), ECellContent.CLEAR);
+	}
+	
+	private void drawLight(LightSensor sensor, IndexPair currentPosition) {
+		IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor.getSensor());
+		if (positionToDraw == null)
+			return;
+		if (sensor.getState() instanceof LightState_Dark)
+			setCell(positionToDraw, 0);
+		else if (sensor.getState() instanceof LightState_Dusky)
+			setCell(positionToDraw, 1); 
+		else if (sensor.getState() instanceof LightState_Light)
+			setCell(positionToDraw, 2); 
+		else 
+			setCell(positionToDraw, -1); 
 	}
 }

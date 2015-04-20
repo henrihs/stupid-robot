@@ -6,6 +6,7 @@ import edu.wsu.modelling.ECellContent;
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
+import static common.PropertyReader.getModelSize;
 
 public class PathFinder {
 
@@ -92,18 +93,28 @@ public class PathFinder {
 	 * @return
 	 */
 	private IndexPair getNeighbour(EDirection direction, IndexPair cell) {
-		switch (direction) {
-			case UP:
-				return new IndexPair(cell.row(), cell.col() - 1);
-			case RIGHT:
-				return new IndexPair(cell.row() + 1, cell.col());
-			case DOWN:
-				return new IndexPair(cell.row(), cell.col() + 1);
-			case LEFT:
-				return new IndexPair(cell.row() - 1, cell.col());
-			default:
-				return null;
+		if (cell == null)
+			return null;
+		IndexPair result = null;
+		try {
+			switch (direction) {
+				case UP:
+						result = new IndexPair(cell.row(), cell.col() - 1);
+					break;
+				case RIGHT:
+						result = new IndexPair(cell.row() + 1, cell.col());
+					break;
+				case DOWN:
+						result = new IndexPair(cell.row(), cell.col() + 1);
+					break;
+				case LEFT:
+						result = new IndexPair(cell.row() - 1, cell.col());
+					break;
+			}
+		} catch (IndexOutOfBoundsException e) {
+			return null;
 		}
+		return result;
 	}
 	
 	/**
@@ -174,6 +185,8 @@ public class PathFinder {
 		
 		for (EDirection dir: directions) {
 			IndexPair neighbour = getNeighbour(dir, cell);
+			if (neighbour == null)
+				return null;
 			if (!cellIsDiscovered(neighbour)) {
 				if (cellIsClear(neighbour)) {
 					setDistanceCell(neighbour, value);
@@ -222,10 +235,12 @@ public class PathFinder {
 		IndexPair lowest_neighbour = null;
 		for (EDirection dir: directions) {
 			IndexPair next_neighbour = getNeighbour(dir, neighbour);
-			int distance = getDistanceCellValue(next_neighbour);
-			if (distance < lowest && distance > -1) {
-				lowest = getDistanceCellValue(next_neighbour);
-				lowest_neighbour = next_neighbour;
+			if (next_neighbour != null) {
+				int distance = getDistanceCellValue(next_neighbour);
+				if (distance < lowest && distance > -1) {
+					lowest = getDistanceCellValue(next_neighbour);
+					lowest_neighbour = next_neighbour;
+			}
 			}
 		}
 		path.add(lowest_neighbour);

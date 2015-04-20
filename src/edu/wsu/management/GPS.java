@@ -5,7 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import common.Methods;
-
+import edu.wsu.modelling.ECellContent;
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
@@ -16,7 +16,7 @@ import edu.wsu.robot.RobotState_Stop;
 
 public class GPS extends Observable implements Observer, StateCompleteListener {
 	
-	private static EnvModel envModel;
+	private EnvModel envModel;
 	private PathFinder pathFinder;
 	private LinkedList<IRobotStates> stateQueue;
 	private IndexPair destination;
@@ -26,12 +26,19 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	public void init(EnvModel envModel) {
-		GPS.envModel = envModel;
+		this.envModel = envModel;
 		pathFinder = new PathFinder(envModel);		
 	}
 	
 	@Override
-	public synchronized void update(Observable o, Object arg) {
+	public void update(Observable obs, Object arg) {
+		if (obs == null){
+			setChanged();
+			notifyObservers(new RobotState_Drive());
+			return;
+		}
+			
+		envModel = (EnvModel)obs;
 		if (hasDestination()) {
 			if (robotAtDestination()) {
 				setDestination(null);
@@ -45,7 +52,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			setDestination(order.getExpectedEnd());
 			addToQueue(order);
 		}
-		
+		System.out.println(stateQueue);
 		setChanged();
 		notifyObservers(stateQueue.pollFirst());
 	}
@@ -56,6 +63,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	private void addToQueue(Order order) {
 		int angle = getTurnAngle(order);
+		System.out.println("Robot headed: " + envModel.getRobotDirection() + ", order says: " + order.getDiretion() + ", must turn" + String.valueOf(angle));
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
 		}
@@ -70,6 +78,8 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	private boolean robotAtDestination() {
+		if (!hasDestination())
+			return false;
 		return (destination.row() == envModel.locateRobot().row() &&
 				destination.col() == envModel.locateRobot().col());
 	}

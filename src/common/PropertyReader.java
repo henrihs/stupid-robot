@@ -93,6 +93,10 @@ public class PropertyReader {
 		return getProperty("initBallSearchAngle");
 	}
 	
+	public static int getModelSize() {
+		return getProperty("modelSize");
+	}
+	
 	public static int getProperty(String propertyKey){
 		return Integer.parseInt(properties.getProperty(propertyKey));
 	}

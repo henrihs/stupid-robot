@@ -23,7 +23,7 @@ public class Robot extends RobotController implements Observer {
 	private List<StateCompleteListener> stateCompleteListeners = new ArrayList<StateCompleteListener>();
 	
 	// State pattern
-	private static IRobotStates state;
+	private IRobotStates state;
 	
 	public Robot() throws IOException {
 		this(new SensorHandler(), new GPS());
@@ -44,14 +44,11 @@ public class Robot extends RobotController implements Observer {
 	// Observer pattern
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		stop();			
-		if (arg1 instanceof ISensorHandler) {
-			state = new RobotState_Stop();
-		}
-		else if (arg1 instanceof IRobotStates && shouldUpdate())
-		{
+		stop();
+		if (arg1 instanceof IRobotStates)
 			state = (IRobotStates)arg1;
-		}
+		else 
+			state = new RobotState_Stop();
 	}
 	
 	// State pattern
@@ -60,7 +57,7 @@ public class Robot extends RobotController implements Observer {
 	}
 	
 	public void setState(IRobotStates state) {
-		Robot.state = state;
+		this.state = state;
 	}
 
 	@Override
