@@ -19,10 +19,13 @@ public class GPS extends Observable implements Observer {
 	private LinkedList<IRobotStates> stateQueue;
 	private IndexPair destination;
 		
-	public GPS(EnvModel envModel) {
-		this.envModel = envModel;
-		pathFinder = new PathFinder(envModel);
+	public GPS() {
 		stateQueue = new LinkedList<IRobotStates>();
+	}
+	
+	public void init(EnvModel envModel) {
+		this.envModel = envModel;
+		pathFinder = new PathFinder(envModel);		
 	}
 	
 	@Override
