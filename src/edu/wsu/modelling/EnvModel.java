@@ -121,6 +121,14 @@ public class EnvModel implements IModel {
 		return null;
 	}
 	
+	public void setCell(IndexPair indexPair, ECellContent content) {
+		setCell(indexPair.row(), indexPair.col(), content);
+	}
+	
+	public void setCell(IndexPair indexPair, int lightIntensity) {
+		setCell(indexPair.row(), indexPair.col(), lightIntensity);
+	}
+	
 	/**
 	 * Set the content of a <code>Cell</code>
 	 * @param row Index of cell row
@@ -169,6 +177,10 @@ public class EnvModel implements IModel {
 	 */
 	public Cell getCell(int row, int col){
 		return envModelCells[row][col];
+	}
+	
+	public ECellContent getCellContent(IndexPair pair) {
+		return envModelCells[pair.row()][pair.col()].getContent();
 	}
 
 	@Override
