@@ -19,15 +19,20 @@ public class PathFinder {
 		this.envModel = envModel;
 		found = new Stack<IndexPair>();
 		path = new Stack<IndexPair>();
-		initDistanceMap();
 	}
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
+		initDistanceMap();
 		this.destination = destination;
 		IndexPair robot = envModel.locateRobot();
 		setDistanceCell(robot, 0);
 		findShortestPath(findDestination(robot));
 		return path;
+	}
+	
+	// TODO: Implement this
+	public Stack<IndexPair> pathToUnknown() {
+		return null;
 	}
 	
 	@Override

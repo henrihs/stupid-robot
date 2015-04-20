@@ -1,75 +1,82 @@
 package edu.wsu.management;
 
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
-import edu.wsu.modelling.ECellContent;
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.robot.IRobotStates;
-import edu.wsu.robot.Robot;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.robot.RobotState_Stop;
 
-public class GPS {
+public class GPS extends Observable implements Observer {
 	
 	private EnvModel envModel;
 	private PathFinder pathFinder;
-	private Stack<IndexPair> path;
+	private LinkedList<IRobotStates> stateQueue;
+	private IndexPair destination;
 		
-	public GPS() {
-		
-		envModel = new EnvModel(60);
-		createOuterWalls();
-		createRow(5, 0, 25);
-		createCol(25, 5, 40);
-		createRow(20, 45, 59);
-		envModel.initRobotPresence();
-		System.out.println(envModel);
-		
+	public GPS(EnvModel envModel) {
+		this.envModel = envModel;
 		pathFinder = new PathFinder(envModel);
+		stateQueue = new LinkedList<IRobotStates>();
 	}
 	
-	public void setEnvModel(EnvModel envModel) {
-		pathFinder = new PathFinder(envModel);
-	}
-	
-	public Order pathTo(IndexPair destination) {
-		path = pathFinder.pathTo(destination);
-		Order order = new Order(path);
-		System.out.println(order);
-		return order;
-	}
-	
-	private void createOuterWalls() {
-		for (int i = 0; i < 60; i++) {
-			envModel.setCell(i, 0, ECellContent.OBSTACLE);
-			envModel.setCell(i, 59, ECellContent.OBSTACLE);
-			envModel.setCell(0, i, ECellContent.OBSTACLE);
-			envModel.setCell(59, i, ECellContent.OBSTACLE);
+	@Override
+	public void update(Observable o, Object arg) {
+		if (stateQueue.isEmpty()) {
+			
+		} else {
+			
 		}
+		
+		
+		
+//		IRobotStates nextState = null;
+//		if (destination != null) {
+//			if (robotAtDestination()) {
+//				destination = null;
+//				nextState = new RobotState_Stop();
+//			} else {
+//				Order order = pathToDestination();
+//				int angle = getTurnAngle(order);
+//				if (angle == 0) {
+//					nextState = new RobotState_Drive();
+//				} else {
+//					nextState = new RobotState_InitTurn(angle);
+//				}
+//			}
+//				
+//		}
+//		if (nextState != null) {
+//			setChanged();
+//			notifyObservers(nextState);
+//		}
 	}
 	
-	private void createRow(int row, int fromY, int toY) {
-		for (int y = fromY; y <= toY; y++) {
-			envModel.setCell(row, y, ECellContent.OBSTACLE);
-		}
+	public void setDestination(IndexPair destination) {
+		this.destination = destination;
 	}
 	
-	private void createCol(int col, int fromX, int toX) {
-		for (int x = fromX; x < toX; x++) {
-			envModel.setCell(x, col, ECellContent.OBSTACLE);
-		}
+	private boolean robotAtDestination() {
+		return (destination.row() == envModel.locateRobot().row() &&
+				destination.col() == envModel.locateRobot().col());
 	}
 	
-	private void turnDirection(Order order, Robot robot) {
+	private Order pathToDestination() {
+		return new Order(pathFinder.pathTo(destination));
+	}
+	
+	// TODO: Implement this.
+	private Order pathToUnknown() {
+		return new Order(pathFinder.pathToUnknown());
+	}
+	
+	private int getTurnAngle(Order order) {
 		int directionDiff = (order.getDiretion().value() - envModel.getRobotDirection().value());
-		directionDiff = EDirection.moduloValue(directionDiff);
-		int angle = directionDiff * 90;
-		IRobotStates initTurnState = new RobotState_InitTurn(angle);
-		IRobotStates driveState = new RobotState_Drive();
-		robot.setNextState(initTurnState);
-		robot.appendStateToQueue(driveState);
-		robot.pollNextState();
+		return EDirection.moduloValue(directionDiff) * 90;
 	}
 }

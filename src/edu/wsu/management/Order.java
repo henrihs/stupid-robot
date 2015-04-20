@@ -5,9 +5,6 @@ import java.util.Stack;
 
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.IndexPair;
-import edu.wsu.robot.IRobotStates;
-import edu.wsu.robot.Robot;
-import edu.wsu.robot.RobotState_InitTurn;
 
 public class Order {
 
@@ -61,9 +58,9 @@ public class Order {
 			next = (IndexPair) li.previous();
 			if (previous != null) {
 				if (direction == null) {
-					direction = getDirection(previous, next);
+					direction = findDirection(previous, next);
 				} else {
-					if (getDirection(previous, next).equals(direction)) {
+					if (findDirection(previous, next).equals(direction)) {
 						length++;
 					} else {
 						break;
@@ -81,7 +78,7 @@ public class Order {
 	 * @param to
 	 * @return EDirection: Direction the path is moving
 	 */
-	private EDirection getDirection(IndexPair from, IndexPair to) {
+	private EDirection findDirection(IndexPair from, IndexPair to) {
 		if (from.row() < to.row())
 			return EDirection.DOWN;
 		else if (from.row() > to.row())
@@ -92,15 +89,5 @@ public class Order {
 			return EDirection.LEFT;
 		else
 			return null;
-	}
-
-	/**
-	 * Checks if current position is same as expected position
-	 * @param currentPosition
-	 * @return
-	 */
-	public boolean Success(IndexPair currentPosition) {
-		return (currentPosition.row() == expectedEnd.row() &&
-				currentPosition.col() == expectedEnd.col());
 	}
 }
