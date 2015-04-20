@@ -21,8 +21,8 @@ public class RobotState_PickupBall implements IRobotStates {
 		if (robot.isObjectHeld()) {
 			returnToInitPosition();
 			//TODO: Fire event to DecisionMaker, telling it to move on
-			robot.setNextState(null);
-			robot.pollNextState();
+//			robot.setNextState(null);
+//			robot.pollNextState();
 			return;
 		}
 		if (checkIfObjectIsInFront()) {
@@ -53,10 +53,10 @@ public class RobotState_PickupBall implements IRobotStates {
 	
 	private void setToInitTurn(int angle) {
 		IRobotStates initTurnState = new RobotState_InitTurn(angle);
-		robot.setNextState(initTurnState);
-		robot.appendStateToQueue(this);
-		turnHistory.add(angle);
-		robot.pollNextState();
+//		robot.setNextState(initTurnState);
+//		robot.appendStateToQueue(this);
+//		turnHistory.add(angle);
+//		robot.pollNextState();
 	}
 
 	private boolean checkIfObjectIsInFront() {

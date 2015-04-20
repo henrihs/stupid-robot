@@ -24,41 +24,31 @@ public class Robot extends RobotController implements Observer {
 	
 	// State pattern
 	private static IRobotStates state;
-	private LinkedList<IRobotStates> stateQueue;
 	
 	public Robot() throws IOException {
-		this(new SensorHandler(), new Modeller());
+		this(new SensorHandler(), new GPS());
+	}
+	
+	public Robot(SensorHandler sensorHandler, GPS gps) {
+		this(new Modeller(sensorHandler, gps), sensorHandler, gps);
 	}
 
-	public Robot(ISensorHandler sensorHandler, Modeller modeller) {
+	public Robot(Modeller modeller, SensorHandler sensorHandler, GPS gps) {
+		gps.addObserver(this);
 		sensorHandler.addObserver(this);
 		addListener(modeller);
 		state = new RobotState_InitSensors(sensorHandler);
-		stateQueue = new LinkedList<IRobotStates>();
 	}
 	
 	// Observer pattern
 	@Override
 	public void update(Observable arg0, Object arg1) {
-//		if (!(arg1 instanceof IRobotStates))
-		if (!(arg1 instanceof GPS))
-			return;
-		if (shouldUpdate())
-//			state = (IRobotStates) arg1;
-			pollNextState();
-	}
-
-	// State pattern
-	public void setNextState(final IRobotStates state) {
-		stateQueue.addFirst(state);
-	}
-	
-	public void appendStateToQueue(IRobotStates state) {
-		stateQueue.add(state);
-	}
-	
-	protected void pollNextState(){
-		state = stateQueue.pollFirst();
+		if (arg1 instanceof ISensorHandler) {
+			stop();			
+			state = new RobotState_Stop();
+		}
+		else if (arg1 instanceof IRobotStates && shouldUpdate())
+			state = (IRobotStates)arg1;
 	}
 	
 	// State pattern

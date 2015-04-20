@@ -8,9 +8,11 @@ import static common.Methods.inInterval;
 
 public class LightState_Dark implements ISensorStates {
 	
+	private int lightValue;
+	
 	@Override
 	public ISensorStates doWork(Robot robot, ESensor sensor) {
-		int lightValue = robot.getLightValue(sensor.val());
+		lightValue = robot.getLightValue(sensor.val());
 		
 		if (inInterval(lightValue, getLightLowerBoundary(), getLightUpperBoundary()))
 			return new LightState_Light();

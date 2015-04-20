@@ -30,7 +30,7 @@ public class RobotState_InitTurn implements IRobotStates {
 		
 		robot.setRightWheelEnd(robot.getRightWheelPosition() - angle * 3);
 		robot.setLeftWheelEnd(robot.getLeftWheelPosition() + angle * 3);
-		robot.setNextState(new RobotState_Turn());
+//		robot.setNextState(new RobotState_Turn());
 	}
 	
 	private int calculateTurn() {

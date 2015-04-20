@@ -5,12 +5,13 @@ import edu.wsu.modelling.IndexPair;
 import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ObservableSensorFactory;
+import edu.wsu.sensors.SensorHandler;
 
 public class RobotState_InitSensors implements IRobotStates {
 	
-	private ISensorHandler sensorHandler;
+	private SensorHandler sensorHandler;
 
-	public RobotState_InitSensors(ISensorHandler sensorHandler) {
+	public RobotState_InitSensors(SensorHandler sensorHandler) {
 		this.sensorHandler = sensorHandler;
 		
 		// TODO: REMOVE GPS (REMEMBER IMPORTS)		
@@ -27,6 +28,6 @@ public class RobotState_InitSensors implements IRobotStates {
 		for (ESensor sensor : ESensor.values()) {
 			factory.createSensors(sensor);
 		}
-		robot.setNextState(new RobotState_Drive());
+//		robot.setState(new RobotState_Drive());
 	}
 }
