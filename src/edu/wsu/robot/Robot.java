@@ -50,7 +50,6 @@ public class Robot extends RobotController implements Observer {
 		}
 		else if (arg1 instanceof IRobotStates && shouldUpdate())
 		{
-			System.out.println("state changed from: " + state + "to: " + arg1);
 			state = (IRobotStates)arg1;
 		}
 	}

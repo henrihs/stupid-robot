@@ -19,13 +19,10 @@ public class PathFinder {
 
 	public PathFinder(EnvModel envModel) {
 		this.envModel = envModel;
-		found = new Stack<IndexPair>();
-		path = new Stack<IndexPair>();
 	}
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
-		initDistanceMap();
-		initDirections();
+		init();
 		this.destination = destination;
 		lookingForUnknown = false;
 		IndexPair robot = envModel.locateRobot();
@@ -34,16 +31,21 @@ public class PathFinder {
 		return path;
 	}
 	
-	// TODO: Implement this
 	public Stack<IndexPair> pathToUnknown() {
-		initDistanceMap();
-		initDirections();
+		init();
 		destination = null;
 		lookingForUnknown = true;
 		IndexPair robot = envModel.locateRobot();
 		setDistanceCell(robot, 0);
 		findShortestPath(findDestination(robot));
 		return path;
+	}
+	
+	private void init() {
+		initDistanceMap();
+		initDirections();
+		found = new Stack<IndexPair>();
+		path = new Stack<IndexPair>();		
 	}
 	
 	@Override
@@ -69,11 +71,6 @@ public class PathFinder {
 			if (!directions.contains(dir)) {
 				directions.add(dir);
 			}
-		}
-		
-		System.out.println("Checking directions in this order");
-		for (EDirection dir: directions) {
-			System.out.println(dir);
 		}
 	}
 	
