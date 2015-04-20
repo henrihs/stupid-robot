@@ -49,23 +49,7 @@ public class PathFinder {
 		found.clear();
 		path.clear();		
 	}
-	
-	@Override
-	public String toString() {
-		String s = "";
-		for (int[] row: distanceMap) {
-			for (int col: row) {
-				if (col > -1) {
-					s += " " + Integer.toString(col);
-				} else {
-					s += "  ";
-				}
-			}
-			s += "\n";
-		}
-		return s;
-	}
-	
+		
 	private void initDirections() {
 		directions = new Stack<EDirection>();
 		directions.add(envModel.getRobotDirection());
@@ -91,7 +75,7 @@ public class PathFinder {
 	 * @param cell with coordinates
 	 * @return
 	 */
-	private IndexPair getNeighbour(EDirection direction, IndexPair cell) {
+	private IndexPair getNeighbourCell(EDirection direction, IndexPair cell) {
 		switch (direction) {
 			case UP:
 				return new IndexPair(cell.row(), cell.col() - 1);
@@ -105,39 +89,7 @@ public class PathFinder {
 				return null;
 		}
 	}
-	
-	/**
-	 * Checks if the given cell is clear
-	 * @param cell
-	 * @return
-	 */
-	private boolean cellIsClear(IndexPair cell) {
-		return (envModel.getCell(cell.row(), cell.col()).getContent() == ECellContent.CLEAR);
-	}
-	
-	/**
-	 * Checks if the given cell is already discovered
-	 * @param cell
-	 * @return
-	 */
-	private boolean cellIsDiscovered(IndexPair cell) {
-		return (distanceMap[cell.row()][cell.col()] != -1);
-	}
-	
-	/**
-	 * Checks if the given cell is the destination wanted
-	 * @param cell
-	 * @return
-	 */
-	private boolean cellIsDestination(IndexPair cell) {
-		return (cell.row() == destination.row() &&
-				cell.col() == destination.col());
-	}
-	
-	private boolean cellIsUnknown(IndexPair cell) {
-		return (envModel.getCell(cell.row(), cell.col()).getContent() == ECellContent.UNKNOWN);
-	}
-	
+		
 	/**
 	 * Returns the value of the given cell
 	 * @param cell
@@ -165,29 +117,57 @@ public class PathFinder {
 	}
 	
 	/**
+	 * Checks if the given cell is clear
+	 * @param cell
+	 * @return
+	 */
+	private boolean cellIsClear(IndexPair cell) {
+		return (envModel.getCellContent(cell) == ECellContent.CLEAR);
+	}
+	
+	/**
+	 * Checks if the given cell is already discovered
+	 * @param cell
+	 * @return
+	 */
+	private boolean cellIsDiscovered(IndexPair cell) {
+		return (getDistanceCellValue(cell) != -1);
+	}
+	
+	/**
+	 * Checks if the given cell is the destination wanted
+	 * @param cell
+	 * @return
+	 */
+	private boolean cellIsDestination(IndexPair cell) {
+		if (destination == null)
+			return false;		
+		return (cell.row() == destination.row() && cell.col() == destination.col());
+
+	}
+	
+	private boolean cellIsUnknown(IndexPair cell) {
+		return (lookingForUnknown && envModel.getCellContent(cell) == ECellContent.UNKNOWN);
+	}	
+	
+	/**
 	 * Checks all neighbours of the given cell
 	 * @param cell
 	 * @return
 	 */
-	private IndexPair checkNeighbours(IndexPair cell) {
+	private IndexPair parseNeighbourCells(IndexPair cell) {
 		int value = getDistanceCellValue(cell) + 1;
 		
 		for (EDirection dir: directions) {
-			IndexPair neighbour = getNeighbour(dir, cell);
-			if (!cellIsDiscovered(neighbour)) {
-				if (cellIsClear(neighbour)) {
-					setDistanceCell(neighbour, value);
-					addToFound(neighbour);
-				}
+			IndexPair neighbour = getNeighbourCell(dir, cell);
+						
+			if (!cellIsDiscovered(neighbour) && cellIsClear(neighbour)) {
+				setDistanceCell(neighbour, value);
+				addToFound(neighbour);
 			}
-			if (destination != null) {
-				if (cellIsDestination(neighbour)) {
-					return neighbour;
-				}					
-			} else if (lookingForUnknown) {
-				if (cellIsUnknown(neighbour)) {
-					return neighbour;
-				}
+			
+			if (cellIsDestination(neighbour) || cellIsUnknown(neighbour)) {
+				return neighbour;
 			}
 		}
 		return null;
@@ -199,14 +179,15 @@ public class PathFinder {
 	 * @return
 	 */
 	private IndexPair findDestination(IndexPair robot) {
-		found.add(robot);
-		IndexPair destinationFound;
+		addToFound(robot);
+		IndexPair cellFound;
 		while (true) {
 			Stack<IndexPair> next = (Stack<IndexPair>) found.clone();
+			found.clear();
 			for (IndexPair n: next) {
-				destinationFound = checkNeighbours(n);
-				if (destinationFound != null) {
-					return destinationFound;
+				cellFound = parseNeighbourCells(n);
+				if (cellFound != null) {
+					return cellFound;
 				}
 			}
 		}
@@ -221,10 +202,10 @@ public class PathFinder {
 		int lowest = 10000;
 		IndexPair lowest_neighbour = null;
 		for (EDirection dir: directions) {
-			IndexPair next_neighbour = getNeighbour(dir, neighbour);
+			IndexPair next_neighbour = getNeighbourCell(dir, neighbour);
 			int distance = getDistanceCellValue(next_neighbour);
 			if (distance < lowest && distance > -1) {
-				lowest = getDistanceCellValue(next_neighbour);
+				lowest = distance;
 				lowest_neighbour = next_neighbour;
 			}
 		}
@@ -249,4 +230,29 @@ public class PathFinder {
 			}
 		}
 	}
+	
+	@Override
+	public String toString() {
+		String s = "";
+		int rowCounter = -1;
+		int colCounter = -1;
+		for (int[] row: distanceMap) {
+			rowCounter++;
+			colCounter = -1;
+			for (int col: row) {
+				colCounter++;
+				if (col > 0 && col < 10) {
+					s += "  " + Integer.toString(col);
+				} else if (col > 10) {
+					s += " " + Integer.toString(col);
+				} else if (col == 0) {
+					s += "  R";
+				} else {
+					s += "  " + envModel.getCellContent(new IndexPair(rowCounter, colCounter));
+				}
+			}
+			s += "\n";
+		}
+		return s;
+	}	
 }

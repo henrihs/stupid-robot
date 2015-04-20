@@ -45,7 +45,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			setDestination(order.getExpectedEnd());
 			addToQueue(order);
 		}
-		
+
 		setChanged();
 		notifyObservers(stateQueue.pollFirst());
 	}
@@ -55,6 +55,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	private void addToQueue(Order order) {
+		System.out.println(pathFinder);
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
