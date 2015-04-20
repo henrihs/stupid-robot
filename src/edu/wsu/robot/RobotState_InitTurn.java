@@ -9,19 +9,28 @@ public class RobotState_InitTurn implements IRobotStates {
 	
 	private Robot robot;
 	private boolean positiveLastTurn;
+	private int angle;
+	
+	public RobotState_InitTurn() {
+	}
+	
+	public RobotState_InitTurn(int angle){
+		this.angle = angle;
+	}
 
 	@Override
 	public void doWork(Robot robot) {
 		if (this.robot == null)
 			this.robot = robot;
 		robot.stop();
-		int angle = calculateTurn();
+		if (angle == 0)
+			angle = calculateTurn();
 		
 		robot.notifyListeners(angle);
 		
 		robot.setRightWheelEnd(robot.getRightWheelPosition() - angle * 3);
 		robot.setLeftWheelEnd(robot.getLeftWheelPosition() + angle * 3);
-		robot.setState(new RobotState_Turn());
+		robot.setNextState(new RobotState_Turn());
 	}
 	
 	private int calculateTurn() {

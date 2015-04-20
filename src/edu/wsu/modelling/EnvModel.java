@@ -8,7 +8,8 @@ import edu.wsu.sensors.ESensor;
 
 public class EnvModel implements IModel {
 
-	private final int modelSize;
+	private static EDirection currentRobotDirection;
+	protected final int modelSize;
 	private final Cell[][] envModelCells;
 	private final List<ModelListener> listeners = new ArrayList<ModelListener>();
 
@@ -21,6 +22,7 @@ public class EnvModel implements IModel {
 				envModelCells[row][col] = new Cell();
 			}
 		}
+		currentRobotDirection = EDirection.RIGHT;
 	}
 	
 	public int getModelSize() {
@@ -38,14 +40,43 @@ public class EnvModel implements IModel {
 	 * Moves robot's presence one step in the desired direction
 	 * @param direction to move robot
 	 */
-	public synchronized void moveRobotPresence(EDirection direction){
+	public synchronized void moveRobotPresence(){
 		IndexPair currentPosition = locateRobot();
-		IndexPair nextPosition = findPositionInFront(direction, currentPosition);
+		IndexPair nextPosition = findPositionInFront(getRobotDirection(), currentPosition);
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
 	}
 	
-	public IndexPair findPositionFromSensorEnum(EDirection direction, IndexPair currentPosition, ESensor sensor) {
+	public EDirection getRobotDirection(){
+		return currentRobotDirection;
+	}
+	
+	private void setRobotDirectionValue(int value) {
+		switch (value) {
+		case 0:
+			currentRobotDirection = EDirection.UP;
+			break;
+		case 1:
+			currentRobotDirection = EDirection.RIGHT;
+			break;
+		case 2:
+			currentRobotDirection = EDirection.DOWN;
+			break;
+		case 3:
+			currentRobotDirection = EDirection.LEFT;
+			break;
+		}
+	}
+	
+	protected void changeRobotDirection(int angle){
+		int directionValue = getRobotDirection().value();
+		directionValue += angle/90;
+		directionValue = EDirection.moduloValue(directionValue);
+		setRobotDirectionValue(directionValue);
+	}
+	
+	public IndexPair findPositionFromSensorEnum(IndexPair currentPosition, ESensor sensor) {
 		IndexPair position = null;
+		EDirection direction = getRobotDirection();
 		switch (sensor) {
 		case FRONTL:
 			position =  findPositionInFront(direction, currentPosition);

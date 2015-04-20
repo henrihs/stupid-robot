@@ -35,7 +35,7 @@ public class RobotTests {
 	public void update_isInTurnState_doesNotChangeState(){
 		RobotState_Turn turnState = new RobotState_Turn();
 		RobotState_Drive driveState = new RobotState_Drive();
-		robot.setState(turnState);
+		robot.setNextState(turnState);
 		
 		robot.update(fakeHandler, driveState);
 		
@@ -46,7 +46,7 @@ public class RobotTests {
 	public void update_isInInitTurnState_doesNotChangeState(){
 		RobotState_InitTurn initTurnState = new RobotState_InitTurn();
 		RobotState_Drive driveState = new RobotState_Drive();
-		robot.setState(initTurnState);
+		robot.setNextState(initTurnState);
 		
 		robot.update(fakeHandler, driveState);
 		
@@ -57,7 +57,7 @@ public class RobotTests {
 	public void update_isInDriveState_ChangesToInitTurnState(){
 		RobotState_Drive driveState = new RobotState_Drive();
 		RobotState_InitTurn initTurnState = new RobotState_InitTurn();
-		robot.setState(driveState);
+		robot.setNextState(driveState);
 		
 		robot.update(fakeHandler, initTurnState);
 		
@@ -68,7 +68,7 @@ public class RobotTests {
 	public void update_isInDriveState_ChangesToStopState(){
 		RobotState_Drive driveState = new RobotState_Drive();
 		RobotState_Stop stopState = new RobotState_Stop();
-		robot.setState(driveState);
+		robot.setNextState(driveState);
 		
 		robot.update(fakeHandler, stopState);
 		
@@ -79,7 +79,7 @@ public class RobotTests {
 	public void update_isInStopState_ChangesToDriveState(){
 		RobotState_Stop stopState = new RobotState_Stop();
 		RobotState_Drive driveState = new RobotState_Drive();
-		robot.setState(stopState);
+		robot.setNextState(stopState);
 		
 		robot.update(fakeHandler, driveState);
 		
@@ -89,7 +89,7 @@ public class RobotTests {
 	 @Test
 	 public void doWork_invokesStateObject() throws Exception{
 		 IRobotStates fakeState = mock(IRobotStates.class);
-		 robot.setState(fakeState);
+		 robot.setNextState(fakeState);
 		 
 		 robot.doWork();
 		 

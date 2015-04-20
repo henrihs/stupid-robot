@@ -32,7 +32,7 @@ public class RobotState_InitTurnTests {
 		
 		verify(fakeRobot).setRightWheelEnd(-getTurnAround()*3);
 		verify(fakeRobot).setLeftWheelEnd(getTurnAround()*3);
-		verify(fakeRobot).setState(any(RobotState_Turn.class));
+		verify(fakeRobot).setNextState(any(RobotState_Turn.class));
 	}
 	
 	@Test
@@ -44,7 +44,7 @@ public class RobotState_InitTurnTests {
 		
 		verify(fakeRobot).setRightWheelEnd(-getRightTurn()*3);
 		verify(fakeRobot).setLeftWheelEnd(getRightTurn()*3);
-		verify(fakeRobot).setState(any(RobotState_Turn.class));
+		verify(fakeRobot).setNextState(any(RobotState_Turn.class));
 	}
 	
 	@Test
@@ -56,7 +56,7 @@ public class RobotState_InitTurnTests {
 		
 		verify(fakeRobot).setRightWheelEnd(-getLeftTurn()*3);
 		verify(fakeRobot).setLeftWheelEnd(getLeftTurn()*3);
-		verify(fakeRobot).setState(any(RobotState_Turn.class));
+		verify(fakeRobot).setNextState(any(RobotState_Turn.class));
 	}	
 	
 	@Test
@@ -75,7 +75,7 @@ public class RobotState_InitTurnTests {
 			verify(fakeRobot).setLeftWheelEnd(getLeftTurn()*3);
 		}
 		
-		verify(fakeRobot).setState(any(RobotState_Turn.class));		
+		verify(fakeRobot).setNextState(any(RobotState_Turn.class));		
 	}
 
 }

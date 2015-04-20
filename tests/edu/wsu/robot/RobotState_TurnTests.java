@@ -82,7 +82,7 @@ public class RobotState_TurnTests {
 		state.doWork(fakeRobot);
 		
 		verify(fakeRobot, times(1)).stop();
-		verify(fakeRobot, times(1)).setState(isA(RobotState_Drive.class));
+		verify(fakeRobot, times(1)).setNextState(isA(RobotState_Drive.class));
 	}
 	
 	private void verifyTurningRight(){

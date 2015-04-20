@@ -89,6 +89,10 @@ public class PropertyReader {
 		return getProperty("darkUpperBoundary");
 	}
 	
+	public static int getInitBallSearchAngle() {
+		return getProperty("initBallSearchAngle");
+	}
+	
 	public static int getProperty(String propertyKey){
 		return Integer.parseInt(properties.getProperty(propertyKey));
 	}
