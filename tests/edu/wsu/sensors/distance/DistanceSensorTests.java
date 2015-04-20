@@ -2,7 +2,7 @@ package edu.wsu.sensors.distance;
 
 import edu.wsu.robot.Robot;
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ISensorState;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class DistanceSensorTests {
 	
 	@Test
 	public void run_invokesStateObject(){
-		ISensorStates fakeState = mock(ISensorStates.class);
+		ISensorState fakeState = mock(ISensorState.class);
 		distanceSensor.setState(fakeState);
 
 		distanceSensor.run();

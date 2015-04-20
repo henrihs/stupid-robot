@@ -28,6 +28,6 @@ public class RobotState_InitSensors implements IRobotStates {
 		for (ESensor sensor : ESensor.values()) {
 			factory.createSensors(sensor);
 		}
-//		robot.setState(new RobotState_Drive());
+		robot.setState(new RobotState_Drive());
 	}
 }

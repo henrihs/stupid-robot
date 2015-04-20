@@ -16,19 +16,19 @@ import edu.wsu.sensors.light.LightSensor;
 
 public class SensorHandler extends Observable implements Observer {
 
-	private HashMap<ObservableSensor, ISensorStates> lightSensorStates;
-	private HashMap<ObservableSensor, ISensorStates> distanceSensorStates;
+	private HashMap<ObservableSensor, ISensorState> lightSensorStates;
+	private HashMap<ObservableSensor, ISensorState> distanceSensorStates;
 
 	public SensorHandler() {
-		lightSensorStates = new HashMap<ObservableSensor, ISensorStates>();
-		distanceSensorStates = new HashMap<ObservableSensor, ISensorStates>();
+		lightSensorStates = new HashMap<ObservableSensor, ISensorState>();
+		distanceSensorStates = new HashMap<ObservableSensor, ISensorState>();
 	}
 
-	public HashMap<ObservableSensor, ISensorStates> getLightSensorStates() {
+	public HashMap<ObservableSensor, ISensorState> getLightSensorStates() {
 		return lightSensorStates;
 	}
 
-	public HashMap<ObservableSensor, ISensorStates> getDistanceSensorStates() {
+	public HashMap<ObservableSensor, ISensorState> getDistanceSensorStates() {
 		return distanceSensorStates;
 	}
 
@@ -36,12 +36,11 @@ public class SensorHandler extends Observable implements Observer {
 	@Override
 	public synchronized void update(Observable sensor, Object data) {
 		if (sensor instanceof DistanceSensor) {
-			distanceSensorStates.put((ObservableSensor) sensor,
-					(ISensorStates) data);
+			distanceSensorStates.put((ObservableSensor) sensor, (ISensorState) data);
 			// update((DistanceSensor)sensor, (ISensorStates)data);
 		} else if (sensor instanceof LightSensor)
 			lightSensorStates.put((ObservableSensor) sensor,
-					(ISensorStates) data);
+					(ISensorState) data);
 		else if (sensor instanceof WheelSensor) {
 			setChanged();
 			notifyObservers(this);

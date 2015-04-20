@@ -26,7 +26,7 @@ public class ObservableSensorTests {
 	
 	@Test
 	public void run_invokesStateObject(){
-		ISensorStates fakeState = mock(ISensorStates.class);
+		ISensorState fakeState = mock(ISensorState.class);
 		observableSensor.setState(fakeState);
 
 		observableSensor.run();

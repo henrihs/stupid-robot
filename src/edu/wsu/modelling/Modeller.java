@@ -8,12 +8,13 @@ import edu.wsu.management.GPS;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ISensorHandler;
-import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ISensorState;
 import edu.wsu.sensors.ObservableSensor;
 import edu.wsu.sensors.SensorHandler;
 import edu.wsu.sensors.Status;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;
+import edu.wsu.sensors.light.LightState_Dark;
 
 public class Modeller extends Observable implements Observer, TurnListener {
 	
@@ -50,8 +51,8 @@ public class Modeller extends Observable implements Observer, TurnListener {
 	}
 	
 	private synchronized void drawSurroundings(SensorHandler sensorHandler) {
-		HashMap<ObservableSensor, ISensorStates> distanceSensors = sensorHandler.getDistanceSensorStates();
-		HashMap<ObservableSensor, ISensorStates> lightSensors = sensorHandler.getDistanceSensorStates();
+		HashMap<ObservableSensor, ISensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
+		HashMap<ObservableSensor, ISensorState> lightSensors = sensorHandler.getDistanceSensorStates();
 		IndexPair currentPosition = envModel.locateRobot();
 		
 		for (ObservableSensor sensor : distanceSensors.keySet()) {
@@ -59,7 +60,7 @@ public class Modeller extends Observable implements Observer, TurnListener {
 		}
 	}
 	
-	private void drawObstacle(ESensor sensor, ISensorStates sensorState, IndexPair currentPosition) {
+	private void drawObstacle(ESensor sensor, ISensorState sensorState, IndexPair currentPosition) {
 		IndexPair positionToDraw = envModel.findPositionFromSensorEnum(currentPosition, sensor);
 		if (positionToDraw == null)
 			return;
@@ -69,7 +70,12 @@ public class Modeller extends Observable implements Observer, TurnListener {
 			envModel.setCell(positionToDraw.row(), positionToDraw.col(), ECellContent.OBSTACLE);
 	}
 	
-	private void drawLight(ISensorStates sensorState, IndexPair positionToDraw) {
+	private void drawLight(ESensor sensor, ISensorState sensorState, IndexPair currentPosition) {
+		IndexPair positionToDraw = envModel.findPositionFromSensorEnum(currentPosition, sensor);
+		if (positionToDraw == null)
+			return;
 		
+		if (sensorState instanceof LightState_Dark)
+			envModel.setCell(positionToDraw, 0);
 	}
 }

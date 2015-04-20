@@ -2,14 +2,14 @@ package edu.wsu.sensors.distance;
 
 import edu.wsu.robot.Robot;
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ISensorState;
 import static common.PropertyReader.*;
 import static common.Methods.inInterval;
 
-public class DistanceState_Unknown implements ISensorStates {
+public class DistanceState_Unknown implements ISensorState {
 	
 	@Override
-	public ISensorStates doWork(Robot robot, ESensor sensor) {
+	public ISensorState doWork(Robot robot, ESensor sensor) {
 		int distanceValue = robot.getDistanceValue(sensor.val());
 		
 		if (inInterval(distanceValue, getClearLowerBoundary(), getClearUpperBoundary()))

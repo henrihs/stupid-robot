@@ -8,7 +8,7 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 
 	protected Robot robot;
 	protected ESensor sensor;
-	protected ISensorStates state;
+	protected ISensorState state;
 
 	public ObservableSensor(Robot robot, ESensor sensor) {
 		this.robot = robot;
@@ -26,17 +26,17 @@ public abstract class ObservableSensor extends Observable implements Runnable {
 		return sensor;
 	}
 	
-	protected void changeState(ISensorStates nextState) {
+	protected void changeState(ISensorState nextState) {
 		setChanged();
 		notifyObservers(nextState);
 		setState(nextState);
 	}
 	
-	public void setState(ISensorStates state) {
+	public void setState(ISensorState state) {
 		this.state = state;
 	}
 	
-	public ISensorStates getState() {
+	public ISensorState getState() {
 		return state;
 	}
 }

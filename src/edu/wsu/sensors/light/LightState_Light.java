@@ -2,14 +2,14 @@ package edu.wsu.sensors.light;
 
 import edu.wsu.robot.Robot;
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.ISensorStates;
+import edu.wsu.sensors.ISensorState;
 import static common.PropertyReader.*;
 import static common.Methods.inInterval;
 
-public class LightState_Light implements ISensorStates {
+public class LightState_Light implements ISensorState {
 	
 	@Override
-	public ISensorStates doWork(Robot robot, ESensor sensor) {
+	public ISensorState doWork(Robot robot, ESensor sensor) {
 		int lightValue = robot.getLightValue(sensor.val());
 		
 		if (inInterval(lightValue, getDuskyLowerBoundary(), getDuskyUpperBoundary()))

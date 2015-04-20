@@ -55,6 +55,10 @@ public class Robot extends RobotController implements Observer {
 	public IRobotStates getState() {
 		return state;
 	}
+	
+	public void setState(IRobotStates state) {
+		Robot.state = state;
+	}
 
 	@Override
 	public synchronized int getDistanceValue(int sensorID) {

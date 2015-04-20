@@ -4,24 +4,24 @@ import java.util.HashMap;
 
 public class Status {
 	
-	private HashMap<ISensorStates, Integer> states;
+	private HashMap<ISensorState, Integer> states;
 	
-	public Status(ISensorStates state) {
-		this.states = new HashMap<ISensorStates, Integer>();
+	public Status(ISensorState state) {
+		this.states = new HashMap<ISensorState, Integer>();
 		addOrCreateState(state);
 	}
 	
-	public void addOrCreateState(ISensorStates state) {
+	public void addOrCreateState(ISensorState state) {
 		if (!states.containsKey(state))
 			states.put(state, 1);
 		else
 			states.put(state, states.get(state) + 1);
 	}
 	
-	public ISensorStates getMostFrequentState() {
-		ISensorStates state = null;
+	public ISensorState getMostFrequentState() {
+		ISensorState state = null;
 		int frequency = 0;
-		for (ISensorStates s: states.keySet()) {
+		for (ISensorState s: states.keySet()) {
 			if (state == null || states.get(s) > frequency) {
 				state = s;
 				frequency = states.get(s);
