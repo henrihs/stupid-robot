@@ -87,10 +87,13 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	private boolean robotAtDestination() {
-		if (!hasDestination())
+		try {
+			if (!hasDestination())
+				return false;
+			return (destination.equals(envModel.locateRobot()));
+		} catch (NullPointerException e) {
 			return false;
-		return (destination.row() == envModel.locateRobot().row() &&
-				destination.col() == envModel.locateRobot().col());
+		}
 	}
 	
 	private Order pathToDestination() {
