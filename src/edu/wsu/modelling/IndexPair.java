@@ -11,6 +11,10 @@ public class IndexPair extends Object {
 			throw new IndexOutOfBoundsException("row argument exceeds size of model");
 		else if (col >= getModelSize())
 			throw new IndexOutOfBoundsException("col argument exceeds size of model");
+		else if (row < 0)
+			throw new IndexOutOfBoundsException("row argument is below minimum");
+		else if (col < 0)
+			throw new IndexOutOfBoundsException("col argument is below minimum");
 		this.row = row;
 		this.col = col;
 	}
