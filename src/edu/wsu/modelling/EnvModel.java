@@ -104,12 +104,12 @@ public class EnvModel extends Observable {
 		case RIGHT:
 			position = findPositionToRight(direction, currentPosition);
 			break;
-//		case ANGLEL:
-//			position = findPositionToLeftAngle(direction, currentPosition);
-//			break;
-//		case ANGLER:
-//			position = findPositionToRightAngle(direction, currentPosition);
-//			break;
+		case ANGLEL:
+			position = findPositionToLeftAngle(direction, currentPosition);
+			break;
+		case ANGLER:
+			position = findPositionToRightAngle(direction, currentPosition);
+			break;
 		case BACKL:
 			position = findPositionToRear(direction, currentPosition);
 			break;
@@ -548,12 +548,19 @@ public class EnvModel extends Observable {
 		HashMap<ESensor, EDistanceSensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
 		HashMap<ESensor, ELightSensorState> lightSensors = sensorHandler.getLightSensorStates();
 		IndexPair currentPosition = locateRobot();
+		boolean obstacleInFront = false;
+		
+		if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.OBSTACLE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.OBSTACLE )
+			obstacleInFront = true;
 		
 		for (ESensor sensor : distanceSensors.keySet()) {
 			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
 			if (positionToDraw == null)
 				continue;
-			draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
+			if ((sensor == ESensor.FRONTL && obstacleInFront) || (sensor == ESensor.FRONTR && obstacleInFront))
+				draw(EDistanceSensorState.OBSTACLE, lightSensors.get(sensor), positionToDraw);
+			else
+				draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
 		}
 		setChanged();
 		notifyObservers();
