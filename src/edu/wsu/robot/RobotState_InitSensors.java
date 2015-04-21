@@ -25,6 +25,7 @@ public class RobotState_InitSensors implements IRobotStates {
 	@Override
 	public void doWork(Robot robot) {
 		doWork(robot, new ObservableSensorFactory(robot, sensorHandler, ESensor.values().length));
+		robot.sleep(50);
 	}
 	
 	protected void doWork(Robot robot, ObservableSensorFactory factory){
@@ -32,6 +33,5 @@ public class RobotState_InitSensors implements IRobotStates {
 			factory.createSensors(sensor);
 		}
 		robot.setState(new RobotState_Stop());
-		robot.notifyStateCompleteListeners();
 	}
 }
