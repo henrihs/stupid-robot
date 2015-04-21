@@ -16,8 +16,8 @@ import static common.PropertyReader.*;
 
 public class SensorHandler extends Observable implements Observer {
 
-	private volatile HashMap<ESensor, ELightSensorState> lightSensorStates;
-	private volatile HashMap<ESensor, EDistanceSensorState> distanceSensorStates;
+	private HashMap<ESensor, ELightSensorState> lightSensorStates;
+	private HashMap<ESensor, EDistanceSensorState> distanceSensorStates;
 	private Robot robot;
 
 	public SensorHandler() {

@@ -567,8 +567,10 @@ public class EnvModel extends Observable {
 			break;
 		case OBSTACLE:
 			content = ECellContent.OBSTACLE;
+			break;
 		default:
 			content = ECellContent.UNKNOWN;
+			break;
 		}
 		setCell(positionToDraw, content, lightState);
 	}
