@@ -10,8 +10,8 @@ import edu.wsu.sensors.light.LightSensor;
 
 public class SensorHandler extends Observable implements Observer {
 
-	private HashMap<LightSensor, ISensorState> lightSensorStates;
-	private HashMap<DistanceSensor, ISensorState> distanceSensorStates;
+	private volatile HashMap<LightSensor, ISensorState> lightSensorStates;
+	private volatile HashMap<DistanceSensor, ISensorState> distanceSensorStates;
 
 	public SensorHandler() {
 		lightSensorStates = new HashMap<LightSensor, ISensorState>();

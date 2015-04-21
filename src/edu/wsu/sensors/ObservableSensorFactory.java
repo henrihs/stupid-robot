@@ -25,7 +25,7 @@ public class ObservableSensorFactory {
 	public void createSensors(ESensor sensor){
 		schedule(createDistanceSensor(sensor));
 		schedule(createLightSensor(sensor));
-		schedule(createWheelSensor());
+		scheduler.scheduleAtFixedRate(createWheelSensor(), getScheduleRate()+2, getScheduleRate(), TimeUnit.MILLISECONDS);
 	}
 	
 	private void schedule(Runnable observableSensor){
