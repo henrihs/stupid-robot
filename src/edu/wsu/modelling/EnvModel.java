@@ -369,16 +369,16 @@ public class EnvModel extends Observable {
 		IndexPair nextPosition = null;
 		switch (direction) {
 		case UP:
-			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
-			break;
-		case RIGHT:
-			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
-			break;
-		case DOWN:
 			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
 			break;
-		case LEFT:
+		case RIGHT:
 			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
+			break;
+		case DOWN:
+			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
+			break;
+		case LEFT:
+			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
 			break;
 		}
 //		nextPosition = adjustIndicesAndModel(nextPosition);
