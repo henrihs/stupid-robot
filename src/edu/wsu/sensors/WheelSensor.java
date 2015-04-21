@@ -3,7 +3,6 @@ package edu.wsu.sensors;
 import java.util.Observable;
 
 import edu.wsu.robot.Robot;
-import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Turn;
 import static common.PropertyReader.*;
 

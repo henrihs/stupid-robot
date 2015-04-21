@@ -23,8 +23,8 @@ public class Frame extends JFrame {
 	}
 	
 	private void initGui(){
-		board.setFont(board.getFont().deriveFont(4.0f));
-	    board.setRowHeight(5);
+		board.setFont(board.getFont().deriveFont(12.0f));
+	    board.setRowHeight(10);
 	    board.setCellSelectionEnabled(true);
 	    for (int i = 0; i < board.getColumnCount(); i++)
 	      board.getColumnModel().getColumn(i).setPreferredWidth(5);
