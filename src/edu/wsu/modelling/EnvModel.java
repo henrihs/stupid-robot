@@ -42,6 +42,54 @@ public class EnvModel extends Observable {
 		return modelSize;
 	}
 	
+	public boolean obstacleInFront() {
+		for (IndexPair cell: getFrontRow()) {
+			if (getCellContent(cell) == ECellContent.OBSTACLE) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean destinationInFront(IndexPair destination) {
+		for (IndexPair cell: getFrontRow()) {
+			if (cell.equals(destination)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private Stack<IndexPair> getFrontRow() {
+		EDirection direction = getRobotDirection();
+		IndexPair robot = locateRobot();
+		Stack<IndexPair> row = new Stack<IndexPair>();
+		switch (direction) {
+			case UP:
+				row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
+				row.add(new IndexPair(robot.row() - 1, robot.col()));
+				row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
+				break;
+			case RIGHT:
+				row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
+				row.add(new IndexPair(robot.row(), robot.col() + 1));
+				row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
+				break;
+			case DOWN:
+				row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
+				row.add(new IndexPair(robot.row() + 1, robot.col()));
+				row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
+				break;
+			case LEFT:
+				row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
+				row.add(new IndexPair(robot.row(), robot.col() - 1));
+				row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
+				break;
+		}
+		return row;
+		
+	}
+	
 	/**
 	 * Sets robot's presence to the middlemost <code>Cell</code> in the envModelCells
 	 */
@@ -87,7 +135,7 @@ public class EnvModel extends Observable {
 		directionValue = EDirection.moduloValue(directionValue);
 		setRobotDirectionValue(directionValue);
 	}
-	
+		
 	public IndexPair findPositionFromSensorEnum(IndexPair currentPosition, ESensor sensor) {
 		IndexPair position = null;
 		EDirection direction = getRobotDirection();
@@ -230,10 +278,6 @@ public class EnvModel extends Observable {
 			col++;
 		}
 		return new IndexPair(row, col);
-	}
-	
-	public ECellContent getCellContentInFront() {
-		return getCellContent(findPositionInFront(getRobotDirection(), locateRobot()));
 	}
 
 	/**
