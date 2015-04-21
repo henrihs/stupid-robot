@@ -54,7 +54,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			}
 		}
 		setChanged();
-		notifyObservers(stateQueue.pollFirst());
+		notifyObservers(nextState);
 	}
 	
 	public void setDestination(IndexPair destination) {
