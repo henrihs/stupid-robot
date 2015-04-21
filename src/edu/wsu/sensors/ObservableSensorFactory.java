@@ -16,24 +16,24 @@ public class ObservableSensorFactory {
 	private final Observer sensorHandler;
 	private final ScheduledExecutorService scheduler;
 
-	public ObservableSensorFactory(Robot robot, SensorHandler sensorHandler, int totalSensors) {
+	public ObservableSensorFactory(Robot robot, SensorHandler sensorHandler) {
 		this.robot = robot;
 		this.sensorHandler = (Observer) sensorHandler;
-		scheduler = Executors.newScheduledThreadPool(totalSensors*2);
+		scheduler = Executors.newScheduledThreadPool(1);
 	}
 	
-	public void createSensors(ESensor sensor){
-		schedule(createDistanceSensor(sensor));
-		schedule(createLightSensor(sensor));
-		scheduler.scheduleAtFixedRate(createWheelSensor(), getScheduleRate()+2, getScheduleRate(), TimeUnit.MILLISECONDS);
+	public void createSensors(){
+//		schedule(createDistanceSensor(sensor));
+//		schedule(createLightSensor(sensor));
+		scheduler.scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
 	}
 	
-	private void schedule(Runnable observableSensor){
-		scheduler.scheduleAtFixedRate(observableSensor, 
-														getScheduleRate(), 
-														getScheduleRate(), 
-														TimeUnit.MILLISECONDS);
-	}
+//	private void schedule(Runnable observableSensor){
+//		scheduler.scheduleAtFixedRate(observableSensor, 
+//														getScheduleRate(), 
+//														getScheduleRate(), 
+//														TimeUnit.MILLISECONDS);
+//	}
 	
 	private WheelSensor createWheelSensor() {
 		WheelSensor wheelSensor = new WheelSensor(robot);
@@ -41,16 +41,16 @@ public class ObservableSensorFactory {
 		return wheelSensor;
 	}
 	
-	private LightSensor createLightSensor(ESensor sensor){
-		LightSensor lightSensor = new LightSensor(robot, sensor);
-		lightSensor.addObserver(sensorHandler);
-		return lightSensor;
-	}
-	
-	private DistanceSensor createDistanceSensor(ESensor sensor){
-		DistanceSensor distanceSensor = new DistanceSensor(robot, sensor);
-		distanceSensor.addObserver(sensorHandler);
-		return distanceSensor;
-	}
+//	private LightSensor createLightSensor(ESensor sensor){
+//		LightSensor lightSensor = new LightSensor(robot, sensor);
+//		lightSensor.addObserver(sensorHandler);
+//		return lightSensor;
+//	}
+//	
+//	private DistanceSensor createDistanceSensor(ESensor sensor){
+//		DistanceSensor distanceSensor = new DistanceSensor(robot, sensor);
+//		distanceSensor.addObserver(sensorHandler);
+//		return distanceSensor;
+//	}
 
 }

@@ -4,15 +4,14 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
-import common.Methods;
 import edu.wsu.modelling.ECellContent;
-import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_Stop;
+import edu.wsu.sensors.distance.EDistanceSensorState;
 
 public class GPS extends Observable implements Observer, StateCompleteListener {
 	

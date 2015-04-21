@@ -12,6 +12,8 @@ import edu.wsu.sensors.SensorHandler;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Clear;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;
+import edu.wsu.sensors.distance.EDistanceSensorState;
+import edu.wsu.sensors.light.ELightSensorState;
 import edu.wsu.sensors.light.LightSensor;
 import edu.wsu.sensors.light.LightState_Dark;
 import edu.wsu.sensors.light.LightState_Dusky;
@@ -136,7 +138,11 @@ public class EnvModel extends Observable {
 		setCell(indexPair.row(), indexPair.col(), content);
 	}
 	
-	public void setCell(IndexPair indexPair, int lightIntensity) {
+	public void setCell(IndexPair indexPair, ECellContent content, ELightSensorState lightState) {
+		setCell(indexPair.row(), indexPair.col(), content, lightState);
+	}
+	
+	public void setCell(IndexPair indexPair, ELightSensorState lightIntensity) {
 		setCell(indexPair.row(), indexPair.col(), lightIntensity);
 	}
 	
@@ -147,7 +153,7 @@ public class EnvModel extends Observable {
 	 * @param content The content of the cell
 	 */
 	public void setCell(int row, int col, ECellContent content){
-		setCell(row, col, content, -1);
+		setCell(row, col, content, null);
 	}
 
 	/**
@@ -156,7 +162,7 @@ public class EnvModel extends Observable {
 	 * @param col Index of cell column
 	 * @param lightIntensity The light intensity of the cell
 	 */
-	public void setCell(int row, int col, int lightIntensity){
+	public void setCell(int row, int col, ELightSensorState lightIntensity){
 		setCell(row, col, null, lightIntensity);
 	}
 
@@ -167,15 +173,15 @@ public class EnvModel extends Observable {
 	 * @param content The content of the cell
 	 * @param lightIntensity The light intensity of the cell
 	 */
-	public void setCell(int row, int col, ECellContent content, int lightIntensity){
+	public void setCell(int row, int col, ECellContent content, ELightSensorState lightState){
 //		IndexPair indices = adjustIndicesAndModel(row, col);
 		IndexPair indices = new IndexPair(row, col); 
 		row = indices.row();
 		col = indices.col();
 		if (content != null)
 			envModelCells[row][col].setContent(content);
-		if (lightIntensity != -1)
-			envModelCells[row][col].setLightIntensity(lightIntensity);
+		if (lightState != null)
+			envModelCells[row][col].setLightIntensity(lightState);
 	}
 	
 	/**
@@ -490,12 +496,12 @@ public class EnvModel extends Observable {
 	public class Cell {
 
 		private ECellContent content;
-		private int lightIntensity;
+		private ELightSensorState lightIntensity;
 		private boolean isRobotPresent;
 
 		public Cell(){
 			content = ECellContent.UNKNOWN;
-			lightIntensity = 0;
+			lightIntensity = ELightSensorState.UNKNOWN;
 			isRobotPresent = false;
 		}
 
@@ -511,7 +517,7 @@ public class EnvModel extends Observable {
 			this.content = content;
 		}
 
-		public void setLightIntensity(int lightIntensity) {
+		public void setLightIntensity(ELightSensorState lightIntensity) {
 			this.lightIntensity = lightIntensity;
 		}
 
@@ -519,7 +525,7 @@ public class EnvModel extends Observable {
 			return content;
 		}
 
-		public int getLightIntensity(){
+		public ELightSensorState getLightIntensity(){
 			return lightIntensity;
 		}
 
@@ -538,42 +544,31 @@ public class EnvModel extends Observable {
 	}
 
 	protected void drawSurroundings(SensorHandler sensorHandler) {
-		HashMap<DistanceSensor, ISensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
-		HashMap<LightSensor, ISensorState> lightSensors = sensorHandler.getLightSensorStates();
+		HashMap<ESensor, EDistanceSensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
+		HashMap<ESensor, ELightSensorState> lightSensors = sensorHandler.getLightSensorStates();
 		IndexPair currentPosition = locateRobot();
 		
-		for (DistanceSensor sensor : distanceSensors.keySet()) {
-			drawObstacle(sensor, currentPosition);
-		}
-		
-		for (LightSensor sensor : lightSensors.keySet()) {
-			drawLight(sensor, currentPosition);
+		for (ESensor sensor : distanceSensors.keySet()) {
+			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
+			if (positionToDraw == null)
+				continue;
+			draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
 		}
 		setChanged();
 		notifyObservers();
 	}
 	
-	private void drawObstacle(DistanceSensor sensor, IndexPair currentPosition) {
-		IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor.getSensor());
-		if (positionToDraw == null)
-			return;
-		if ((sensor.getState() instanceof DistanceState_Obstacle))
-			setCell(positionToDraw.row(), positionToDraw.col(), ECellContent.OBSTACLE);
-		else if ((sensor.getState() instanceof DistanceState_Clear))
-			setCell(positionToDraw.row(), positionToDraw.col(), ECellContent.CLEAR);
-	}
-	
-	private void drawLight(LightSensor sensor, IndexPair currentPosition) {
-		IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor.getSensor());
-		if (positionToDraw == null)
-			return;
-		if (sensor.getState() instanceof LightState_Dark)
-			setCell(positionToDraw, 0);
-		else if (sensor.getState() instanceof LightState_Dusky)
-			setCell(positionToDraw, 1); 
-		else if (sensor.getState() instanceof LightState_Light)
-			setCell(positionToDraw, 2); 
-		else 
-			setCell(positionToDraw, -1); 
+	private void draw(EDistanceSensorState distanceState, ELightSensorState lightState, IndexPair positionToDraw) {
+		ECellContent content = null;
+		switch (distanceState) {
+		case CLEAR:
+			content = ECellContent.CLEAR;
+			break;
+		case OBSTACLE:
+			content = ECellContent.OBSTACLE;
+		default:
+			content = ECellContent.UNKNOWN;
+		}
+		setCell(positionToDraw, content, lightState);
 	}
 }

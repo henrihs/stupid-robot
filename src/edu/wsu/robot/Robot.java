@@ -34,6 +34,7 @@ public class Robot extends RobotController implements Observer {
 	}
 
 	public Robot(Modeller modeller, SensorHandler sensorHandler, GPS gps) {
+		sensorHandler.setRobot(this);
 		gps.addObserver(this);
 		sensorHandler.addObserver(this);
 		addTurnListener(modeller);
