@@ -48,6 +48,9 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		IRobotStates nextState = stateQueue.pollFirst();
 		if (nextState instanceof RobotState_Drive) {
 			if (envModel.getCellContentInFront() == ECellContent.OBSTACLE) {
+				if (envModel.findPositionInFront(envModel.getRobotDirection(), envModel.locateRobot()).equals(destination)) {
+					destination = null;
+				}
 				stateQueue.clear();
 				setChanged();
 				notifyObservers(new RobotState_Stop());
