@@ -609,4 +609,17 @@ public class EnvModel extends Observable {
 			}
 		}
 	}
+	
+	private float percentDiscovered() {
+		int mapSize = getModelSize() * getModelSize();
+		int unknown = 0;
+		for (Cell[] row: envModelCells) {
+			for (Cell col: row) {
+				if (col.getContent() == ECellContent.UNKNOWN) {
+					unknown++;
+				}
+			}
+		}
+		return 1 - (unknown / mapSize);
+	}
 }
