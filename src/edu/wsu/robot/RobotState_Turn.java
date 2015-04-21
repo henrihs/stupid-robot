@@ -19,9 +19,7 @@ public class RobotState_Turn implements IRobotStates {
 			wheelSpeed = getTurnSlowSpeed();
 		
 		if (doneTurning()) {
-			robot.stop();
 			robot.setState(new RobotState_Stop());
-			robot.notifyStateCompleteListeners();
 		}
 		else if (shouldKeepTurning()) {
 			robot.setMotorSpeeds(wheelSpeed, -wheelSpeed);
