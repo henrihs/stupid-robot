@@ -224,6 +224,10 @@ public class EnvModel extends Observable {
 		}
 		return new IndexPair(row, col);
 	}
+	
+	public ECellContent getCellContentInFront() {
+		return getCellContent(findPositionInFront(getRobotDirection(), locateRobot()));
+	}
 
 	/**
 	 * Find which position is one step ahead
