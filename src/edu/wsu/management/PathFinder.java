@@ -83,16 +83,16 @@ public class PathFinder {
 		try {
 			switch (direction) {
 				case UP:
-						result = new IndexPair(cell.row(), cell.col() - 1);
+						result = new IndexPair(cell.row() - 1, cell.col());
 					break;
 				case RIGHT:
-						result = new IndexPair(cell.row() + 1, cell.col());
-					break;
-				case DOWN:
 						result = new IndexPair(cell.row(), cell.col() + 1);
 					break;
+				case DOWN:
+						result = new IndexPair(cell.row() + 1, cell.col());
+					break;
 				case LEFT:
-						result = new IndexPair(cell.row() - 1, cell.col());
+						result = new IndexPair(cell.row(), cell.col() - 1);
 					break;
 			}
 		} catch (IndexOutOfBoundsException e) {

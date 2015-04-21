@@ -32,13 +32,6 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	@Override
 	public void update(Observable obs, Object arg) {
-		if (obs == null){
-			setChanged();
-			notifyObservers(new RobotState_Drive());
-			return;
-		}
-			
-		envModel = (EnvModel)obs;
 		if (hasDestination()) {
 			if (robotAtDestination()) {
 				setDestination(null);
@@ -61,9 +54,10 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	private void addToQueue(Order order) {
+		System.out.println("Robot is at (" + envModel.locateRobot().row() + ", " + envModel.locateRobot().col() + ")");
+		System.out.println("Order is " + order.getLength() + " times " + order.getDiretion() + " to (" + order.getExpectedEnd().row() + ", " + order.getExpectedEnd() + ")");
 		System.out.println(pathFinder);
 		int angle = getTurnAngle(order);
-		System.out.println("Robot headed: " + envModel.getRobotDirection() + ", order says: " + order.getDiretion() + ", must turn" + String.valueOf(angle));
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
 		}
