@@ -27,7 +27,7 @@ public class WheelSensor extends Observable implements Runnable {
 			return;			
 		}
 		calculateTicks();
-		if (ticks >= getWheelInterval()) {
+		if (Math.abs(ticks) >= getWheelInterval()) {
 			robot.sleep(20);
 			ticks = 0;
 			setChanged();

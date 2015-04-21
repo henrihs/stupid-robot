@@ -1,5 +1,6 @@
 package edu.wsu.modelling;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,23 +9,20 @@ import java.util.Observable;
 import java.util.Stack;
 
 import edu.wsu.sensors.ESensor;
-import edu.wsu.sensors.ISensorState;
 import edu.wsu.sensors.SensorHandler;
-import edu.wsu.sensors.distance.DistanceSensor;
-import edu.wsu.sensors.distance.DistanceState_Clear;
-import edu.wsu.sensors.distance.DistanceState_Obstacle;
 import edu.wsu.sensors.distance.EDistanceSensorState;
 import edu.wsu.sensors.light.ELightSensorState;
-import edu.wsu.sensors.light.LightSensor;
-import edu.wsu.sensors.light.LightState_Dark;
-import edu.wsu.sensors.light.LightState_Dusky;
-import edu.wsu.sensors.light.LightState_Light;
 
-public class EnvModel extends Observable {
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
+public class EnvModel extends Observable implements TableModel {
 
 	private static EDirection currentRobotDirection;
 	protected final int modelSize;
 	private final Cell[][] envModelCells;
+	private List<TableModelListener> listeners = new ArrayList<TableModelListener>();
 
 	public EnvModel(int modelSize){
 		this.modelSize = modelSize;
@@ -43,12 +41,9 @@ public class EnvModel extends Observable {
 	}
 	
 	public boolean obstacleInFront() {
-		for (IndexPair cell: getFrontRow()) {
-			if (getCellContent(cell) == ECellContent.OBSTACLE) {
-				return true;
-			}
-		}
-		return false;
+		if (findPositionInFront(currentRobotDirection, locateRobot()) == null)
+			return false;
+		return (getCellContent(findPositionInFront(currentRobotDirection, locateRobot())) == ECellContent.OBSTACLE);
 	}
 	
 	public boolean destinationInFront(IndexPair destination) {
@@ -231,6 +226,9 @@ public class EnvModel extends Observable {
 			envModelCells[row][col].setContent(content);
 		if (lightState != null)
 			envModelCells[row][col].setLightIntensity(lightState);
+		TableModelEvent event = new TableModelEvent(this, row, row, col);
+	    for (TableModelListener listener : listeners)
+	      listener.tableChanged(event);
 	}
 	
 	/**
@@ -288,24 +286,29 @@ public class EnvModel extends Observable {
 	 */
 	public IndexPair findPositionInFront(EDirection direction, IndexPair currentPosition){
 		IndexPair nextPosition = null;
-		switch (direction) {
-		case UP:
-			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
-			break;
-		case RIGHT:
-			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
-			break;
-		case DOWN:
-			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
-			break;
-		case LEFT:
-			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
-			break;
+		try {
+			switch (direction) {
+			case UP:
+				nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
+				break;
+			case RIGHT:
+				nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
+				break;
+			case DOWN:
+				nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
+				break;
+			case LEFT:
+				nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() - 1);
+				break;
+			}
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		} catch (NullPointerException e) {
+			return null;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-		
+
 	/** 
 	 * Find which position is to the left
 	 * @param direction
@@ -606,10 +609,70 @@ public class EnvModel extends Observable {
 			else
 				draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
 		}
+		
 		setChanged();
 		notifyObservers();
 	}
 	
+	protected void postDrawRendering() {
+		for (int i = 0; i < envModelCells.length; i++) {
+			for (int k = 0; k < envModelCells.length; k++) {
+				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
+					IndexPair cellLocation = new IndexPair(i, k);
+					if (isProbablyAOuterCorner(cellLocation) || isProbablyAWall(cellLocation))
+						setCell(cellLocation, ECellContent.OBSTACLE);
+				}
+			}
+		}
+	}
+	
+	private boolean isProbablyAOuterCorner(IndexPair pair) {
+		IndexPair[][] n =  getNeighbourCellsAsArray(pair);
+		if (isObstacle(n[0][1]) && isObstacle(n[1][0]) && isUnknown(n[0][0]) && isClear(n[0][2]) && isClear(n[2][0]))
+			return true;
+		else if (isObstacle(n[0][1]) && isObstacle(n[1][2]) && isUnknown(n[0][2]) && isClear(n[0][0]) && isClear(n[2][2]))
+			return true;
+		else if (isObstacle(n[1][0]) && isObstacle(n[2][1]) && isUnknown(n[2][0]) && isClear(n[0][0]) && isClear(n[2][2]))
+			return true;
+		else if (isObstacle(n[2][1]) && isObstacle(n[1][2]) && isUnknown(n[2][2]) && isClear(n[0][2]) && isClear(n[2][0]))
+			return true;
+		
+		return false;
+	}
+	
+	private boolean isObstacle(IndexPair pair) {
+		if (pair == null)
+			return false;
+		return (getCellContent(pair) == ECellContent.OBSTACLE);
+	}
+	
+	private boolean isUnknown(IndexPair pair) {
+		if (pair == null)
+			return false;
+		return (getCellContent(pair) == ECellContent.UNKNOWN);
+	}
+	
+	private boolean isClear(IndexPair pair) {
+		if (pair == null)
+			return false;
+		return (getCellContent(pair) == ECellContent.CLEAR);
+	}
+	
+	private boolean isProbablyAWall(IndexPair pair) {
+		IndexPair[][] n =  getNeighbourCellsAsArray(pair);
+		if (isClear(n[1][0]) && isClear(n[1][2]))
+			return false;
+		else if (isClear(n[0][1]) && isClear(n[2][1]))
+			return false;
+		else {
+			if (isObstacle(n[0][1]) && isObstacle(n[2][1]))
+				return true;
+			else if (isObstacle(n[1][0]) && isObstacle(n[1][2]))
+				return true;
+		}
+		return false;
+	}
+
 	private void draw(EDistanceSensorState distanceState, ELightSensorState lightState, IndexPair positionToDraw) {
 		ECellContent content = null;
 		switch (distanceState) {
@@ -619,11 +682,24 @@ public class EnvModel extends Observable {
 		case OBSTACLE:
 			content = ECellContent.OBSTACLE;
 			break;
-		default:
-			content = ECellContent.UNKNOWN;
-			break;
 		}
 		setCell(positionToDraw, content, lightState);
+	}
+	
+	private IndexPair[][] getNeighbourCellsAsArray(IndexPair cell) {
+		IndexPair[][] indexPairs = new IndexPair[3][3];
+		
+		for (int i = -1; i < 2; i++) {
+			for (int k = -1; k < 2; k++) {
+				try {
+					indexPairs[i+1][k+1] = new IndexPair(cell.row() + i, cell.col() + k);					
+				} catch (IndexOutOfBoundsException e) {
+					indexPairs[i+1][k+1] = null;
+				}
+			}
+		}
+		
+		return indexPairs;
 	}
 	
 	private Stack<IndexPair> getNeighbourCells(IndexPair cell) {
@@ -672,5 +748,57 @@ public class EnvModel extends Observable {
 			}
 		}
 		return 1 - (unknown / mapSize);
+	}
+
+	
+	/*
+	 * JAVA SWING RELATED SHIT FROM HERE
+	 */
+	
+	@Override
+	public void addTableModelListener(TableModelListener l) {
+		listeners.add(l);
+	}
+
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		return Object.class;
+	}
+
+	@Override
+	public int getColumnCount() {
+		return modelSize;
+	}
+
+	@Override
+	public String getColumnName(int columnIndex) {
+		return String.valueOf(columnIndex + 1);
+	}
+
+	@Override
+	public int getRowCount() {
+		return modelSize;
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		if ((getCell(rowIndex, columnIndex)).isRobotPresent)
+			return "X";
+		return getCellContent(new IndexPair(rowIndex, columnIndex));
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+
+	@Override
+	public void removeTableModelListener(TableModelListener l) {
+		listeners.remove(l);
+		
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 	}
 }

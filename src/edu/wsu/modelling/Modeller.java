@@ -1,21 +1,18 @@
 package edu.wsu.modelling;
 
-import java.util.HashMap;
-
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JTable;
 import edu.wsu.management.GPS;
-import edu.wsu.modelling.IndexPair;
 import edu.wsu.sensors.*;
-import edu.wsu.sensors.distance.*;
-import edu.wsu.sensors.light.*;
 import static common.PropertyReader.getModelSize;
 
 public class Modeller extends Observable implements Observer, TurnListener {
 	
 	private final EnvModel envModel;
 	private final RenderedModel rendModel;
+	private JTable board;
 	
 	public Modeller(SensorHandler sensorHandler, GPS gps){
 		this(new EnvModel(getModelSize()), sensorHandler, gps);
@@ -28,11 +25,13 @@ public class Modeller extends Observable implements Observer, TurnListener {
 		envModel.initRobotPresence();
 		gps.init(envModel);
 		rendModel = new RenderedModel(envModel);
+		new Frame(envModel);
 	}
 	
 	@Override
 	public void onTurnInitialized(int angle) {
 		envModel.changeRobotDirection(angle);
+		envModel.postDrawRendering();
 	}
 
 	@Override

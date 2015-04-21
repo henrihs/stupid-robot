@@ -51,6 +51,9 @@ public class SensorHandler extends Observable implements Observer {
 		for (ESensor sensor : ESensor.values()) {
 			int distance = robot.getDistanceValue(sensor.val());
 			int light = robot.getLightValue(sensor.val());
+			if (distance > 1000) {
+				//TODO UPDATE ROBOT AND DRIVE OUT OF SHIT
+			}
 			setDistanceSensorState(sensor, distance);
 			setLightSensorState(sensor, light);
 		}
