@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
+import java.util.Stack;
 
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ISensorState;
@@ -575,5 +576,40 @@ public class EnvModel extends Observable {
 			setCell(positionToDraw, 2); 
 		else 
 			setCell(positionToDraw, -1); 
+	}
+	
+	private Stack<IndexPair> getNeighbourCells(IndexPair cell) {
+		Stack<IndexPair> neighbours = new Stack<IndexPair>();
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col()));
+		neighbours.add(new IndexPair(cell.row(), cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col()));
+		neighbours.add(new IndexPair(cell.row(), cell.col() - 1));
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col() - 1));
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col() - 1));
+		return neighbours;
+	}
+	
+	private boolean isBall(IndexPair cell) {
+		for (IndexPair neighbour: getNeighbourCells(cell)) {
+			if (getCellContent(neighbour) == ECellContent.OBSTACLE) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private void renderBalls() {
+		for (int row = 0; row < getModelSize(); row++) {
+			for (int col = 0; col < getModelSize(); col++) {
+				IndexPair cell = new IndexPair(row, col);
+				if (getCellContent(cell) == ECellContent.BALL) {
+					if (isBall(cell)) {
+						setCell(cell, ECellContent.BALL);
+					}
+				}
+			}
+		}
 	}
 }

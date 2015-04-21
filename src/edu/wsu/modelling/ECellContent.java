@@ -1,7 +1,7 @@
 package edu.wsu.modelling;
 
 public enum ECellContent {
-	OBSTACLE("#"), CLOSE_TO_OBSTACLE("_"), CLEAR(" "), UNKNOWN("?");
+	OBSTACLE("#"), CLOSE_TO_OBSTACLE("_"), CLEAR(" "), UNKNOWN("?"), BALL("B");
 	
 	private String symbol;
 	
