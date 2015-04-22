@@ -89,14 +89,6 @@ public class PropertyReader {
 		return getProperty("lightUpperBoundary");
 	}
 	
-	public static int getDuskyLowerBoundary() {
-		return getProperty("duskyLowerBoundary");
-	}
-	
-	public static int getDuskyUpperBoundary() {
-		return getProperty("duskyUpperBoundary");
-	}
-	
 	public static int getDarkLowerBoundary() {
 		return getProperty("darkLowerBoundary");
 	}

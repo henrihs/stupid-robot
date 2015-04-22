@@ -74,8 +74,6 @@ public class SensorHandler extends Observable implements Observer {
 		ELightSensorState state;
 		if (inInterval(value, getDarkLowerBoundary(), getDarkUpperBoundary()))
 			state = ELightSensorState.DARK;
-		else if (inInterval(value, getDuskyLowerBoundary(), getDuskyUpperBoundary()))
-			state = ELightSensorState.DUSKY;
 		else if (inInterval(value, getLightLowerBoundary(), getLightUpperBoundary()))
 			state = ELightSensorState.LIGHT;
 		else
