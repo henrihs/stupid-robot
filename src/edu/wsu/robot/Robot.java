@@ -115,6 +115,6 @@ public class Robot extends RobotController implements Observer {
 
 	protected void notifyStateCompleteListeners() {
 		for (StateCompleteListener listener : stateCompleteListeners)
-			listener.onStateCompleted();
+			listener.onStateCompleted(isObjectHeld());
 	}
 }

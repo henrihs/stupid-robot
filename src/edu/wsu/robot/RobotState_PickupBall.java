@@ -10,29 +10,33 @@ public class RobotState_PickupBall implements IRobotStates {
 
 	private Robot robot;
 	private Stack<Integer> turnHistory;
+	private boolean failed;
 
 	public RobotState_PickupBall() {
 		turnHistory = new Stack<Integer>();
+		failed = false;
 	}
 
 	@Override
 	public void doWork(Robot robot) throws Exception {
 		if (this.robot == null)
 			this.robot = robot;
-		if (robot.isObjectHeld()) {
+		if (robot.isObjectHeld() || failed) {
 			if (!turnHistory.empty()) {
 				returnToInitPosition();	
 			} else {
 				robot.setState(new RobotState_Stop());				
 			}
-		
-			//TODO: Fire event to DecisionMaker, telling it to move on
-//			robot.setNextState(null);
-//			robot.pollNextState();
 			return;
 		}
+		
 		if (checkIfObjectIsInFront()) {
-			pickUpBall();
+			try {
+				pickUpBall();
+			} catch (BallNotFoundException e) {
+				robot.setArmState(KSGripperStates.ARM_UP);
+				failed = true;
+			}
 			return;
 		}
 		

@@ -32,6 +32,10 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	@Override
 	public void update(Observable obs, Object arg) {
+		boolean isBallHeld = false;
+		if (obs instanceof GPS) {
+			isBallHeld = (boolean) arg;	
+		}
 		if (hasDestination()) {
 			if (robotAtDestination()) {
 				setDestination(null);
@@ -40,8 +44,13 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			} else if (stateQueue.isEmpty()) {
 				addToQueue(pathToDestination());
 			}
-		} else if (envModel.getBallReady()) {
+		} else if (envModel.getBallReady() && !isBallHeld) {
 			Order order = pathToBall(true);
+			setDestination(order.getExpectedEnd());
+			addToQueue(order);
+		} else if (isBallHeld) {
+			destination = envModel.getBallDestination();
+			Order order = pathToDestination();
 			setDestination(order.getExpectedEnd());
 			addToQueue(order);
 		} else {
@@ -128,7 +137,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 
 	@Override
-	public void onStateCompleted() {
-		update(null, null);
+	public void onStateCompleted(boolean isBallHeld) {
+		update(this, isBallHeld);
 	}
 }
