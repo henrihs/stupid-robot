@@ -625,8 +625,8 @@ public class EnvModel extends Observable implements TableModel {
 		@Override
 		public String toString() {
 			if (isRobotPresent)
-				return "R";
-			return content.toString();
+				return "R"+lightIntensity.toString();
+			return content.toString()+lightIntensity.toString();
 		}
 
 	}
@@ -936,7 +936,7 @@ public class EnvModel extends Observable implements TableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		if ((getCell(rowIndex, columnIndex)).isRobotPresent)
 			return "X";
-		return getCellContent(new IndexPair(rowIndex, columnIndex));
+		return getCellContent(new IndexPair(rowIndex, columnIndex)).toString() + getCell(rowIndex, columnIndex).getLightIntensity().toString();
 	}
 
 	@Override
