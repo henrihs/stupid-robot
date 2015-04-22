@@ -17,22 +17,13 @@ public class ObservableSensorFactory {
 	public ObservableSensorFactory(Robot robot, SensorHandler sensorHandler) {
 		this.robot = robot;
 		this.sensorHandler = (Observer) sensorHandler;
-		scheduler = Executors.newScheduledThreadPool(2);
+		scheduler = Executors.newScheduledThreadPool(1);
 	}
 	
 	public void createSensors(){
-//		schedule(createDistanceSensor(sensor));
-//		schedule(createLightSensor(sensor));
 		scheduler.scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
-		scheduler.scheduleAtFixedRate(createFrontSensor(), getScheduleRate(), 1, TimeUnit.MILLISECONDS);
+//		scheduler.scheduleAtFixedRate(createFrontSensor(), getScheduleRate(), 1, TimeUnit.MILLISECONDS);
 	}
-	
-//	private void schedule(Runnable observableSensor){
-//		scheduler.scheduleAtFixedRate(observableSensor, 
-//														getScheduleRate(), 
-//														getScheduleRate(), 
-//														TimeUnit.MILLISECONDS);
-//	}
 	
 	private WheelSensor createWheelSensor() {
 		WheelSensor wheelSensor = new WheelSensor(robot);
@@ -45,11 +36,4 @@ public class ObservableSensorFactory {
 		frontSensor.addObserver(sensorHandler);
 		return frontSensor;
 	}
-	
-//	private LightSensor createLightSensor(ESensor sensor){
-//		LightSensor lightSensor = new LightSensor(robot, sensor);
-//		lightSensor.addObserver(sensorHandler);
-//		return lightSensor;
-//	}
-//	
 }

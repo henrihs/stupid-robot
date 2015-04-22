@@ -1,4 +1,4 @@
-package edu.wsu.sensors.distance;
+package edu.wsu.sensors;
 
 public enum EDistanceSensorState {
 	OBSTACLE, CLOSE, CLEAR, UNKNOWN;

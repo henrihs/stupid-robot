@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import edu.wsu.management.GPS;
 import edu.wsu.management.StateCompleteListener;
 import edu.wsu.modelling.IndexPair;
-import edu.wsu.sensors.ISensorHandler;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.ObservableSensorFactory;
 import edu.wsu.sensors.SensorHandler;

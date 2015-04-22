@@ -5,7 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.wsu.modelling.EnvModel.IndexPair;
+import edu.wsu.modelling.IndexPair;
+import edu.wsu.sensors.ELightSensorState;
 
 public class EnvModelTests {
 	
@@ -21,7 +22,7 @@ public class EnvModelTests {
 		model.setCell(2, 2, ECellContent.OBSTACLE);
 		
 		ECellContent content = model.getCell(2, 2).getContent();
-		int lightIntensity = model.getCell(2, 2).getLightIntensity();
+		ELightSensorState lightIntensity = model.getCell(2, 2).getLightIntensity();
 		
 		assertEquals(ECellContent.OBSTACLE, content);
 		assertEquals(0, lightIntensity);
@@ -29,25 +30,25 @@ public class EnvModelTests {
 	
 	@Test
 	public void setCell_lightIntensityIs_lightIntensityIsSet(){
-		model.setCell(2, 2, 2);
+		model.setCell(2, 2, ELightSensorState.LIGHT);
 		
 		ECellContent content = model.getCell(2, 2).getContent();
-		int lightIntensity = model.getCell(2, 2).getLightIntensity();
+		ELightSensorState lightIntensity = model.getCell(2, 2).getLightIntensity();
 		
 		assertEquals(ECellContent.UNKNOWN, content);
-		assertEquals(2, lightIntensity);
+		assertEquals(ELightSensorState.LIGHT, lightIntensity);
 	}
 	
 	@Test
 	public void setCell_contenAndLightIntensitytIsGiven_BothAreSet(){
-		model.setCell(2, 2, ECellContent.OBSTACLE, 2);
+		model.setCell(2, 2, ECellContent.OBSTACLE, ELightSensorState.LIGHT);
 
 		
 		ECellContent content = model.getCell(2, 2).getContent();
-		int lightIntensity = model.getCell(2, 2).getLightIntensity();
+		ELightSensorState lightIntensity = model.getCell(2, 2).getLightIntensity();
 		
 		assertEquals(ECellContent.OBSTACLE, content);
-		assertEquals(2, lightIntensity);
+		assertEquals(ELightSensorState.LIGHT, lightIntensity);
 	}
 	
 	@Test

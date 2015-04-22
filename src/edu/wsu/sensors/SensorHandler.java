@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import edu.wsu.robot.Robot;
-import edu.wsu.sensors.distance.EDistanceSensorState;
 import static common.Methods.*;
 import static common.PropertyReader.*;
 

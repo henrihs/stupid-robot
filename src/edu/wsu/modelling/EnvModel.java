@@ -8,10 +8,10 @@ import java.util.Observable;
 import java.util.Stack;
 
 import static common.PropertyReader.getWallLenght;
+import edu.wsu.sensors.EDistanceSensorState;
 import edu.wsu.sensors.ELightSensorState;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.SensorHandler;
-import edu.wsu.sensors.distance.EDistanceSensorState;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -292,7 +292,7 @@ public class EnvModel extends Observable implements TableModel {
 	 * @param col Column index
 	 * @return 
 	 */
-	private IndexPair adjustIndicesAndModel(int row, int col){
+	protected IndexPair adjustIndicesAndModel(int row, int col){
 		if (row >= envModelCells.length - 1){
 			//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
 			upShiftModel(1);
