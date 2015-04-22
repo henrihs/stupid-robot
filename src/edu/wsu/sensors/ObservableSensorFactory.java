@@ -22,18 +22,11 @@ public class ObservableSensorFactory {
 	
 	public void createSensors(){
 		scheduler.scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
-//		scheduler.scheduleAtFixedRate(createFrontSensor(), getScheduleRate(), 1, TimeUnit.MILLISECONDS);
 	}
 	
 	private WheelSensor createWheelSensor() {
 		WheelSensor wheelSensor = new WheelSensor(robot);
 		wheelSensor.addObserver(sensorHandler);
 		return wheelSensor;
-	}
-	
-	private FrontSensor createFrontSensor() {
-		FrontSensor frontSensor = new FrontSensor(robot);
-		frontSensor.addObserver(sensorHandler);
-		return frontSensor;
 	}
 }
