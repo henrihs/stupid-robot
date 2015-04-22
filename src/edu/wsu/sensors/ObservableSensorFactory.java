@@ -6,8 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import edu.wsu.robot.Robot;
-import edu.wsu.sensors.distance.DistanceSensor;
-import edu.wsu.sensors.light.LightSensor;
 import static common.PropertyReader.getScheduleRate;
 
 public class ObservableSensorFactory {

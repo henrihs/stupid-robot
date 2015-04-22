@@ -9,8 +9,6 @@ import edu.wsu.robot.Robot;
 import edu.wsu.sensors.distance.DistanceSensor;
 import edu.wsu.sensors.distance.DistanceState_Obstacle;
 import edu.wsu.sensors.distance.EDistanceSensorState;
-import edu.wsu.sensors.light.ELightSensorState;
-import edu.wsu.sensors.light.LightSensor;
 import static common.Methods.*;
 import static common.PropertyReader.*;
 

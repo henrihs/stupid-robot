@@ -8,10 +8,10 @@ import java.util.Observable;
 import java.util.Stack;
 
 import static common.PropertyReader.getWallLenght;
+import edu.wsu.sensors.ELightSensorState;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.SensorHandler;
 import edu.wsu.sensors.distance.EDistanceSensorState;
-import edu.wsu.sensors.light.ELightSensorState;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -637,6 +637,7 @@ public class EnvModel extends Observable implements TableModel {
 		HashMap<ESensor, EDistanceSensorState> distanceSensors = sensorHandler.getDistanceSensorStates();
 		HashMap<ESensor, ELightSensorState> lightSensors = sensorHandler.getLightSensorStates();
 		IndexPair currentPosition = locateRobot();
+		
 		boolean obstacleInFront = false;
 		//		boolean closeInFront = false;
 
@@ -646,19 +647,23 @@ public class EnvModel extends Observable implements TableModel {
 		//			closeInFront = true;
 
 		for (ESensor sensor : distanceSensors.keySet()) {
+			EDistanceSensorState distanceState = distanceSensors.get(sensor);
+			ELightSensorState lightState = ELightSensorState.UNKNOWN;
+			
 			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
 			if (positionToDraw == null)
 				continue;
 			if ((sensor == ESensor.FRONTL) || (sensor == ESensor.FRONTR)) {
 				if (obstacleInFront)
-					draw(EDistanceSensorState.OBSTACLE, lightSensors.get(sensor), positionToDraw);
+					distanceState = EDistanceSensorState.OBSTACLE;
 				else
-					draw(EDistanceSensorState.CLEAR, lightSensors.get(sensor), positionToDraw);
-				//				else if (closeInFront)
-				//					draw(EDistanceSensorState.CLOSE, lightSensors.get(sensor), positionToDraw);
+					distanceState = EDistanceSensorState.CLEAR;
+				lightState = lightSensors.get(sensor);
+			} else if (sensor == ESensor.ANGLEL || sensor == ESensor.ANGLER ) {
+				lightState = lightSensors.get(sensor);
 			}
-			else
-				draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
+			
+			draw(distanceState, lightState, positionToDraw);
 		}
 
 		notifyListeners();
