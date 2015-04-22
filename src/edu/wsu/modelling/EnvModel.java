@@ -1,6 +1,5 @@
 package edu.wsu.modelling;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,6 +23,7 @@ public class EnvModel extends Observable implements TableModel {
 	private final Cell[][] envModelCells;
 	private List<TableModelListener> listeners = new ArrayList<TableModelListener>();
 	private boolean ballReadyForPickup;
+	private IndexPair ballDestination;
 
 	public EnvModel(int modelSize){
 		this.modelSize = modelSize;
@@ -35,10 +35,38 @@ public class EnvModel extends Observable implements TableModel {
 			}
 		}
 		currentRobotDirection = EDirection.RIGHT;
+		ballDestination = null;
+	}
+	
+	public void parseMap() {
+		Cluster cluster;
+		IndexPair cell;
+		ballReadyForPickup = false;
+		for (int row = 0; row < envModelCells.length; row++) {
+			for (int col = 0; col < envModelCells[row].length; col++) {
+				try {
+					cell = new IndexPair(row, col);
+					if (getCellContent(cell) == ECellContent.OBSTACLE) {
+						cluster = new Cluster(this, cell);
+						cluster.run();
+					}
+					if (getCellContent(cell) == ECellContent.BALL && getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
+						ballReadyForPickup = true;
+					}
+					if (getCellContent(cell) == ECellContent.CLEAR && getCell(cell.row(), cell.col()).getLightIntensity() == ELightSensorState.LIGHT) {
+						ballDestination = cell;
+					}
+				} catch (IndexOutOfBoundsException e) {}
+			}
+		}
+	}
+	
+	public IndexPair getBallDestination() {
+		return ballDestination;
 	}
 	
 	public boolean getBallReady() {
-		return ballReadyForPickup;
+		return (ballReadyForPickup && ballDestination != null);
 	}
 	
 	public int getModelSize() {
@@ -765,27 +793,7 @@ public class EnvModel extends Observable implements TableModel {
 		neighbours.add(new IndexPair(cell.row() - 1, cell.col() - 1));
 		return neighbours;
 	}
-	
-	public void parseMap() {
-		Cluster cluster;
-		IndexPair cell;
-		ballReadyForPickup = false;
-		for (int row = 0; row < envModelCells.length; row++) {
-			for (int col = 0; col < envModelCells[row].length; col++) {
-				try {
-					cell = new IndexPair(row, col);
-					if (getCellContent(cell) == ECellContent.OBSTACLE) {
-						cluster = new Cluster(this, cell);
-						cluster.run();
-					}
-					if (getCellContent(cell) == ECellContent.BALL && getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
-						ballReadyForPickup = true;
-					}
-				} catch (IndexOutOfBoundsException e) {}
-			}
-		}
-	}
-	
+		
 	/*
 	 * JAVA SWING RELATED SHIT FROM HERE
 	 */

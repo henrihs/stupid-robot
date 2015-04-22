@@ -16,6 +16,7 @@ public class PathFinder {
 	private EnvModel envModel;
 	private IndexPair destination;
 	private boolean lookingForUnknown;
+	private boolean lookingForBall;
 	private Stack<EDirection> directions;
 
 	public PathFinder(EnvModel envModel) {
@@ -25,19 +26,29 @@ public class PathFinder {
 	}
 		
 	public Stack<IndexPair> pathTo(IndexPair destination) {
-		init();
 		this.destination = destination;
 		lookingForUnknown = false;
-		IndexPair robot = envModel.locateRobot();
-		setDistanceCell(robot, 0);
-		findShortestPath(findDestination(robot));
-		return path;
+		lookingForBall = false;
+		return run();
 	}
 	
 	public Stack<IndexPair> pathToUnknown() {
-		init();
 		destination = null;
 		lookingForUnknown = true;
+		lookingForBall = false;
+		return run();
+	}
+	
+	public Stack<IndexPair> pathToBall() {
+		destination = null;
+		lookingForUnknown = false;
+		lookingForBall = true;
+		return run();
+		
+	}
+	
+	private Stack<IndexPair> run() {
+		init();
 		IndexPair robot = envModel.locateRobot();
 		setDistanceCell(robot, 0);
 		findShortestPath(findDestination(robot));
@@ -120,10 +131,7 @@ public class PathFinder {
 	private void setDistanceCell(IndexPair cell, int value) {
 		try {
 			distanceMap[cell.row()][cell.col()] = value;
-		} catch (NullPointerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (NullPointerException e) {}
 	}
 	
 	/**
@@ -166,7 +174,11 @@ public class PathFinder {
 	
 	private boolean cellIsUnknown(IndexPair cell) {
 		return (lookingForUnknown && envModel.getCellContent(cell) == ECellContent.UNKNOWN);
-	}	
+	}
+	
+	private boolean cellIsBall(IndexPair cell) {
+		return (lookingForBall && envModel.getCellContent(cell) == ECellContent.BALL);
+	}
 	
 	/**
 	 * Checks all neighbours of the given cell
@@ -186,7 +198,7 @@ public class PathFinder {
 				addToFound(neighbour);
 			}
 			
-			if (cellIsDestination(neighbour) || cellIsUnknown(neighbour)) {
+			if (cellIsDestination(neighbour) || cellIsUnknown(neighbour) || cellIsBall(neighbour)) {
 				return neighbour;
 			}
 		}

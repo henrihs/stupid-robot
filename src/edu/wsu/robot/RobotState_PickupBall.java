@@ -12,6 +12,7 @@ public class RobotState_PickupBall implements IRobotStates {
 	private Stack<Integer> turnHistory;
 
 	public RobotState_PickupBall() {
+		turnHistory = new Stack<Integer>();
 	}
 
 	@Override
