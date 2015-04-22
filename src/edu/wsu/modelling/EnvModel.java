@@ -43,6 +43,7 @@ public class EnvModel extends Observable implements TableModel {
 		Cluster cluster;
 		IndexPair cell;
 		ballReadyForPickup = false;
+		ballDestination = null;
 		for (int row = 0; row < envModelCells.length; row++) {
 			for (int col = 0; col < envModelCells[row].length; col++) {
 				try {
@@ -54,7 +55,7 @@ public class EnvModel extends Observable implements TableModel {
 					if (getCellContent(cell) == ECellContent.BALL && getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
 						ballReadyForPickup = true;
 					}
-					if (getCellContent(cell) == ECellContent.CLEAR && getCell(cell.row(), cell.col()).getLightIntensity() == ELightSensorState.LIGHT) {
+					if (ballDestination == null && getCellContent(cell) == ECellContent.CLEAR && getCell(cell.row(), cell.col()).getLightIntensity() == ELightSensorState.LIGHT) {
 						ballDestination = cell;
 					}
 				} catch (IndexOutOfBoundsException e) {}
