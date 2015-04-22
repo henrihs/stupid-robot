@@ -4,10 +4,7 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
-import edu.wsu.modelling.ECellContent;
 import edu.wsu.robot.Robot;
-import edu.wsu.sensors.distance.DistanceSensor;
-import edu.wsu.sensors.distance.DistanceState_Obstacle;
 import edu.wsu.sensors.distance.EDistanceSensorState;
 import static common.Methods.*;
 import static common.PropertyReader.*;
@@ -50,9 +47,25 @@ public class SensorHandler extends Observable implements Observer {
 				continue;
 			int distance = robot.getDistanceValue(sensor.val());
 			int light = robot.getLightValue(sensor.val());
-			setDistanceSensorState(sensor, distance);
+			if (sensor == ESensor.ANGLEL || sensor == ESensor.ANGLER)
+				setAngleDistanceSensorState(sensor, distance);
+			else
+				setDistanceSensorState(sensor, distance);
 			setLightSensorState(sensor, light);
 		}
+	}
+
+	private void setAngleDistanceSensorState(ESensor sensor, int value) {
+		EDistanceSensorState state;
+		if (inInterval(value, getClearLowerBoundary(), getAngleClearUpperBoundary()))
+			state = EDistanceSensorState.CLEAR;
+		//		else if (inInterval(value, getCloseLowerBoundary(), getCloseUpperBoundary()))
+		//			state = EDistanceSensorState.CLOSE;
+		else if (inInterval(value, getAngleObstacleLowerBoundary(), getObstacleUpperBoundary()))
+			state = EDistanceSensorState.OBSTACLE;
+		else
+			state = EDistanceSensorState.UNKNOWN;
+		distanceSensorStates.put(sensor, state);
 	}
 
 	private void setDistanceSensorState(ESensor sensor, int value) {

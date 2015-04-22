@@ -48,6 +48,14 @@ public class PropertyReader {
 	public static int getClearUpperBoundary() {
 		return getProperty("clearUpperBoundary");
 	}
+	
+	public static int getAngleClearUpperBoundary() {
+		return getProperty("angleClearUpperBoundary");
+	}
+	
+	public static int getAngleObstacleLowerBoundary(){
+		return getProperty("angleObstacleLowerBoundary");
+	}
 		
 	public static int getTurnBoundary() {
 		return getProperty("turnBoundary");

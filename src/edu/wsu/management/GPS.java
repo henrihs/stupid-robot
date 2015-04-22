@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
-import edu.wsu.modelling.ECellContent;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.robot.IRobotStates;
@@ -13,7 +12,6 @@ import edu.wsu.robot.RobotState_DropBall;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_PickupBall;
 import edu.wsu.robot.RobotState_Stop;
-import edu.wsu.sensors.distance.EDistanceSensorState;
 
 public class GPS extends Observable implements Observer, StateCompleteListener {
 	
@@ -83,6 +81,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	private void addToQueue(Order order) {
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
+			envModel.parseMap();
 			stateQueue.add(new RobotState_InitTurn(angle));
 		}
 		if (order.isBallOrder() || isBallHeld) {
