@@ -17,7 +17,7 @@ public class ObservableSensorFactory {
 	public ObservableSensorFactory(Robot robot, SensorHandler sensorHandler) {
 		this.robot = robot;
 		this.sensorHandler = (Observer) sensorHandler;
-		scheduler = Executors.newScheduledThreadPool(1);
+		scheduler = Executors.newScheduledThreadPool(2);
 	}
 	
 	public void createSensors(){

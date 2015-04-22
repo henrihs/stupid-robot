@@ -84,9 +84,8 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
-			envModel.parseMap();
 		}
-		if (order.isBallOrder()) {
+		if (order.isBallOrder() || isBallHeld) {
 			for (int i = 0; i < order.getLength() - 1; i++) {
 				stateQueue.add(new RobotState_Drive());
 			}			
@@ -96,14 +95,16 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			}
 		}
 
-		stateQueue.add(new RobotState_Stop());
 		if (order.isBallOrder() && order.getExpectedEnd().equals(order.getFinalDestination())) {
 			stateQueue.add(new RobotState_PickupBall());
 		}
 		
-		if (isBallHeld) {
+		else if (isBallHeld && order.getExpectedEnd().equals(order.getFinalDestination())) {
 			stateQueue.add(new RobotState_DropBall());
 		}
+		
+		else
+			stateQueue.add(new RobotState_Stop());
 	}
 	
 	private boolean hasDestination() {

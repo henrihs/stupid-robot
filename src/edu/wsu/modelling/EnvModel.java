@@ -40,6 +40,7 @@ public class EnvModel extends Observable implements TableModel {
 	}
 	
 	public void parseMap() {
+		sharpenCorners();
 		Cluster cluster;
 		IndexPair cell;
 		ballReadyForPickup = false;
@@ -658,29 +659,15 @@ public class EnvModel extends Observable implements TableModel {
 					distanceState = EDistanceSensorState.OBSTACLE;
 				else
 					distanceState = EDistanceSensorState.CLEAR;
-				lightState = lightSensors.get(sensor);
-			} else if (sensor == ESensor.ANGLEL || sensor == ESensor.ANGLER ) {
-				lightState = lightSensors.get(sensor);
 			}
 			
+			lightState = lightSensors.get(sensor);
 			draw(distanceState, lightState, positionToDraw);
 		}
 
 		notifyListeners();
 		setChanged();
 		notifyObservers();
-	}
-
-	protected void postDrawRendering() {
-		sharpenCorners();
-		//		for (int i = 0; i < envModelCells.length; i++) {
-		//			for (int k = 0; k < envModelCells.length; k++) {
-		//				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
-		//					IndexPair cellLocation = new IndexPair(i, k);
-		//					if
-		//				}
-		//			}
-		//		}
 	}
 
 	private void sharpenCorners(){
