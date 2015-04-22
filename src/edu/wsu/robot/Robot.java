@@ -60,6 +60,7 @@ public class Robot extends RobotController implements Observer {
 	}
 
 	public void setState(IRobotStates state) {
+		System.out.println(state);
 		stop();
 		this.state = state;
 	}

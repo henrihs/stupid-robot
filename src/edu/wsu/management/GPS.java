@@ -9,6 +9,7 @@ import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.RobotState_Drive;
+import edu.wsu.robot.RobotState_DropBall;
 import edu.wsu.robot.RobotState_InitTurn;
 import edu.wsu.robot.RobotState_PickupBall;
 import edu.wsu.robot.RobotState_Stop;
@@ -20,6 +21,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	private PathFinder pathFinder;
 	private LinkedList<IRobotStates> stateQueue;
 	private IndexPair destination;
+	private boolean isBallHeld;
 		
 	public GPS() {
 		stateQueue = new LinkedList<IRobotStates>();
@@ -32,7 +34,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	@Override
 	public void update(Observable obs, Object arg) {
-		boolean isBallHeld = false;
+		isBallHeld = false;
 		if (obs instanceof GPS) {
 			isBallHeld = (boolean) arg;	
 		}
@@ -98,6 +100,10 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		stateQueue.add(new RobotState_Stop());
 		if (order.isBallOrder() && order.getExpectedEnd().equals(order.getFinalDestination())) {
 			stateQueue.add(new RobotState_PickupBall());
+		}
+		
+		if (isBallHeld) {
+			stateQueue.add(new RobotState_DropBall());
 		}
 	}
 	
