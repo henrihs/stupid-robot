@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
 
+import static common.PropertyReader.getWallLenght;
 import edu.wsu.sensors.ESensor;
 import edu.wsu.sensors.SensorHandler;
 import edu.wsu.sensors.distance.EDistanceSensorState;
@@ -40,11 +41,11 @@ public class EnvModel extends Observable implements TableModel {
 	public boolean getBallReady() {
 		return ballReadyForPickup;
 	}
-	
+
 	public int getModelSize() {
 		return modelSize;
 	}
-	
+
 	public boolean obstacleInFront() {
 		try {
 			if (findPositionInFront(currentRobotDirection, locateRobot()) == null)
@@ -54,7 +55,7 @@ public class EnvModel extends Observable implements TableModel {
 			return false;
 		}
 	}
-	
+
 	public boolean destinationInFront(IndexPair destination) {
 		for (IndexPair cell: getFrontRow()) {
 			if (cell.equals(destination)) {
@@ -63,44 +64,44 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		return false;
 	}
-	
+
 	private Stack<IndexPair> getFrontRow() {
 		EDirection direction = getRobotDirection();
 		IndexPair robot = locateRobot();
 		Stack<IndexPair> row = new Stack<IndexPair>();
 		switch (direction) {
-			case UP:
-				row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
-				row.add(new IndexPair(robot.row() - 1, robot.col()));
-				row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
-				break;
-			case RIGHT:
-				row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
-				row.add(new IndexPair(robot.row(), robot.col() + 1));
-				row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
-				break;
-			case DOWN:
-				row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
-				row.add(new IndexPair(robot.row() + 1, robot.col()));
-				row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
-				break;
-			case LEFT:
-				row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
-				row.add(new IndexPair(robot.row(), robot.col() - 1));
-				row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
-				break;
+		case UP:
+			row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
+			row.add(new IndexPair(robot.row() - 1, robot.col()));
+			row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
+			break;
+		case RIGHT:
+			row.add(new IndexPair(robot.row() - 1, robot.col() + 1));
+			row.add(new IndexPair(robot.row(), robot.col() + 1));
+			row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
+			break;
+		case DOWN:
+			row.add(new IndexPair(robot.row() + 1, robot.col() + 1));
+			row.add(new IndexPair(robot.row() + 1, robot.col()));
+			row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
+			break;
+		case LEFT:
+			row.add(new IndexPair(robot.row() + 1, robot.col() - 1));
+			row.add(new IndexPair(robot.row(), robot.col() - 1));
+			row.add(new IndexPair(robot.row() - 1, robot.col() - 1));
+			break;
 		}
 		return row;
-		
+
 	}
-	
+
 	/**
 	 * Sets robot's presence to the middlemost <code>Cell</code> in the envModelCells
 	 */
 	public void initRobotPresence(){
 		moveRobotPresence(modelSize/2, modelSize/2);
 	}
-	
+
 	/**
 	 * Moves robot's presence one step in the desired direction
 	 * @param direction to move robot
@@ -109,13 +110,13 @@ public class EnvModel extends Observable implements TableModel {
 		IndexPair currentPosition = locateRobot();
 		IndexPair nextPosition = findPositionInFront(getRobotDirection(), currentPosition);
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
-//		setChanged();
+		//		setChanged();
 	}
-	
+
 	public EDirection getRobotDirection(){
 		return currentRobotDirection;
 	}
-	
+
 	private void setRobotDirectionValue(int value) {
 		switch (value) {
 		case 0:
@@ -132,16 +133,16 @@ public class EnvModel extends Observable implements TableModel {
 			break;
 		}
 	}
-	
+
 	protected void changeRobotDirection(int angle){
 		int directionValue = getRobotDirection().value();
 		directionValue += angle/90;
 		directionValue = EDirection.moduloValue(directionValue);
 		setRobotDirectionValue(directionValue);
-//		setChanged();
-//		notifyObservers();
+		//		setChanged();
+		//		notifyObservers();
 	}
-		
+
 	public IndexPair findPositionFromSensorEnum(IndexPair currentPosition, ESensor sensor) {
 		IndexPair position = null;
 		EDirection direction = getRobotDirection();
@@ -175,7 +176,7 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		return position;
 	}
-	
+
 	/**
 	 * @return IndexPair Row and column position of cell with robot's presence
 	 */
@@ -188,19 +189,19 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		return null;
 	}
-	
+
 	public void setCell(IndexPair indexPair, ECellContent content) {
 		setCell(indexPair.row(), indexPair.col(), content);
 	}
-	
+
 	public void setCell(IndexPair indexPair, ECellContent content, ELightSensorState lightState) {
 		setCell(indexPair.row(), indexPair.col(), content, lightState);
 	}
-	
+
 	public void setCell(IndexPair indexPair, ELightSensorState lightIntensity) {
 		setCell(indexPair.row(), indexPair.col(), lightIntensity);
 	}
-	
+
 	/**
 	 * Set the content of a <code>Cell</code>
 	 * @param row Index of cell row
@@ -229,7 +230,7 @@ public class EnvModel extends Observable implements TableModel {
 	 * @param lightIntensity The light intensity of the cell
 	 */
 	public void setCell(int row, int col, ECellContent content, ELightSensorState lightState){
-//		IndexPair indices = adjustIndicesAndModel(row, col);
+		//		IndexPair indices = adjustIndicesAndModel(row, col);
 		IndexPair indices = new IndexPair(row, col); 
 		row = indices.row();
 		col = indices.col();
@@ -238,7 +239,7 @@ public class EnvModel extends Observable implements TableModel {
 		if (lightState != null)
 			envModelCells[row][col].setLightIntensity(lightState);
 	}
-	
+
 	/**
 	 * @param row Index of cell row
 	 * @param col Index of cell column
@@ -250,11 +251,11 @@ public class EnvModel extends Observable implements TableModel {
 			return null;
 		return envModelCells[row][col];
 	}
-	
+
 	public ECellContent getCellContent(IndexPair pair) {
 		return envModelCells[pair.row()][pair.col()].getContent();
 	}
-	
+
 	/**
 	 * Adjust the indices and the envModelCells so that it corresponds to the array size
 	 * @param row Row index
@@ -263,23 +264,23 @@ public class EnvModel extends Observable implements TableModel {
 	 */
 	private IndexPair adjustIndicesAndModel(int row, int col){
 		if (row >= envModelCells.length - 1){
-//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
+			//			System.out.println("Upshift " + String.valueOf(row - (envModelCells.length - 1)));
 			upShiftModel(1);
 			row--;
 		}
 		else if (row < 1) {
-//			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
+			//			System.out.println("Downshift " + String.valueOf(Math.abs(row)));
 			downShiftModel(1);
 			row++;
 		}
 
 		if (col >= envModelCells[row].length - 1){
-//			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
+			//			System.out.println("Leftshift " + String.valueOf(col - (envModelCells[row].length - 1)));
 			leftShiftModel(1);
 			col--;
 		}
 		else if (col < 1) {
-//			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
+			//			System.out.println("Rightshift " + String.valueOf(Math.abs(col)));
 			rightShiftModel(1);
 			col++;
 		}
@@ -339,10 +340,10 @@ public class EnvModel extends Observable implements TableModel {
 			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col());
 			break;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
+		//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-	
+
 	/**
 	 *  Find which position is to the right
 	 * @param direction
@@ -365,10 +366,10 @@ public class EnvModel extends Observable implements TableModel {
 			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col());
 			break;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
+		//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-	
+
 	/**
 	 *  Find which position is to the left/front
 	 * @param direction
@@ -391,10 +392,10 @@ public class EnvModel extends Observable implements TableModel {
 			nextPosition = new IndexPair(currentPosition.row() + 1, currentPosition.col() - 1);
 			break;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
+		//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-	
+
 	/**
 	 *  Find which position is to the right/front
 	 * @param direction
@@ -417,10 +418,10 @@ public class EnvModel extends Observable implements TableModel {
 			nextPosition = new IndexPair(currentPosition.row() - 1, currentPosition.col() - 1);
 			break;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
+		//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-	
+
 	/**
 	 *  Find which position is to the rear
 	 * @param direction
@@ -443,10 +444,10 @@ public class EnvModel extends Observable implements TableModel {
 			nextPosition = new IndexPair(currentPosition.row(), currentPosition.col() + 1);
 			break;
 		}
-//		nextPosition = adjustIndicesAndModel(nextPosition);
+		//		nextPosition = adjustIndicesAndModel(nextPosition);
 		return nextPosition;
 	}
-	
+
 	/**
 	 * Moves robot's presence from old location to new one
 	 * @param row index of new position
@@ -461,7 +462,7 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		getCell(nextRobotPosition.row(), nextRobotPosition.col()).setRobotPresent(true);
 	}
-	
+
 	/**
 	 * Move the entire content of the envModelCells upwards,
 	 * filling the blank cells with new Cells ("unknown" content)
@@ -470,11 +471,11 @@ public class EnvModel extends Observable implements TableModel {
 	private void upShiftModel(int shiftValue) {
 		for (int i = 0; i < envModelCells.length - shiftValue; i++)
 			envModelCells[i] = Arrays.copyOf(envModelCells[i+1], envModelCells.length);
-		
+
 		for (int i = envModelCells.length - shiftValue; i < envModelCells.length; i++)
 			envModelCells[i] = newCellRow();
 	}
-	
+
 	/**
 	 * Move the entire content of the envModelCells downwards,
 	 * filling the blank cells with new Cells ("unknown" content)
@@ -483,7 +484,7 @@ public class EnvModel extends Observable implements TableModel {
 	private void downShiftModel(int shiftValue) {
 		for (int i = (envModelCells.length - 1); i > shiftValue; i--)
 			envModelCells[i] = Arrays.copyOf(envModelCells[i-1], envModelCells.length);
-		
+
 		for (int i = 0; i <= shiftValue; i++)
 			envModelCells[i] = newCellRow();
 	}
@@ -522,7 +523,7 @@ public class EnvModel extends Observable implements TableModel {
 		}
 	}
 
-	
+
 	/**
 	 * Create a new row of <code>Cell</code>'s
 	 * @return Cell[] Array of new Cells
@@ -534,7 +535,7 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		return c;
 	}
-	
+
 	public String toString(){
 		String s = "";
 		for (Cell[] cells : envModelCells) {
@@ -545,7 +546,7 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		return s;
 	}
-		
+
 	/**
 	 * Class representing a single square (1000x1000 ticks) in "the real world"
 	 */
@@ -607,13 +608,13 @@ public class EnvModel extends Observable implements TableModel {
 		HashMap<ESensor, ELightSensorState> lightSensors = sensorHandler.getLightSensorStates();
 		IndexPair currentPosition = locateRobot();
 		boolean obstacleInFront = false;
-//		boolean closeInFront = false;
-		
+		//		boolean closeInFront = false;
+
 		if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.OBSTACLE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.OBSTACLE )
 			obstacleInFront = true;
-//		else if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.CLOSE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.CLOSE)
-//			closeInFront = true;
-		
+		//		else if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.CLOSE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.CLOSE)
+		//			closeInFront = true;
+
 		for (ESensor sensor : distanceSensors.keySet()) {
 			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
 			if (positionToDraw == null)
@@ -623,89 +624,194 @@ public class EnvModel extends Observable implements TableModel {
 					draw(EDistanceSensorState.OBSTACLE, lightSensors.get(sensor), positionToDraw);
 				else
 					draw(EDistanceSensorState.CLEAR, lightSensors.get(sensor), positionToDraw);
-//				else if (closeInFront)
-//					draw(EDistanceSensorState.CLOSE, lightSensors.get(sensor), positionToDraw);
+				//				else if (closeInFront)
+				//					draw(EDistanceSensorState.CLOSE, lightSensors.get(sensor), positionToDraw);
 			}
 			else
 				draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
 		}
-		
+
 		notifyListeners();
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	protected void postDrawRendering() {
-//		for (int i = 0; i < envModelCells.length; i++) {
-//			for (int k = 0; k < envModelCells.length; k++) {
-//				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
-//					IndexPair cellLocation = new IndexPair(i, k);
-//					if
-//				}
-//			}
-//		}
+		sharpenCorners();
+		//		for (int i = 0; i < envModelCells.length; i++) {
+		//			for (int k = 0; k < envModelCells.length; k++) {
+		//				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
+		//					IndexPair cellLocation = new IndexPair(i, k);
+		//					if
+		//				}
+		//			}
+		//		}
 	}
-	
+
+	private void sharpenCorners(){
+		ArrayList<IndexPair> checked = new ArrayList<>();
+		for (int i = 0; i < envModelCells.length; i++) {
+			for (int k = 0; k < envModelCells.length; k++) {
+				try {
+					IndexPair pair = new IndexPair(i, k);
+					if (!checked.contains(pair))
+						checked.addAll(checkForCorner(pair));
+				} catch (IndexOutOfBoundsException e) {
+				}
+			}
+		}
+	}
+
 	/**
-	   * Check if (x,y) is part of a horizontal 5 in a row obstacle.
-	   *
-	   * @param indexPair 
-	   * @return true if there are 5 in a row including (x,y)
-	   */
-	private int checkForHorizontalWall(IndexPair pair)
-	  {
+	 * @return ArrayList<IndexPair> contains IndexPairs that are walls to avoid double checking
+	 */
+	private ArrayList<IndexPair> checkForCorner(IndexPair pair) {
+		ArrayList<IndexPair> checkedPairs = new ArrayList<>();
+
+		int[] horizontalNeighbours = checkForHorizontalWall(pair);
+		int[] verticalNeighbours = checkForVerticalWall(pair);
+
+		if (verticalNeighbours[1] - verticalNeighbours[0] > getWallLenght() &&
+				horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()){
+			// IS A CORNER ALREADY
+		}
+		else if (verticalNeighbours[1] - verticalNeighbours[0] > getWallLenght()) {
+			IndexPair minEnd = new IndexPair(verticalNeighbours[0], pair.col());
+			IndexPair maxEnd = new IndexPair(verticalNeighbours[1], pair.col());
+			for (int r = 0; r <= 3; r++) {
+				for (int c = -2; c <= 2; c++) {
+					try {
+						IndexPair lower = new IndexPair(minEnd.row() - r, minEnd.col() + c);
+						int[] horizontalLower = checkForHorizontalWall(lower);
+						int wallLengthLower = horizontalLower[1] - horizontalLower[0];
+						if (wallLengthLower >= getWallLenght()) {
+							setCell(minEnd.row() - r, minEnd.col(), ECellContent.OBSTACLE);
+						}
+						checkedPairs.add(lower);
+					} catch (IndexOutOfBoundsException e) {
+					}
+
+					try {
+						IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
+						int[] horizontalUpper = checkForHorizontalWall(upper);
+						int wallLengthUpper = horizontalUpper[1] - horizontalUpper[0];
+						if (wallLengthUpper >= getWallLenght()) {
+							setCell(maxEnd.row() + r, maxEnd.col(), ECellContent.OBSTACLE);
+						}
+						checkedPairs.add(upper);
+					} catch (IndexOutOfBoundsException e) {
+					}
+				}
+			}
+		}
+		else if (horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()) {
+			IndexPair minEnd = new IndexPair(horizontalNeighbours[0], pair.col());
+			IndexPair maxEnd = new IndexPair(horizontalNeighbours[1], pair.col());
+			for (int r = -2; r <= 2; r++) {
+				for (int c = 0; c <= 3; c++) {
+					try {
+						IndexPair lower = new IndexPair(minEnd.row() + r, minEnd.col() - c);
+						int[] verticalLower = checkForVerticalWall(lower);
+						int wallLengthLower = verticalLower[1] - verticalLower[0];
+						if (wallLengthLower >= getWallLenght()) {
+							setCell(minEnd.row(), minEnd.col() - c, ECellContent.OBSTACLE);
+						}
+						checkedPairs.add(lower);
+					} catch (IndexOutOfBoundsException e) {
+						// Do nothing, cell is outside of model
+					}
+
+					try {
+						IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
+						int[] verticalUpper = checkForVerticalWall(upper);
+						int wallLengthUpper = verticalUpper[1] - verticalUpper[0];
+						if (wallLengthUpper >= getWallLenght()) {
+							setCell(maxEnd.row(), maxEnd.col() + c, ECellContent.OBSTACLE);
+						}
+						checkedPairs.add(upper);
+					} catch (IndexOutOfBoundsException e) {
+						// Do nothing, cell is outside of model
+					}
+				}
+			}
+		}
+
+		// Add (row,col)-pairs for cells that are already checked
+		for (int i = verticalNeighbours[0]; i <= verticalNeighbours[1]; i++) {
+			IndexPair p = new IndexPair(i, pair.col());
+			checkedPairs.add(p);
+		}
+
+		for (int i = horizontalNeighbours[0]; i <= horizontalNeighbours[1]; i++) {
+			IndexPair p = new IndexPair(pair.row(), i);
+			checkedPairs.add(p);
+		}
+
+		return checkedPairs;
+	}
+
+	/**
+	 * Check if (x,y) is part of a horizontal 5 in a row obstacle.
+	 *
+	 * @param indexPair 
+	 * @return boolean true if there are 5 in a row including (x,y)
+	 */
+	private int[] checkForVerticalWall(IndexPair pair)
+	{
 		if (getCellContent(pair) != ECellContent.OBSTACLE)
-			return 0;
-	    // Find the minimum and maximum x values for this y which have the same mark
-	    int minX = pair.row();
-	    while (minX > 0 && envModelCells[minX - 1][pair.col()].equals(ECellContent.OBSTACLE))
-	      minX--;
-	    int maxX = pair.row();
-	    while ((maxX + 1) < envModelCells.length && envModelCells[maxX + 1][pair.col()].equals(ECellContent.OBSTACLE))
-	      maxX++;
-	    // If the difference is larger than 4, we have 5 in a row
-	    return maxX - minX;
-	  }
+			return new int[] {0, 0};
+		// Find the minimum and maximum x values for this y which have OBSTACLE
+		int minX = pair.row();
+		while (minX > 0 && envModelCells[minX - 1][pair.col()].getContent() == ECellContent.OBSTACLE)
+			minX--;
+		int maxX = pair.row();
+		while ((maxX + 1) < envModelCells.length && envModelCells[maxX + 1][pair.col()].getContent() == ECellContent.OBSTACLE)
+			maxX++;
+		return new int[] {minX, maxX};
+	}
 
-	 /**
-	   * Check if (x,y) is part of a vertical 5 in a row obstacle.
-	   *
-	   * @param x X coordinate of cell to check
-	   * @param y Y coordinate of cell to check
-	   * @return true if there are 5 in a row including (x,y)
-	   */
-	  private boolean checkForVerticalWall(IndexPair pair)
-	  {
-	    // Find the minimum and maximum y values for this x which have the same mark
-	    int minY = pair.col();
-	    while (minY > 0 && envModelCells[pair.row()][minY - 1].equals(ECellContent.OBSTACLE))
-	      minY--;
-	    int maxY = pair.col();
-	    while ((maxY + 1) < envModelCells.length && envModelCells[pair.row()][maxY + 1].equals(ECellContent.OBSTACLE))
-	      maxY++;
-	    // If the difference is larger than 4, we have 5 in a row
-	    return maxY - minY >= 4;
+	/**
+	 * Check if (x,y) is part of a vertical 5 in a row obstacle.
+	 *
+	 * @param x X coordinate of cell to check
+	 * @param y Y coordinate of cell to check
+	 * @return true if there are 5 in a row including (x,y)
+	 */
+	private int[] checkForHorizontalWall(IndexPair pair)
+	{
 
-	  }
-	
+		if (pair.row() == 4 && pair.col() == 20)
+			System.out.println("lol");
+		if (getCellContent(pair) != ECellContent.OBSTACLE)
+			return new int[] {0, 0};
+		// Find the minimum and maximum y values for this x which have OBSTACLE
+		int minY = pair.col();
+		while (minY > 0 && envModelCells[pair.row()][minY - 1].getContent() == ECellContent.OBSTACLE)
+			minY--;
+		int maxY = pair.col();
+		while ((maxY + 1) < envModelCells.length && envModelCells[pair.row()][maxY + 1].getContent() == ECellContent.OBSTACLE)
+			maxY++;
+		return new int[] {minY, maxY};
+	}
+
 	private boolean isObstacle(IndexPair pair) {
 		if (pair == null)
 			return false;
 		return (getCellContent(pair) == ECellContent.OBSTACLE);
 	}
-	
+
 	private boolean isUnknown(IndexPair pair) {
 		if (pair == null)
 			return false;
 		return (getCellContent(pair) == ECellContent.UNKNOWN);
 	}
-	
+
 	private boolean isClear(IndexPair pair) {
 		if (pair == null)
 			return false;
 		return (getCellContent(pair) == ECellContent.CLEAR);
 	}
-	
+
 	private boolean isProbablyAWall(IndexPair pair) {
 		IndexPair[][] n =  getNeighbourCellsAsArray(pair);
 		if (isClear(n[1][0]) && isClear(n[1][2]))
@@ -736,10 +842,10 @@ public class EnvModel extends Observable implements TableModel {
 		}
 		setCell(positionToDraw, content, lightState);
 	}
-	
+
 	private IndexPair[][] getNeighbourCellsAsArray(IndexPair cell) {
 		IndexPair[][] indexPairs = new IndexPair[3][3];
-		
+
 		for (int i = -1; i < 2; i++) {
 			for (int k = -1; k < 2; k++) {
 				try {
@@ -749,10 +855,10 @@ public class EnvModel extends Observable implements TableModel {
 				}
 			}
 		}
-		
+
 		return indexPairs;
 	}
-	
+
 	public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
 		Stack<IndexPair> neighbours = new Stack<IndexPair>();
 		neighbours.add(new IndexPair(cell.row() - 1, cell.col()));
@@ -765,7 +871,7 @@ public class EnvModel extends Observable implements TableModel {
 		neighbours.add(new IndexPair(cell.row() - 1, cell.col() - 1));
 		return neighbours;
 	}
-	
+
 	public void parseMap() {
 		Cluster cluster;
 		IndexPair cell;
@@ -785,17 +891,17 @@ public class EnvModel extends Observable implements TableModel {
 			}
 		}
 	}
-	
+
 	/*
 	 * JAVA SWING RELATED SHIT FROM HERE
 	 */
-	
+
 	private void notifyListeners(){
 		TableModelEvent event = new TableModelEvent(this);
-	    for (TableModelListener listener : listeners)
-	      listener.tableChanged(event);
+		for (TableModelListener listener : listeners)
+			listener.tableChanged(event);
 	}
-	
+
 	@Override
 	public void addTableModelListener(TableModelListener l) {
 		listeners.add(l);
@@ -836,7 +942,7 @@ public class EnvModel extends Observable implements TableModel {
 	@Override
 	public void removeTableModelListener(TableModelListener l) {
 		listeners.remove(l);
-		
+
 	}
 
 	@Override

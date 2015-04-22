@@ -17,6 +17,10 @@ public class PropertyReader {
 		return getProperty("wheelInterval");
 	}
 	
+	public static int getWallLenght() {
+		return getProperty("wallLength");
+	}
+	
 	public static int getEmergencyStopBoundary() {
 		return getProperty("emergencyStopBoundary");
 	}

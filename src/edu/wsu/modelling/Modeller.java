@@ -31,7 +31,7 @@ public class Modeller extends Observable implements Observer, TurnListener {
 	@Override
 	public void onTurnInitialized(int angle) {
 		envModel.changeRobotDirection(angle);
-//		envModel.postDrawRendering();
+		envModel.postDrawRendering();
 	}
 
 	@Override
