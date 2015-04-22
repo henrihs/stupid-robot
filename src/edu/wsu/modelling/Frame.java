@@ -23,11 +23,11 @@ public class Frame extends JFrame {
 	}
 	
 	private void initGui(){
-		board.setFont(board.getFont().deriveFont(4.0f));
-	    board.setRowHeight(5);
+		board.setFont(board.getFont().deriveFont(8.0f));
+	    board.setRowHeight(8);
 	    board.setCellSelectionEnabled(true);
 	    for (int i = 0; i < board.getColumnCount(); i++)
-	      board.getColumnModel().getColumn(i).setPreferredWidth(5);
+	      board.getColumnModel().getColumn(i).setPreferredWidth(8);
 	    board.setGridColor(Color.WHITE);
 	    board.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	    DefaultTableCellRenderer dtcl = new DefaultTableCellRenderer();

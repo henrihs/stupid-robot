@@ -26,6 +26,7 @@ public class ObservableSensorFactory {
 //		schedule(createDistanceSensor(sensor));
 //		schedule(createLightSensor(sensor));
 		scheduler.scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
+		scheduler.scheduleAtFixedRate(createFrontSensor(), getScheduleRate(), 1, TimeUnit.MILLISECONDS);
 	}
 	
 //	private void schedule(Runnable observableSensor){
@@ -41,16 +42,16 @@ public class ObservableSensorFactory {
 		return wheelSensor;
 	}
 	
+	private FrontSensor createFrontSensor() {
+		FrontSensor frontSensor = new FrontSensor(robot);
+		frontSensor.addObserver(sensorHandler);
+		return frontSensor;
+	}
+	
 //	private LightSensor createLightSensor(ESensor sensor){
 //		LightSensor lightSensor = new LightSensor(robot, sensor);
 //		lightSensor.addObserver(sensorHandler);
 //		return lightSensor;
 //	}
 //	
-//	private DistanceSensor createDistanceSensor(ESensor sensor){
-//		DistanceSensor distanceSensor = new DistanceSensor(robot, sensor);
-//		distanceSensor.addObserver(sensorHandler);
-//		return distanceSensor;
-//	}
-
 }

@@ -31,14 +31,14 @@ public class Modeller extends Observable implements Observer, TurnListener {
 	@Override
 	public void onTurnInitialized(int angle) {
 		envModel.changeRobotDirection(angle);
-		envModel.postDrawRendering();
+//		envModel.postDrawRendering();
 	}
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		if (!(arg1 instanceof SensorHandler))
-			return;
-		envModel.moveRobotPresence();
-		envModel.drawSurroundings((SensorHandler)arg1);
+		if (arg1 instanceof WheelSensor)
+			envModel.moveRobotPresence();
+		envModel.drawSurroundings((SensorHandler)arg0);
+//		System.out.println(envModel);
 	}
 }

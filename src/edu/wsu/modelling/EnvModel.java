@@ -100,7 +100,7 @@ public class EnvModel extends Observable implements TableModel {
 		IndexPair currentPosition = locateRobot();
 		IndexPair nextPosition = findPositionInFront(getRobotDirection(), currentPosition);
 		moveRobotPresence(nextPosition.row(), nextPosition.col());
-		setChanged();
+//		setChanged();
 	}
 	
 	public EDirection getRobotDirection(){
@@ -129,6 +129,8 @@ public class EnvModel extends Observable implements TableModel {
 		directionValue += angle/90;
 		directionValue = EDirection.moduloValue(directionValue);
 		setRobotDirectionValue(directionValue);
+//		setChanged();
+//		notifyObservers();
 	}
 		
 	public IndexPair findPositionFromSensorEnum(IndexPair currentPosition, ESensor sensor) {
@@ -226,9 +228,6 @@ public class EnvModel extends Observable implements TableModel {
 			envModelCells[row][col].setContent(content);
 		if (lightState != null)
 			envModelCells[row][col].setLightIntensity(lightState);
-		TableModelEvent event = new TableModelEvent(this, row, row, col);
-	    for (TableModelListener listener : listeners)
-	      listener.tableChanged(event);
 	}
 	
 	/**
@@ -449,7 +448,7 @@ public class EnvModel extends Observable implements TableModel {
 		IndexPair currentRobotPosition = locateRobot();
 		if (currentRobotPosition != null) {
 			getCell(currentRobotPosition.row(), currentRobotPosition.col()).setRobotPresent(false);
-			setCell(currentRobotPosition.row(), currentRobotPosition.col(), ECellContent.CLEAR);
+			getCell(currentRobotPosition.row(), currentRobotPosition.col()).setContent(ECellContent.CLEAR);
 		}
 		getCell(nextRobotPosition.row(), nextRobotPosition.col()).setRobotPresent(true);
 	}
@@ -577,9 +576,12 @@ public class EnvModel extends Observable implements TableModel {
 			return lightIntensity;
 		}
 
+		/*
+		 * Returns true if content of other cell is equal to this cells content
+		 */
 		@Override
 		public boolean equals(Object obj){
-			return obj instanceof Cell && content.equals(((Cell) obj).getContent()) && lightIntensity == ((Cell)obj).getLightIntensity(); 
+			return (obj instanceof Cell && content.equals(((Cell) obj).getContent())); 
 		}
 
 		@Override
@@ -596,49 +598,86 @@ public class EnvModel extends Observable implements TableModel {
 		HashMap<ESensor, ELightSensorState> lightSensors = sensorHandler.getLightSensorStates();
 		IndexPair currentPosition = locateRobot();
 		boolean obstacleInFront = false;
+//		boolean closeInFront = false;
 		
 		if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.OBSTACLE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.OBSTACLE )
 			obstacleInFront = true;
+//		else if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.CLOSE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.CLOSE)
+//			closeInFront = true;
 		
 		for (ESensor sensor : distanceSensors.keySet()) {
 			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
 			if (positionToDraw == null)
 				continue;
-			if ((sensor == ESensor.FRONTL && obstacleInFront) || (sensor == ESensor.FRONTR && obstacleInFront))
-				draw(EDistanceSensorState.OBSTACLE, lightSensors.get(sensor), positionToDraw);
+			if ((sensor == ESensor.FRONTL) || (sensor == ESensor.FRONTR)) {
+				if (obstacleInFront)
+					draw(EDistanceSensorState.OBSTACLE, lightSensors.get(sensor), positionToDraw);
+				else
+					draw(EDistanceSensorState.CLEAR, lightSensors.get(sensor), positionToDraw);
+//				else if (closeInFront)
+//					draw(EDistanceSensorState.CLOSE, lightSensors.get(sensor), positionToDraw);
+			}
 			else
 				draw(distanceSensors.get(sensor), lightSensors.get(sensor), positionToDraw);
 		}
 		
+		notifyListeners();
 		setChanged();
 		notifyObservers();
 	}
 	
 	protected void postDrawRendering() {
-		for (int i = 0; i < envModelCells.length; i++) {
-			for (int k = 0; k < envModelCells.length; k++) {
-				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
-					IndexPair cellLocation = new IndexPair(i, k);
-					if (isProbablyAOuterCorner(cellLocation) || isProbablyAWall(cellLocation))
-						setCell(cellLocation, ECellContent.OBSTACLE);
-				}
-			}
-		}
+//		for (int i = 0; i < envModelCells.length; i++) {
+//			for (int k = 0; k < envModelCells.length; k++) {
+//				if (envModelCells[i][k].getContent() == ECellContent.CLEAR) {
+//					IndexPair cellLocation = new IndexPair(i, k);
+//					if
+//				}
+//			}
+//		}
 	}
 	
-	private boolean isProbablyAOuterCorner(IndexPair pair) {
-		IndexPair[][] n =  getNeighbourCellsAsArray(pair);
-		if (isObstacle(n[0][1]) && isObstacle(n[1][0]) && isUnknown(n[0][0]) && isClear(n[0][2]) && isClear(n[2][0]))
-			return true;
-		else if (isObstacle(n[0][1]) && isObstacle(n[1][2]) && isUnknown(n[0][2]) && isClear(n[0][0]) && isClear(n[2][2]))
-			return true;
-		else if (isObstacle(n[1][0]) && isObstacle(n[2][1]) && isUnknown(n[2][0]) && isClear(n[0][0]) && isClear(n[2][2]))
-			return true;
-		else if (isObstacle(n[2][1]) && isObstacle(n[1][2]) && isUnknown(n[2][2]) && isClear(n[0][2]) && isClear(n[2][0]))
-			return true;
-		
-		return false;
-	}
+	/**
+	   * Check if (x,y) is part of a horizontal 5 in a row obstacle.
+	   *
+	   * @param indexPair 
+	   * @return true if there are 5 in a row including (x,y)
+	   */
+	private int checkForHorizontalWall(IndexPair pair)
+	  {
+		if (getCellContent(pair) != ECellContent.OBSTACLE)
+			return 0;
+	    // Find the minimum and maximum x values for this y which have the same mark
+	    int minX = pair.row();
+	    while (minX > 0 && envModelCells[minX - 1][pair.col()].equals(ECellContent.OBSTACLE))
+	      minX--;
+	    int maxX = pair.row();
+	    while ((maxX + 1) < envModelCells.length && envModelCells[maxX + 1][pair.col()].equals(ECellContent.OBSTACLE))
+	      maxX++;
+	    // If the difference is larger than 4, we have 5 in a row
+	    return maxX - minX;
+	  }
+
+	 /**
+	   * Check if (x,y) is part of a vertical 5 in a row obstacle.
+	   *
+	   * @param x X coordinate of cell to check
+	   * @param y Y coordinate of cell to check
+	   * @return true if there are 5 in a row including (x,y)
+	   */
+	  private boolean checkForVerticalWall(IndexPair pair)
+	  {
+	    // Find the minimum and maximum y values for this x which have the same mark
+	    int minY = pair.col();
+	    while (minY > 0 && envModelCells[pair.row()][minY - 1].equals(ECellContent.OBSTACLE))
+	      minY--;
+	    int maxY = pair.col();
+	    while ((maxY + 1) < envModelCells.length && envModelCells[pair.row()][maxY + 1].equals(ECellContent.OBSTACLE))
+	      maxY++;
+	    // If the difference is larger than 4, we have 5 in a row
+	    return maxY - minY >= 4;
+
+	  }
 	
 	private boolean isObstacle(IndexPair pair) {
 		if (pair == null)
@@ -681,6 +720,9 @@ public class EnvModel extends Observable implements TableModel {
 			break;
 		case OBSTACLE:
 			content = ECellContent.OBSTACLE;
+			break;
+		case CLOSE:
+			content = ECellContent.CLOSE_TO_OBSTACLE;
 			break;
 		}
 		setCell(positionToDraw, content, lightState);
@@ -754,6 +796,12 @@ public class EnvModel extends Observable implements TableModel {
 	/*
 	 * JAVA SWING RELATED SHIT FROM HERE
 	 */
+	
+	private void notifyListeners(){
+		TableModelEvent event = new TableModelEvent(this);
+	    for (TableModelListener listener : listeners)
+	      listener.tableChanged(event);
+	}
 	
 	@Override
 	public void addTableModelListener(TableModelListener l) {

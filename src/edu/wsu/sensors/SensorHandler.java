@@ -24,7 +24,7 @@ public class SensorHandler extends Observable implements Observer {
 		lightSensorStates = new HashMap<ESensor, ELightSensorState>();
 		distanceSensorStates = new HashMap<ESensor, EDistanceSensorState>();
 	}
-	
+
 	public void setRobot(Robot robot) {
 		this.robot = robot;
 	}
@@ -40,36 +40,36 @@ public class SensorHandler extends Observable implements Observer {
 	// Observer pattern
 	@Override
 	public void update(Observable sensor, Object data) {
-		if (sensor instanceof WheelSensor) {
-			updateSensorValues();
-			setChanged();
-			notifyObservers(this);
-		}
+		updateSensorValues();
+		setChanged();
+		notifyObservers(sensor);
+
 	}
-	
+
 	private void updateSensorValues() {
 		for (ESensor sensor : ESensor.values()) {
+			if (sensor == ESensor.BACKL || sensor == ESensor.BACKR)
+				continue;
 			int distance = robot.getDistanceValue(sensor.val());
 			int light = robot.getLightValue(sensor.val());
-			if (distance > 1000) {
-				//TODO UPDATE ROBOT AND DRIVE OUT OF SHIT
-			}
 			setDistanceSensorState(sensor, distance);
 			setLightSensorState(sensor, light);
 		}
 	}
-	
+
 	private void setDistanceSensorState(ESensor sensor, int value) {
 		EDistanceSensorState state;
 		if (inInterval(value, getClearLowerBoundary(), getClearUpperBoundary()))
 			state = EDistanceSensorState.CLEAR;
+		//		else if (inInterval(value, getCloseLowerBoundary(), getCloseUpperBoundary()))
+		//			state = EDistanceSensorState.CLOSE;
 		else if (inInterval(value, getObstacleLowerBoundary(), getObstacleUpperBoundary()))
 			state = EDistanceSensorState.OBSTACLE;
 		else
 			state = EDistanceSensorState.UNKNOWN;
 		distanceSensorStates.put(sensor, state);
 	}
-	
+
 	private void setLightSensorState(ESensor sensor, int value) {
 		ELightSensorState state;
 		if (inInterval(value, getDarkLowerBoundary(), getDarkUpperBoundary()))
@@ -82,12 +82,8 @@ public class SensorHandler extends Observable implements Observer {
 			state = ELightSensorState.UNKNOWN;
 		lightSensorStates.put(sensor, state);
 	}
-	
-	 private boolean isFront(ESensor sensor) {
-	 return (sensor == ESensor.FRONTL || sensor == ESensor.FRONTR);
-	 }
-	
-	 private boolean isObstacle(ISensorState sensorState) {
-	 return (sensorState instanceof DistanceState_Obstacle);
-	 }
+
+	private boolean isFront(ESensor sensor) {
+		return (sensor == ESensor.FRONTL || sensor == ESensor.FRONTR);
+	}
 }
