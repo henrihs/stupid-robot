@@ -48,7 +48,9 @@ public class PathFinder {
 		initDistanceMap();
 		initDirections();
 		found.clear();
-		path.clear();		
+		found.trimToSize();
+		path.clear();
+		path.trimToSize();
 	}
 		
 	private void initDirections() {
