@@ -48,7 +48,9 @@ public class PathFinder {
 		initDistanceMap();
 		initDirections();
 		found.clear();
-		path.clear();		
+		found.trimToSize();
+		path.clear();
+		path.trimToSize();
 	}
 		
 	private void initDirections() {
@@ -116,7 +118,12 @@ public class PathFinder {
 	 * @param value
 	 */
 	private void setDistanceCell(IndexPair cell, int value) {
-		distanceMap[cell.row()][cell.col()] = value;
+		try {
+			distanceMap[cell.row()][cell.col()] = value;
+		} catch (NullPointerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

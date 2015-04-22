@@ -41,9 +41,13 @@ public class EnvModel extends Observable implements TableModel {
 	}
 	
 	public boolean obstacleInFront() {
-		if (findPositionInFront(currentRobotDirection, locateRobot()) == null)
+		try {
+			if (findPositionInFront(currentRobotDirection, locateRobot()) == null)
+				return false;
+			return (getCellContent(findPositionInFront(currentRobotDirection, locateRobot())) == ECellContent.OBSTACLE);
+		} catch (NullPointerException e) {
 			return false;
-		return (getCellContent(findPositionInFront(currentRobotDirection, locateRobot())) == ECellContent.OBSTACLE);
+		}
 	}
 	
 	public boolean destinationInFront(IndexPair destination) {
@@ -744,7 +748,7 @@ public class EnvModel extends Observable implements TableModel {
 		return indexPairs;
 	}
 	
-	private Stack<IndexPair> getNeighbourCells(IndexPair cell) {
+	public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
 		Stack<IndexPair> neighbours = new Stack<IndexPair>();
 		neighbours.add(new IndexPair(cell.row() - 1, cell.col()));
 		neighbours.add(new IndexPair(cell.row(), cell.col() + 1));
@@ -757,22 +761,19 @@ public class EnvModel extends Observable implements TableModel {
 		return neighbours;
 	}
 	
-	private boolean isBall(IndexPair cell) {
-		for (IndexPair neighbour: getNeighbourCells(cell)) {
-			if (getCellContent(neighbour) == ECellContent.OBSTACLE) {
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	private void renderBalls() {
-		for (int row = 0; row < getModelSize(); row++) {
-			for (int col = 0; col < getModelSize(); col++) {
-				IndexPair cell = new IndexPair(row, col);
-				if (getCellContent(cell) == ECellContent.BALL) {
-					if (isBall(cell)) {
-						setCell(cell, ECellContent.BALL);
+	public void parseMap() {
+		Cluster cluster;
+		IndexPair cell;
+		if (percentDiscovered() > 0.20) {
+			for (int row = 0; row < envModelCells.length; row++) {
+				for (int col = 0; col < envModelCells[row].length; col++) {
+					try {
+						cell = new IndexPair(row, col);
+						if (getCellContent(cell) == ECellContent.UNKNOWN || getCellContent(cell) == ECellContent.OBSTACLE) {
+							cluster = new Cluster(this, cell);
+							cluster.run();
+						}
+					} catch (IndexOutOfBoundsException e) {
 					}
 				}
 			}
@@ -780,8 +781,8 @@ public class EnvModel extends Observable implements TableModel {
 	}
 	
 	private float percentDiscovered() {
-		int mapSize = getModelSize() * getModelSize();
-		int unknown = 0;
+		float mapSize = getModelSize() * getModelSize();
+		float unknown = 0;
 		for (Cell[] row: envModelCells) {
 			for (Cell col: row) {
 				if (col.getContent() == ECellContent.UNKNOWN) {

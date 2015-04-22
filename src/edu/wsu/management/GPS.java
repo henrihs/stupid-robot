@@ -72,6 +72,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
+			envModel.parseMap();
 		}
 		for (int i = 0; i < order.getLength(); i++) {
 			stateQueue.add(new RobotState_Drive());
