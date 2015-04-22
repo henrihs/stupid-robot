@@ -109,12 +109,12 @@ public class PropertyReader {
 		return getProperty("modelSize");
 	}
 	
-	public static int getBallClusterSize() {
-		return getProperty("ballCluster");
+	public static int getBallClusterLower() {
+		return getProperty("ballClusterLower");
 	}
 	
-	public static int getUnknownClusterSize() {
-		return getProperty("unknownCluster");
+	public static int getBallClusterUpper() {
+		return getProperty("ballClusterUpper");
 	}
 	
 	public static int getProperty(String propertyKey){

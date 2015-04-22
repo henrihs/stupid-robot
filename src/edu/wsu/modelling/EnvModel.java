@@ -23,6 +23,7 @@ public class EnvModel extends Observable implements TableModel {
 	protected final int modelSize;
 	private final Cell[][] envModelCells;
 	private List<TableModelListener> listeners = new ArrayList<TableModelListener>();
+	private boolean ballReadyForPickup;
 
 	public EnvModel(int modelSize){
 		this.modelSize = modelSize;
@@ -34,6 +35,10 @@ public class EnvModel extends Observable implements TableModel {
 			}
 		}
 		currentRobotDirection = EDirection.RIGHT;
+	}
+	
+	public boolean getBallReady() {
+		return ballReadyForPickup;
 	}
 	
 	public int getModelSize() {
@@ -764,35 +769,22 @@ public class EnvModel extends Observable implements TableModel {
 	public void parseMap() {
 		Cluster cluster;
 		IndexPair cell;
-		if (percentDiscovered() > 0.20) {
-			for (int row = 0; row < envModelCells.length; row++) {
-				for (int col = 0; col < envModelCells[row].length; col++) {
-					try {
-						cell = new IndexPair(row, col);
-						if (getCellContent(cell) == ECellContent.UNKNOWN || getCellContent(cell) == ECellContent.OBSTACLE) {
-							cluster = new Cluster(this, cell);
-							cluster.run();
-						}
-					} catch (IndexOutOfBoundsException e) {
+		ballReadyForPickup = false;
+		for (int row = 0; row < envModelCells.length; row++) {
+			for (int col = 0; col < envModelCells[row].length; col++) {
+				try {
+					cell = new IndexPair(row, col);
+					if (getCellContent(cell) == ECellContent.OBSTACLE) {
+						cluster = new Cluster(this, cell);
+						cluster.run();
 					}
-				}
+					if (getCellContent(cell) == ECellContent.BALL && getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
+						ballReadyForPickup = true;
+					}
+				} catch (IndexOutOfBoundsException e) {}
 			}
 		}
 	}
-	
-	private float percentDiscovered() {
-		float mapSize = getModelSize() * getModelSize();
-		float unknown = 0;
-		for (Cell[] row: envModelCells) {
-			for (Cell col: row) {
-				if (col.getContent() == ECellContent.UNKNOWN) {
-					unknown++;
-				}
-			}
-		}
-		return 1 - (unknown / mapSize);
-	}
-
 	
 	/*
 	 * JAVA SWING RELATED SHIT FROM HERE

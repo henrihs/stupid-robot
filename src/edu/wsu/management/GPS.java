@@ -68,6 +68,9 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	private void addToQueue(Order order) {
 //		System.out.println("Robot is at (" + envModel.locateRobot().row() + ", " + envModel.locateRobot().col() + ")");
 //		System.out.println("Order is " + order.getLength() + " times " + order.getDiretion() + " to (" + order.getExpectedEnd().row() + ", " + order.getExpectedEnd() + ")");
+		if (envModel.getBallReady()) {
+			System.out.println("A ball is ready for pickup");
+		}
 
 		int angle = getTurnAngle(order);
 		if (angle != 0) {

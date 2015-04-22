@@ -2,13 +2,13 @@ package edu.wsu.modelling;
 
 import java.util.Stack;
 import static common.PropertyReader.*;
+import static common.Methods.*;
 
 public class Cluster {
 
 	private Stack<IndexPair> cluster;
 	private Stack<IndexPair> next;
 	private int max_distance;
-	private ECellContent cluster_type;
 	private EnvModel envModel;
 	
 	public Cluster(EnvModel envModel, IndexPair cell) {
@@ -61,6 +61,7 @@ public class Cluster {
 			}
 		}
 		next.clear();
+		next.trimToSize();
 		next = (Stack<IndexPair>) found.clone();
 	}
 	
@@ -69,7 +70,7 @@ public class Cluster {
 	}
 	
 	private boolean valid() {
-		return max_distance <= getUnknownClusterSize();
+		return inInterval(max_distance, 0, getBallClusterUpper() + 1);
 	}
 	
 	private void setMaxDistance() {
@@ -85,13 +86,12 @@ public class Cluster {
 	}
 	
 	private void setClusterType() {
-		if (max_distance == getUnknownClusterSize())
-			cluster_type = ECellContent.UNKNOWN;
-		else if (max_distance == getBallClusterSize())
-			cluster_type = ECellContent.BALL;
-		else
+		ECellContent cluster_type = ECellContent.UNKNOWN;
+		if (inInterval(max_distance, 0, getBallClusterLower())) {
 			cluster_type = ECellContent.CLEAR;
-
+		} else if (inInterval(max_distance, getBallClusterLower(), getBallClusterUpper() + 1)) {
+			cluster_type = ECellContent.BALL;
+		}
 		for (IndexPair cell: cluster) {
 			envModel.setCell(cell, cluster_type);
 		}
