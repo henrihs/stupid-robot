@@ -1,7 +1,7 @@
 package edu.wsu.sensors.light;
 
 public enum ELightSensorState {
-	DARK("-"), DUSKY("+"), LIGHT("*"), UNKNOWN(" ");
+	DARK(" "), LIGHT("+"), UNKNOWN(" ");
 	
 	private String symbol;
 	
