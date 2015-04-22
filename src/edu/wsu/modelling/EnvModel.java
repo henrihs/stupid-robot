@@ -807,9 +807,6 @@ public class EnvModel extends Observable implements TableModel {
 	 */
 	private int[] checkForHorizontalWall(IndexPair pair)
 	{
-
-		if (pair.row() == 4 && pair.col() == 20)
-			System.out.println("lol");
 		if (getCellContent(pair) != ECellContent.OBSTACLE)
 			return new int[] {0, 0};
 		// Find the minimum and maximum y values for this x which have OBSTACLE
