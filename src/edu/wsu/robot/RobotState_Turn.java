@@ -5,7 +5,12 @@ import static common.PropertyReader.*;
 public class RobotState_Turn implements IRobotStates {
 
 	private Robot robot;
+	private IRobotStates nextState;
 
+	public RobotState_Turn(IRobotStates nextState) {
+		this.nextState = nextState;
+	}
+	
 	@Override
 	public void doWork(Robot robot) {
 		if (this.robot == null)
@@ -20,7 +25,11 @@ public class RobotState_Turn implements IRobotStates {
 		
 		if (doneTurning()) {
 			robot.stop();
-			robot.setState(new RobotState_Stop());
+			if (nextState != null) {
+				robot.setState(nextState);
+			} else {
+				robot.setState(new RobotState_Stop());
+			}
 		}
 		else if (shouldKeepTurning()) {
 			robot.setMotorSpeeds(wheelSpeed, -wheelSpeed);

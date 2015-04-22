@@ -77,7 +77,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			envModel.parseMap();
 		}
 		if (order.isBallOrder()) {
-			for (int i = 0; i < order.getLength() - 3; i++) {
+			for (int i = 0; i < order.getLength() - 1; i++) {
 				stateQueue.add(new RobotState_Drive());
 			}			
 		} else {

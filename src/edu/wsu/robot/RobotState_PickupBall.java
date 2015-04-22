@@ -20,7 +20,12 @@ public class RobotState_PickupBall implements IRobotStates {
 		if (this.robot == null)
 			this.robot = robot;
 		if (robot.isObjectHeld()) {
-			returnToInitPosition();
+			if (!turnHistory.empty()) {
+				returnToInitPosition();	
+			} else {
+				robot.setState(new RobotState_Stop());				
+			}
+		
 			//TODO: Fire event to DecisionMaker, telling it to move on
 //			robot.setNextState(null);
 //			robot.pollNextState();
@@ -35,9 +40,7 @@ public class RobotState_PickupBall implements IRobotStates {
 	}
 
 	private void returnToInitPosition() {
-		for (Integer angle : turnHistory) {
-			setToInitTurn(-angle);
-		}		
+		setToInitTurn(-turnHistory.pop());
 	}
 
 	private void turnToLocateBall() throws Exception {
@@ -49,20 +52,18 @@ public class RobotState_PickupBall implements IRobotStates {
 			throw new BallNotFoundException(
 					"The ball pickup algorithm needs improval");
 		
+		turnHistory.add(angle);
 		setToInitTurn(angle);
 	}
 	
 	private void setToInitTurn(int angle) {
-		IRobotStates initTurnState = new RobotState_InitTurn(angle);
-//		robot.setNextState(initTurnState);
-//		robot.appendStateToQueue(this);
-//		turnHistory.add(angle);
-//		robot.pollNextState();
+		IRobotStates initTurnState = new RobotState_InitTurn(angle, this);
+		robot.setState(initTurnState);
 	}
 
 	private boolean checkIfObjectIsInFront() {
-		if (robot.getDistanceValue(ESensor.LEFT.val()) > 900 && 
-		robot.getDistanceValue(ESensor.RIGHT.val()) > 900 )
+		if (robot.getDistanceValue(ESensor.FRONTL.val()) > 300 && 
+		robot.getDistanceValue(ESensor.FRONTR.val()) > 300 )
 			return true;
 		return false;
 	}
