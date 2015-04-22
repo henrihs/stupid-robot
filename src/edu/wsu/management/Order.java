@@ -12,12 +12,31 @@ public class Order {
 	private EDirection direction;
 	private int length;
 	private IndexPair expectedEnd;
+	private IndexPair finalDestination;
+	private boolean ballOrder;
 	
 	public Order(Stack<IndexPair> path) {
+		this.ballOrder = false;
 		this.path = path;
 		this.length = 1;
 		this.direction = null;
 		generateOrder();
+	}
+	
+	public Order(Stack<IndexPair> path, boolean ballOrder) {
+		this.ballOrder = ballOrder;
+		this.path = path;
+		this.length = 1;
+		this.direction = null;
+		generateOrder();
+	}
+	
+	public IndexPair getFinalDestination() {
+		return finalDestination;
+	}
+	
+	public boolean isBallOrder() {
+		return ballOrder;
 	}
 	
 	public String toString() {
@@ -49,6 +68,7 @@ public class Order {
 	 * Generates the order based on the path given in constructor.
 	 */
 	private void generateOrder() {
+		finalDestination = path.firstElement();
 		ListIterator li = path.listIterator(path.size());
 	
 		IndexPair next;

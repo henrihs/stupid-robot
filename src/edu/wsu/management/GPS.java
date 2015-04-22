@@ -10,6 +10,7 @@ import edu.wsu.modelling.IndexPair;
 import edu.wsu.robot.IRobotStates;
 import edu.wsu.robot.RobotState_Drive;
 import edu.wsu.robot.RobotState_InitTurn;
+import edu.wsu.robot.RobotState_PickupBall;
 import edu.wsu.robot.RobotState_Stop;
 import edu.wsu.sensors.distance.EDistanceSensorState;
 
@@ -39,6 +40,10 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			} else if (stateQueue.isEmpty()) {
 				addToQueue(pathToDestination());
 			}
+		} else if (envModel.getBallReady()) {
+			Order order = pathToBall(true);
+			setDestination(order.getExpectedEnd());
+			addToQueue(order);
 		} else {
 			Order order = pathToUnknown();
 			setDestination(order.getExpectedEnd());
@@ -66,23 +71,25 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	}
 	
 	private void addToQueue(Order order) {
-//		System.out.println("Robot is at (" + envModel.locateRobot().row() + ", " + envModel.locateRobot().col() + ")");
-//		System.out.println("Order is " + order.getLength() + " times " + order.getDiretion() + " to (" + order.getExpectedEnd().row() + ", " + order.getExpectedEnd() + ")");
-		if (envModel.getBallReady()) {
-			System.out.println("A ball is ready for pickup");
-		}
-
 		int angle = getTurnAngle(order);
 		if (angle != 0) {
 			stateQueue.add(new RobotState_InitTurn(angle));
 			envModel.parseMap();
 		}
-		for (int i = 0; i < order.getLength(); i++) {
-			stateQueue.add(new RobotState_Drive());
+		if (order.isBallOrder()) {
+			for (int i = 0; i < order.getLength() - 3; i++) {
+				stateQueue.add(new RobotState_Drive());
+			}			
+		} else {
+			for (int i = 0; i < order.getLength(); i++) {
+				stateQueue.add(new RobotState_Drive());
+			}
 		}
+
 		stateQueue.add(new RobotState_Stop());
-//		System.out.println(stateQueue);
-//		System.out.println(pathFinder);
+		if (order.isBallOrder() && order.getExpectedEnd().equals(order.getFinalDestination())) {
+			stateQueue.add(new RobotState_PickupBall());
+		}
 	}
 	
 	private boolean hasDestination() {
@@ -105,6 +112,10 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	
 	private Order pathToUnknown() {
 		return new Order(pathFinder.pathToUnknown());
+	}
+	
+	private Order pathToBall(boolean ballOrder) {
+		return new Order(pathFinder.pathToBall(), ballOrder);
 	}
 	
 	private int getTurnAngle(Order order) {
