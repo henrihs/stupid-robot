@@ -6,7 +6,6 @@ import edu.wsu.modelling.ECellContent;
 import edu.wsu.modelling.EDirection;
 import edu.wsu.modelling.EnvModel;
 import edu.wsu.modelling.IndexPair;
-import edu.wsu.sensors.EDistanceSensorState;
 
 public class PathFinder {
 

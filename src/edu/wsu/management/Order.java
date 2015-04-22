@@ -69,7 +69,7 @@ public class Order {
 	 */
 	private void generateOrder() {
 		finalDestination = path.firstElement();
-		ListIterator li = path.listIterator(path.size());
+		ListIterator<IndexPair> li = path.listIterator(path.size());
 	
 		IndexPair next;
 		IndexPair previous = null;

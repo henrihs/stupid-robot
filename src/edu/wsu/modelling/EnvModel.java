@@ -640,12 +640,9 @@ public class EnvModel extends Observable implements TableModel {
 		IndexPair currentPosition = locateRobot();
 		
 		boolean obstacleInFront = false;
-		//		boolean closeInFront = false;
 
 		if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.OBSTACLE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.OBSTACLE )
 			obstacleInFront = true;
-		//		else if (distanceSensors.get(ESensor.FRONTL) == EDistanceSensorState.CLOSE || distanceSensors.get(ESensor.FRONTR) == EDistanceSensorState.CLOSE)
-		//			closeInFront = true;
 
 		for (ESensor sensor : distanceSensors.keySet()) {
 			EDistanceSensorState distanceState = distanceSensors.get(sensor);
@@ -813,38 +810,6 @@ public class EnvModel extends Observable implements TableModel {
 		return new int[] {minY, maxY};
 	}
 
-	private boolean isObstacle(IndexPair pair) {
-		if (pair == null)
-			return false;
-		return (getCellContent(pair) == ECellContent.OBSTACLE);
-	}
-
-	private boolean isUnknown(IndexPair pair) {
-		if (pair == null)
-			return false;
-		return (getCellContent(pair) == ECellContent.UNKNOWN);
-	}
-
-	private boolean isClear(IndexPair pair) {
-		if (pair == null)
-			return false;
-		return (getCellContent(pair) == ECellContent.CLEAR);
-	}
-
-	private boolean isProbablyAWall(IndexPair pair) {
-		IndexPair[][] n =  getNeighbourCellsAsArray(pair);
-		if (isClear(n[1][0]) && isClear(n[1][2]))
-			return false;
-		else if (isClear(n[0][1]) && isClear(n[2][1]))
-			return false;
-		else {
-			if (isObstacle(n[0][1]) && isObstacle(n[2][1]))
-				return true;
-			else if (isObstacle(n[1][0]) && isObstacle(n[1][2]))
-				return true;
-		}
-		return false;
-	}
 
 	private void draw(EDistanceSensorState distanceState, ELightSensorState lightState, IndexPair positionToDraw) {
 		ECellContent content = null;
@@ -858,24 +823,10 @@ public class EnvModel extends Observable implements TableModel {
 		case CLOSE:
 			content = ECellContent.CLOSE_TO_OBSTACLE;
 			break;
+		default:
+			break;
 		}
 		setCell(positionToDraw, content, lightState);
-	}
-
-	private IndexPair[][] getNeighbourCellsAsArray(IndexPair cell) {
-		IndexPair[][] indexPairs = new IndexPair[3][3];
-
-		for (int i = -1; i < 2; i++) {
-			for (int k = -1; k < 2; k++) {
-				try {
-					indexPairs[i+1][k+1] = new IndexPair(cell.row() + i, cell.col() + k);					
-				} catch (IndexOutOfBoundsException e) {
-					indexPairs[i+1][k+1] = null;
-				}
-			}
-		}
-
-		return indexPairs;
 	}
 
 	public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
