@@ -40,7 +40,11 @@ public class RobotState_PickupBall implements IRobotStates {
 			return;
 		}
 		
-		turnToLocateBall();
+		try {
+			turnToLocateBall();
+		} catch (BallNotFoundException e) {
+			failed = true;
+		}
 	}
 
 	private void returnToInitPosition() {
@@ -52,9 +56,10 @@ public class RobotState_PickupBall implements IRobotStates {
 		int angle = getInitBallSearchAngle() - (turnHistory.size() * 5);
 		angle *= multiplier;
 		
-		if (turnHistory.size() > 10)
+		if (turnHistory.size() > 10) {
 			throw new BallNotFoundException(
 					"The ball pickup algorithm needs improval");
+		}
 		
 		turnHistory.add(angle);
 		setToInitTurn(angle);
