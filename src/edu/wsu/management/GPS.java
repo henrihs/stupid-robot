@@ -28,7 +28,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	public void init(EnvModel envModel) {
 		this.envModel = envModel;
 		isBallHeld = false;
-		pathFinder = new PathFinder(envModel);		
+		pathFinder = new PathFinder(envModel);
 	}
 	
 	@Override
@@ -49,7 +49,6 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			setDestination(order.getExpectedEnd());
 			addToQueue(order);
 		} else if (isBallHeld) {
-			stateQueue.clear();
 			setDestination(envModel.getBallDestination());
 			Order order = pathToDestination();
 			addToQueue(order);
@@ -85,7 +84,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			envModel.parseMap();
 			stateQueue.add(new RobotState_InitTurn(angle));
 		}
-		if (order.isBallOrder() || isBallHeld) {
+		if (order.isBallOrder() || (isBallHeld && order.getExpectedEnd().equals(envModel.getBallDestination()))) {
 			for (int i = 0; i < order.getLength() - 1; i++) {
 				stateQueue.add(new RobotState_Drive());
 			}			
@@ -99,7 +98,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		if (order.isBallOrder() && order.getExpectedEnd().equals(order.getFinalDestination())) {
 			stateQueue.add(new RobotState_PickupBall());
 		}
-		else if (isBallHeld && order.getExpectedEnd().equals(destination)) {
+		else if (isBallHeld && order.getExpectedEnd().equals(envModel.getBallDestination())) {
 			stateQueue.add(new RobotState_DropBall());
 		}
 		
