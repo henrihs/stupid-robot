@@ -20,6 +20,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 	private LinkedList<IRobotStates> stateQueue;
 	private IndexPair destination;
 	private boolean isBallHeld;
+	private IndexPair ballStart;
 		
 	public GPS() {
 		stateQueue = new LinkedList<IRobotStates>();
@@ -47,6 +48,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		} else if (envModel.getBallReady() && !isBallHeld) {
 			Order order = pathToBall(true);
 			setDestination(order.getExpectedEnd());
+			ballStart = order.getExpectedEnd();
 			addToQueue(order);
 		} else if (isBallHeld) {
 			setDestination(envModel.getBallDestination());
@@ -100,6 +102,12 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		}
 		else if (isBallHeld && order.getExpectedEnd().equals(envModel.getBallDestination())) {
 			stateQueue.add(new RobotState_DropBall());
+		}
+		
+		if (isBallHeld && ballStart != null) {
+			System.out.println("Ball: " + ballStart);
+			envModel.removeBall(ballStart);
+			ballStart = null;
 		}
 		
 		if (isBallHeld) {
