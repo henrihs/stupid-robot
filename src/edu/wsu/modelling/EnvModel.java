@@ -840,7 +840,8 @@ public class EnvModel extends Observable implements TableModel {
 		default:
 			break;
 		}
-		setCell(positionToDraw, content, lightState);
+		if (getCellContent(positionToDraw) != ECellContent.BALL)
+			setCell(positionToDraw, content, lightState);
 	}
 
 	public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
