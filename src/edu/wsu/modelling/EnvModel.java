@@ -633,8 +633,9 @@ public class EnvModel extends Observable implements TableModel {
 		}
 
 		public void setLightIntensity(ELightSensorState lightIntensity) {
-			if (this.lightIntensity != ELightSensorState.LIGHT)
-				this.lightIntensity = lightIntensity;
+			if (this.lightIntensity == ELightSensorState.LIGHT && lightIntensity == ELightSensorState.DARK)
+				return;
+			this.lightIntensity = lightIntensity;
 		}
 
 		public ECellContent getContent(){

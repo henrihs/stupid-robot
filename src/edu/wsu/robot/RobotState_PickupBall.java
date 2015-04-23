@@ -26,7 +26,7 @@ public class RobotState_PickupBall implements IRobotStates {
 				returnToInitPosition();	
 			} else {
 				IRobotStates nextState;
-				if (!failed)
+				if (robot.isObjectHeld())
 					nextState = new RobotState_InitTurn(180);
 				else
 					nextState = new RobotState_Stop();
