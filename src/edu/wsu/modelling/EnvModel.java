@@ -682,14 +682,13 @@ public class EnvModel extends Observable implements TableModel {
 	}
 
 	private void sharpenCorners(){
-		//		ArrayList<IndexPair> checked = new ArrayList<>();
+		ArrayList<IndexPair> checked = new ArrayList<>();
 		for (int i = 0; i < envModelCells.length; i++) {
 			for (int k = 0; k < envModelCells.length; k++) {
 				try {
 					IndexPair pair = new IndexPair(i, k);
-					//					if (!checked.contains(pair))
-					//						checked.addAll(checkForCorner(pair));
-					checkForCorner(pair);
+					if (!checked.contains(pair))
+						checked.addAll(checkForCorner(pair));
 				} catch (IndexOutOfBoundsException e) {
 				}
 			}
@@ -699,11 +698,15 @@ public class EnvModel extends Observable implements TableModel {
 	/**
 	 * @return ArrayList<IndexPair> contains IndexPairs that are walls to avoid double checking
 	 */
-	private void checkForCorner(IndexPair pair) {
-		//		ArrayList<IndexPair> checkedPairs = new ArrayList<>();
+	private ArrayList<IndexPair> checkForCorner(IndexPair pair) {
+		ArrayList<IndexPair> checkedPairs = new ArrayList<>();
 
 		int[] horizontalNeighbours = checkForHorizontalWall(pair);
 		int[] verticalNeighbours = checkForVerticalWall(pair);
+		
+		if (!isEndOfWall(pair)) {
+			return checkedPairs;
+		}
 
 		if (verticalNeighbours[1] - verticalNeighbours[0] > getWallLenght() &&
 				horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()){
@@ -719,224 +722,265 @@ public class EnvModel extends Observable implements TableModel {
 						int[] horizontalLower = checkForHorizontalWall(lower);
 						int wallLengthLower = horizontalLower[1] - horizontalLower[0];
 						if (wallLengthLower >= getWallLenght()) {
-							for (int i = 0; i <= c; i++) {
+							for (int i = 0; i <= Math.abs(c); i++) {
 								for (int k = 0; k <= r; k++) {
-									if (c < 0)
-										setCell(minEnd.row() - k, minEnd.col() - i, ECellContent.OBSTACLE);
-									else if (c >= 0)
-										setCell(minEnd.row() - k, maxEnd.col() + i, ECellContent.OBSTACLE);
+									if (c < 0) {
+										IndexPair p = new IndexPair(minEnd.row() - k, minEnd.col() - i);
+										setCell(p, ECellContent.OBSTACLE); 
+										checkedPairs.add(p);
+									}
+									else if (c >= 0) {
+										IndexPair p = new IndexPair(minEnd.row() - k, minEnd.col() +i);
+										setCell(p, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
 								}
 							}
 						}
-					
-					//						checkedPairs.add(lower);
-				} catch (IndexOutOfBoundsException e) {
-				}
-			
 
-				try {
-					IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
-					int[] horizontalUpper = checkForHorizontalWall(upper);
-					int wallLengthUpper = horizontalUpper[1] - horizontalUpper[0];
-					if (wallLengthUpper >= getWallLenght()) {
-						for (int i = 0; i <= c; i++) {
-							for (int k = 0; k <= r; k++) {
-								if (c < 0)
-									setCell(minEnd.row() - k, minEnd.col() - i, ECellContent.OBSTACLE);
-								else if (c >= 0)
-									setCell(maxEnd.row() + k, maxEnd.col() + i, ECellContent.OBSTACLE);
+						//						checkedPairs.add(lower);
+					} catch (IndexOutOfBoundsException e) {
+					}
+
+
+					try {
+						IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
+						int[] horizontalUpper = checkForHorizontalWall(upper);
+						int wallLengthUpper = horizontalUpper[1] - horizontalUpper[0];
+						if (wallLengthUpper >= getWallLenght()) {
+							for (int i = 0; i <= Math.abs(c); i++) {
+								for (int k = 0; k <= r; k++) {
+									if (c < 0) {
+										IndexPair p = new IndexPair(maxEnd.row() + k, maxEnd.col() - i);
+										setCell(p, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+									else if (c >= 0) {
+										IndexPair p = new IndexPair(maxEnd.row() + k, maxEnd.col() + i);
+										setCell(p, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+								}
 							}
 						}
+						//						checkedPairs.add(upper);
+					} catch (IndexOutOfBoundsException e) {
 					}
-					//						checkedPairs.add(upper);
-				} catch (IndexOutOfBoundsException e) {
 				}
 			}
 		}
-	}
-	else if (horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()) {
-		IndexPair minEnd = new IndexPair(horizontalNeighbours[0], pair.col());
-		IndexPair maxEnd = new IndexPair(horizontalNeighbours[1], pair.col());
-		for (int r = -3; r <= 3; r++) {
-			for (int c = 0; c <= 3; c++) {
-				try {
-					IndexPair lower = new IndexPair(minEnd.row() + r, minEnd.col() - c);
-					int[] verticalLower = checkForVerticalWall(lower);
-					int wallLengthLower = verticalLower[1] - verticalLower[0];
-					if (wallLengthLower >= getWallLenght()) {
-						for (int i = 0; i <= c; i++) {
-							for (int k = 0; k <= r; k++) {
-								if (r < 0)
-									setCell(minEnd.row() - k, minEnd.col() - i, ECellContent.OBSTACLE);
-								else if (r >= 0)
-									setCell(maxEnd.row() + k, maxEnd.col() - i, ECellContent.OBSTACLE);
+		else if (horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()) {
+			IndexPair minEnd = new IndexPair(horizontalNeighbours[0], pair.col());
+			IndexPair maxEnd = new IndexPair(horizontalNeighbours[1], pair.col());
+			for (int r = -3; r <= 3; r++) {
+				for (int c = 0; c <= 3; c++) {
+					try {
+						IndexPair lower = new IndexPair(minEnd.row() + r, minEnd.col() - c);
+						int[] verticalLower = checkForVerticalWall(lower);
+						int wallLengthLower = verticalLower[1] - verticalLower[0];
+						if (wallLengthLower >= getWallLenght()) {
+							for (int i = 0; i <= c; i++) {
+								for (int k = 0; k <= Math.abs(r); k++) {
+									if (r < 0) {
+										IndexPair p = new IndexPair(minEnd.row() - k, minEnd.col() - i);
+										setCell(p, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+									else if (r >= 0) {
+										IndexPair p = new IndexPair(minEnd.row() + k, minEnd.col());
+										setCell(p, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+								}
 							}
 						}
+						//						checkedPairs.add(lower);
+					} catch (IndexOutOfBoundsException e) {
+						// Do nothing, cell is outside of model
 					}
-					//						checkedPairs.add(lower);
-				} catch (IndexOutOfBoundsException e) {
-					// Do nothing, cell is outside of model
-				}
 
-				try {
-					IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
-					int[] verticalUpper = checkForVerticalWall(upper);
-					int wallLengthUpper = verticalUpper[1] - verticalUpper[0];
-					if (wallLengthUpper >= getWallLenght()) {
-						for (int i = 0; i <= c; i++) {
-							for (int k = 0; k <= r; k++) {
-								if (r < 0)
-									setCell(minEnd.row() - k, maxEnd.col() + i, ECellContent.OBSTACLE);
-								else if (r >= 0)
-									setCell(maxEnd.row() + k, maxEnd.col() + i, ECellContent.OBSTACLE);
+					try {
+						IndexPair upper = new IndexPair(maxEnd.row() + r, maxEnd.col() + c);
+						int[] verticalUpper = checkForVerticalWall(upper);
+						int wallLengthUpper = verticalUpper[1] - verticalUpper[0];
+						if (wallLengthUpper >= getWallLenght()) {
+							for (int i = 0; i <= c; i++) {
+								for (int k = 0; k <= Math.abs(r); k++) {
+									if (r < 0) {
+										IndexPair p = new IndexPair(maxEnd.row() - k, maxEnd.col() + i);
+										setCell(maxEnd.row() - k, maxEnd.col() + i, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+									else if (r >= 0) {
+										IndexPair p = new IndexPair(maxEnd.row() + k, maxEnd.col() + i);
+										setCell(maxEnd.row() + k, maxEnd.col() + i, ECellContent.OBSTACLE);
+										checkedPairs.add(p);
+									}
+								}
 							}
 						}
+						//						checkedPairs.add(upper);
+					} catch (IndexOutOfBoundsException e) {
+						// Do nothing, cell is outside of model
 					}
-					//						checkedPairs.add(upper);
-				} catch (IndexOutOfBoundsException e) {
-					// Do nothing, cell is outside of model
 				}
 			}
 		}
+
+		// Add (row,col)-pairs for cells that are already checked
+		//	for (int i = verticalNeighbours[0]; i <= verticalNeighbours[1]; i++) {
+		//		IndexPair p = new IndexPair(i, pair.col());
+		//		checkedPairs.add(p);
+		//	}
+		//
+		//	for (int i = horizontalNeighbours[0]; i <= horizontalNeighbours[1]; i++) {
+		//		IndexPair p = new IndexPair(pair.row(), i);
+		//		checkedPairs.add(p);
+		//	}
+		//
+			return checkedPairs;
 	}
 
-	// Add (row,col)-pairs for cells that are already checked
-//	for (int i = verticalNeighbours[0]; i <= verticalNeighbours[1]; i++) {
-//		IndexPair p = new IndexPair(i, pair.col());
-//		checkedPairs.add(p);
-//	}
-//
-//	for (int i = horizontalNeighbours[0]; i <= horizontalNeighbours[1]; i++) {
-//		IndexPair p = new IndexPair(pair.row(), i);
-//		checkedPairs.add(p);
-//	}
-//
-//	return checkedPairs;
-}
-
-/**
- * Check if (x,y) is part of a horizontal 5 in a row obstacle.
- *
- * @param indexPair 
- * @return boolean true if there are 5 in a row including (x,y)
- */
-private int[] checkForVerticalWall(IndexPair pair)
-{
-	if (getCellContent(pair) != ECellContent.OBSTACLE)
-		return new int[] {0, 0};
-	// Find the minimum and maximum x values for this y which have OBSTACLE
-	int minX = pair.row();
-	while (minX > 0 && envModelCells[minX - 1][pair.col()].getContent() == ECellContent.OBSTACLE)
-		minX--;
-	int maxX = pair.row();
-	while ((maxX + 1) < envModelCells.length && envModelCells[maxX + 1][pair.col()].getContent() == ECellContent.OBSTACLE)
-		maxX++;
-	return new int[] {minX, maxX};
-}
-
-/**
- * Check if (x,y) is part of a vertical 5 in a row obstacle.
- *
- * @param x X coordinate of cell to check
- * @param y Y coordinate of cell to check
- * @return true if there are 5 in a row including (x,y)
- */
-private int[] checkForHorizontalWall(IndexPair pair)
-{
-	if (getCellContent(pair) != ECellContent.OBSTACLE)
-		return new int[] {0, 0};
-	// Find the minimum and maximum y values for this x which have OBSTACLE
-	int minY = pair.col();
-	while (minY > 0 && envModelCells[pair.row()][minY - 1].getContent() == ECellContent.OBSTACLE)
-		minY--;
-	int maxY = pair.col();
-	while ((maxY + 1) < envModelCells.length && envModelCells[pair.row()][maxY + 1].getContent() == ECellContent.OBSTACLE)
-		maxY++;
-	return new int[] {minY, maxY};
-}
-
-
-private void draw(EDistanceSensorState distanceState, ELightSensorState lightState, IndexPair positionToDraw) {
-	ECellContent content = null;
-	switch (distanceState) {
-	case CLEAR:
-		content = ECellContent.CLEAR;
-		break;
-	case OBSTACLE:
-		content = ECellContent.OBSTACLE;
-		break;
-	default:
-		break;
+	private boolean isEndOfWall(IndexPair pair) {
+		int[] horizontalNeighbours = checkForHorizontalWall(pair);
+		int[] verticalNeighbours = checkForVerticalWall(pair);
+		
+		if (horizontalNeighbours.length > 0) {
+			if (pair.col() == horizontalNeighbours[0] || pair.col() == horizontalNeighbours[1])
+				return true;
+		}
+		
+		else if (verticalNeighbours.length > 0) {
+			if (pair.row() == horizontalNeighbours[0] || pair.row() == horizontalNeighbours[1])
+				return true;
+		}
+		
+		return false;
 	}
-	if (getCellContent(positionToDraw) != ECellContent.BALL)
-		setCell(positionToDraw, content, lightState);
-}
 
-public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
-	Stack<IndexPair> neighbours = new Stack<IndexPair>();
-	neighbours.add(new IndexPair(cell.row() - 1, cell.col()));
-	neighbours.add(new IndexPair(cell.row(), cell.col() + 1));
-	neighbours.add(new IndexPair(cell.row() + 1, cell.col()));
-	neighbours.add(new IndexPair(cell.row(), cell.col() - 1));
-	neighbours.add(new IndexPair(cell.row() - 1, cell.col() + 1));
-	neighbours.add(new IndexPair(cell.row() + 1, cell.col() + 1));
-	neighbours.add(new IndexPair(cell.row() + 1, cell.col() - 1));
-	neighbours.add(new IndexPair(cell.row() - 1, cell.col() - 1));
-	return neighbours;
-}
+	/**
+	 * Check if (x,y) is part of a horizontal 5 in a row obstacle.
+	 *
+	 * @param indexPair 
+	 * @return boolean true if there are 5 in a row including (x,y)
+	 */
+	private int[] checkForVerticalWall(IndexPair pair)
+	{
+		if (getCellContent(pair) != ECellContent.OBSTACLE)
+			return new int[] {0, 0};
+		// Find the minimum and maximum x values for this y which have OBSTACLE
+		int minX = pair.row();
+		while (minX > 0 && envModelCells[minX - 1][pair.col()].getContent() == ECellContent.OBSTACLE)
+			minX--;
+		int maxX = pair.row();
+		while ((maxX + 1) < envModelCells.length && envModelCells[maxX + 1][pair.col()].getContent() == ECellContent.OBSTACLE)
+			maxX++;
+		return new int[] {minX, maxX};
+	}
 
-/*
- * JAVA SWING RELATED SHIT FROM HERE
- */
+	/**
+	 * Check if (x,y) is part of a vertical 5 in a row obstacle.
+	 *
+	 * @param x X coordinate of cell to check
+	 * @param y Y coordinate of cell to check
+	 * @return true if there are 5 in a row including (x,y)
+	 */
+	private int[] checkForHorizontalWall(IndexPair pair)
+	{
+		if (getCellContent(pair) != ECellContent.OBSTACLE)
+			return new int[] {0, 0};
+		// Find the minimum and maximum y values for this x which have OBSTACLE
+		int minY = pair.col();
+		while (minY > 0 && envModelCells[pair.row()][minY - 1].getContent() == ECellContent.OBSTACLE)
+			minY--;
+		int maxY = pair.col();
+		while ((maxY + 1) < envModelCells.length && envModelCells[pair.row()][maxY + 1].getContent() == ECellContent.OBSTACLE)
+			maxY++;
+		return new int[] {minY, maxY};
+	}
 
-private void notifyListeners(){
-	TableModelEvent event = new TableModelEvent(this);
-	for (TableModelListener listener : listeners)
-		listener.tableChanged(event);
-}
 
-@Override
-public void addTableModelListener(TableModelListener l) {
-	listeners.add(l);
-}
+	private void draw(EDistanceSensorState distanceState, ELightSensorState lightState, IndexPair positionToDraw) {
+		ECellContent content = null;
+		switch (distanceState) {
+		case CLEAR:
+			content = ECellContent.CLEAR;
+			break;
+		case OBSTACLE:
+			content = ECellContent.OBSTACLE;
+			break;
+		default:
+			break;
+		}
+		if (getCellContent(positionToDraw) != ECellContent.BALL)
+			setCell(positionToDraw, content, lightState);
+	}
 
-@Override
-public Class<?> getColumnClass(int columnIndex) {
-	return Object.class;
-}
+	public Stack<IndexPair> getNeighbourCells(IndexPair cell) {
+		Stack<IndexPair> neighbours = new Stack<IndexPair>();
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col()));
+		neighbours.add(new IndexPair(cell.row(), cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col()));
+		neighbours.add(new IndexPair(cell.row(), cell.col() - 1));
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col() + 1));
+		neighbours.add(new IndexPair(cell.row() + 1, cell.col() - 1));
+		neighbours.add(new IndexPair(cell.row() - 1, cell.col() - 1));
+		return neighbours;
+	}
 
-@Override
-public int getColumnCount() {
-	return modelSize;
-}
+	/*
+	 * JAVA SWING RELATED SHIT FROM HERE
+	 */
 
-@Override
-public String getColumnName(int columnIndex) {
-	return String.valueOf(columnIndex + 1);
-}
+	private void notifyListeners(){
+		TableModelEvent event = new TableModelEvent(this);
+		for (TableModelListener listener : listeners)
+			listener.tableChanged(event);
+	}
 
-@Override
-public int getRowCount() {
-	return modelSize;
-}
+	@Override
+	public void addTableModelListener(TableModelListener l) {
+		listeners.add(l);
+	}
 
-@Override
-public Object getValueAt(int rowIndex, int columnIndex) {
-	return getCell(rowIndex, columnIndex).toString();
-}
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		return Object.class;
+	}
 
-@Override
-public boolean isCellEditable(int rowIndex, int columnIndex) {
-	return false;
-}
+	@Override
+	public int getColumnCount() {
+		return modelSize;
+	}
 
-@Override
-public void removeTableModelListener(TableModelListener l) {
-	listeners.remove(l);
+	@Override
+	public String getColumnName(int columnIndex) {
+		return String.valueOf(columnIndex + 1);
+	}
 
-}
+	@Override
+	public int getRowCount() {
+		return modelSize;
+	}
 
-@Override
-public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-}
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		return getCell(rowIndex, columnIndex).toString();
+	}
+
+	@Override
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return false;
+	}
+
+	@Override
+	public void removeTableModelListener(TableModelListener l) {
+		listeners.remove(l);
+
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+	}
 }
