@@ -661,7 +661,6 @@ public class EnvModel extends Observable implements TableModel {
 
 		for (ESensor sensor : distanceSensors.keySet()) {
 			EDistanceSensorState distanceState = distanceSensors.get(sensor);
-			ELightSensorState lightState = ELightSensorState.UNKNOWN;
 			
 			IndexPair positionToDraw = findPositionFromSensorEnum(currentPosition, sensor);
 			if (positionToDraw == null)
@@ -673,7 +672,7 @@ public class EnvModel extends Observable implements TableModel {
 					distanceState = EDistanceSensorState.CLEAR;
 			}
 			
-			lightState = lightSensors.get(sensor);
+			ELightSensorState lightState = lightSensors.get(sensor);
 			draw(distanceState, lightState, positionToDraw);
 		}
 
@@ -834,9 +833,6 @@ public class EnvModel extends Observable implements TableModel {
 			break;
 		case OBSTACLE:
 			content = ECellContent.OBSTACLE;
-			break;
-		case CLOSE:
-			content = ECellContent.CLOSE_TO_OBSTACLE;
 			break;
 		default:
 			break;

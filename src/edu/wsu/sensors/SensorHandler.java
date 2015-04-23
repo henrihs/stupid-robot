@@ -42,14 +42,19 @@ public class SensorHandler extends Observable implements Observer {
 
 	private void updateSensorValues() {
 		for (ESensor sensor : ESensor.values()) {
-			if (sensor == ESensor.BACKL || sensor == ESensor.BACKR)
-				continue;
-			int distance = robot.getDistanceValue(sensor.val());
 			int light = robot.getLightValue(sensor.val());
+			int distance = robot.getDistanceValue(sensor.val());
+			
+			if (sensor == ESensor.BACKL || sensor == ESensor.BACKR){
+				setLightSensorState(sensor, light);
+				continue;
+			}
+			
 			if (sensor == ESensor.ANGLEL || sensor == ESensor.ANGLER)
 				setAngleDistanceSensorState(sensor, distance);
 			else
 				setDistanceSensorState(sensor, distance);
+			
 			setLightSensorState(sensor, light);
 		}
 	}
@@ -89,9 +94,5 @@ public class SensorHandler extends Observable implements Observer {
 		else
 			state = ELightSensorState.UNKNOWN;
 		lightSensorStates.put(sensor, state);
-	}
-
-	private boolean isFront(ESensor sensor) {
-		return (sensor == ESensor.FRONTL || sensor == ESensor.FRONTR);
 	}
 }
