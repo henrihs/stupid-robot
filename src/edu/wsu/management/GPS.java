@@ -105,20 +105,8 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		}
 		
 		if (isBallHeld && ballStart != null) {
-			System.out.println("Ball: " + ballStart);
 			envModel.removeBall(ballStart);
 			ballStart = null;
-		}
-		
-		if (isBallHeld) {
-			System.out.println("Expected end: " + order.getExpectedEnd());
-			System.out.println("Final destination: " + order.getFinalDestination());
-			System.out.println("Ball destination: " + envModel.getBallDestination());
-			System.out.println("Order: " + stateQueue);
-			System.out.println("\n");
-			for (IndexPair cell: order.getPath()) {
-				System.out.println("Path: " + cell);
-			}
 		}
 	}
 	

@@ -639,7 +639,7 @@ public class EnvModel extends Observable implements TableModel {
 		@Override
 		public String toString() {
 			if (isRobotPresent)
-				return "R";
+				return "X";
 			if (content == ECellContent.CLEAR && getLightIntensity() == ELightSensorState.LIGHT) {
 				return getLightIntensity().toString();
 			} else {
