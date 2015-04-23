@@ -64,6 +64,16 @@ public class EnvModel extends Observable implements TableModel {
 		}
 	}
 	
+	public void removeBall(IndexPair ballPosition) {
+		if (getCellContent(ballPosition) != ECellContent.BALL)
+			return;
+		
+		setCell(ballPosition, ECellContent.CLEAR);
+		Stack<IndexPair> neighbours = getNeighbourCells(ballPosition);
+		for (IndexPair neighbour : neighbours)
+			removeBall(neighbour);
+	}
+	
 	public IndexPair getBallDestination() {
 		return ballDestination;
 	}
