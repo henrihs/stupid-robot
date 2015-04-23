@@ -25,7 +25,7 @@ public class RobotState_PickupBall implements IRobotStates {
 			if (!turnHistory.empty()) {
 				returnToInitPosition();	
 			} else {
-				robot.setState(new RobotState_Stop());				
+				robot.setState(new RobotState_InitTurn(180));				
 			}
 			return;
 		}

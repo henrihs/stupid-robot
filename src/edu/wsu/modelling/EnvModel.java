@@ -498,8 +498,7 @@ public class EnvModel extends Observable implements TableModel {
 		IndexPair currentRobotPosition = locateRobot();
 		if (currentRobotPosition != null) {
 			getCell(currentRobotPosition.row(), currentRobotPosition.col()).setRobotPresent(false);
-			if (getCellContent(currentRobotPosition) != ECellContent.BALL)
-				getCell(currentRobotPosition.row(), currentRobotPosition.col()).setContent(ECellContent.CLEAR);
+			getCell(currentRobotPosition.row(), currentRobotPosition.col()).setContent(ECellContent.CLEAR);
 		}
 		getCell(nextRobotPosition.row(), nextRobotPosition.col()).setRobotPresent(true);
 	}
