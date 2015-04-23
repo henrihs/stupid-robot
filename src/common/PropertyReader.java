@@ -24,14 +24,6 @@ public class PropertyReader {
 	public static int getEmergencyStopBoundary() {
 		return getProperty("emergencyStopBoundary");
 	}
-
-//	public static int getCloseLowerBoundary() {
-//		return getProperty("closeLowerBoundary");
-//	}
-//	
-//	public static int getCloseUpperBoundary() {
-//		return getProperty("closeUpperBoundary");
-//	}
 	
 	public static int getObstacleLowerBoundary() {
 		return getProperty("obstacleLowerBoundary");
