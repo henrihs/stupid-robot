@@ -13,6 +13,7 @@ public class Order {
 	private int length;
 	private IndexPair expectedEnd;
 	private IndexPair finalDestination;
+	private IndexPair startLocation;
 	private boolean ballOrder;
 	
 	public Order(Stack<IndexPair> path) {
@@ -33,6 +34,10 @@ public class Order {
 	
 	public IndexPair getFinalDestination() {
 		return finalDestination;
+	}
+	
+	public IndexPair getStartLocation() {
+		return startLocation;
 	}
 	
 	public boolean isBallOrder() {
@@ -73,6 +78,7 @@ public class Order {
 	 */
 	private void generateOrder() {
 		finalDestination = path.firstElement();
+		startLocation = path.lastElement();
 		ListIterator<IndexPair> li = path.listIterator(path.size());
 	
 		IndexPair next;

@@ -1,6 +1,8 @@
 package edu.wsu.modelling;
 
 import java.util.Stack;
+
+import edu.wsu.sensors.ELightSensorState;
 import static common.PropertyReader.*;
 import static common.Methods.*;
 
@@ -70,7 +72,16 @@ public class Cluster {
 	}
 	
 	private boolean valid() {
-		return inInterval(max_distance, 0, getBallClusterUpper() + 1);
+		return inInterval(max_distance, 0, getBallClusterUpper() + 1) && !containsLight();
+	}
+	
+	private boolean containsLight() {
+		for (IndexPair cell: cluster) {
+			if (envModel.getCell(cell.row(), cell.col()).getLightIntensity() == ELightSensorState.LIGHT) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void setMaxDistance() {
