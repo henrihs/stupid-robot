@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import edu.wsu.KheperaSimulator.RobotController;
 import edu.wsu.management.GPS;
@@ -21,9 +24,11 @@ public class Robot extends RobotController implements Observer {
 
 	private List<TurnListener> turnListeners = new ArrayList<TurnListener>();
 	private List<StateCompleteListener> stateCompleteListeners = new ArrayList<StateCompleteListener>();
+	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	// State pattern
 	private IRobotStates state;
+
 
 	public Robot() throws IOException {
 		this(new SensorHandler(), new GPS());
@@ -88,7 +93,7 @@ public class Robot extends RobotController implements Observer {
 
 	@Override
 	public void close() throws Exception {
-
+		scheduler.awaitTermination(100, TimeUnit.MILLISECONDS);
 	}
 
 	public void drive() {
@@ -115,5 +120,14 @@ public class Robot extends RobotController implements Observer {
 	protected void notifyStateCompleteListeners() {
 		for (StateCompleteListener listener : stateCompleteListeners)
 			listener.onStateCompleted(isObjectHeld());
+	}
+
+	public void setScheduler(ScheduledExecutorService scheduler) {
+		this.scheduler = scheduler;
+		
+	}
+
+	public ScheduledExecutorService getScheduler() {
+		return scheduler;
 	}
 }

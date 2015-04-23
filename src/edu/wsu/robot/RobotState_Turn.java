@@ -25,6 +25,7 @@ public class RobotState_Turn implements IRobotStates {
 		
 		if (doneTurning()) {
 			robot.stop();
+			robot.sleep(20);
 			if (nextState != null) {
 				robot.setState(nextState);
 			} else {

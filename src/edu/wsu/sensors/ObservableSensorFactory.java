@@ -12,16 +12,14 @@ public class ObservableSensorFactory {
 	
 	private final Robot robot;
 	private final Observer sensorHandler;
-	private final ScheduledExecutorService scheduler;
 
 	public ObservableSensorFactory(Robot robot, SensorHandler sensorHandler) {
 		this.robot = robot;
 		this.sensorHandler = (Observer) sensorHandler;
-		scheduler = Executors.newScheduledThreadPool(1);
 	}
 	
 	public void createSensors(){
-		scheduler.scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
+		robot.getScheduler().scheduleAtFixedRate(createWheelSensor(), 1, getScheduleRate(), TimeUnit.MILLISECONDS);
 	}
 	
 	private WheelSensor createWheelSensor() {
