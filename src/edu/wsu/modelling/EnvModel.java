@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Stack;
 
-import static common.PropertyReader.getWallLenght;
+import static common.PropertyReader.*;
 import edu.wsu.sensors.EDistanceSensorState;
 import edu.wsu.sensors.ELightSensorState;
 import edu.wsu.sensors.ESensor;
@@ -699,6 +699,7 @@ public class EnvModel extends Observable implements TableModel {
 	 * @return ArrayList<IndexPair> contains IndexPairs that are walls to avoid double checking
 	 */
 	private ArrayList<IndexPair> checkForCorner(IndexPair pair) {
+		int checkCornerBoundary = getCheckBorderBoundary();
 		ArrayList<IndexPair> checkedPairs = new ArrayList<>();
 
 		int[] horizontalNeighbours = checkForHorizontalWall(pair);
@@ -715,8 +716,8 @@ public class EnvModel extends Observable implements TableModel {
 		else if (verticalNeighbours[1] - verticalNeighbours[0] > getWallLenght()) {
 			IndexPair minEnd = new IndexPair(verticalNeighbours[0], pair.col());
 			IndexPair maxEnd = new IndexPair(verticalNeighbours[1], pair.col());
-			for (int r = 0; r <= 3; r++) {
-				for (int c = -3; c <= 3; c++) {
+			for (int r = 0; r <= checkCornerBoundary; r++) {
+				for (int c = -checkCornerBoundary; c <= checkCornerBoundary; c++) {
 					try {
 						IndexPair lower = new IndexPair(minEnd.row() - r, minEnd.col() + c);
 						int[] horizontalLower = checkForHorizontalWall(lower);
@@ -772,8 +773,8 @@ public class EnvModel extends Observable implements TableModel {
 		else if (horizontalNeighbours[1] - horizontalNeighbours[0] > getWallLenght()) {
 			IndexPair minEnd = new IndexPair(horizontalNeighbours[0], pair.col());
 			IndexPair maxEnd = new IndexPair(horizontalNeighbours[1], pair.col());
-			for (int r = -3; r <= 3; r++) {
-				for (int c = 0; c <= 3; c++) {
+			for (int r = -checkCornerBoundary; r <= checkCornerBoundary; r++) {
+				for (int c = 0; c <= checkCornerBoundary; c++) {
 					try {
 						IndexPair lower = new IndexPair(minEnd.row() + r, minEnd.col() - c);
 						int[] verticalLower = checkForVerticalWall(lower);

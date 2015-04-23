@@ -21,6 +21,10 @@ public class PropertyReader {
 		return getProperty("wallLength");
 	}
 	
+	public static int getCheckBorderBoundary() {
+		return getProperty("checkBorderBoundary");
+	}
+	
 	public static int getEmergencyStopBoundary() {
 		return getProperty("emergencyStopBoundary");
 	}
