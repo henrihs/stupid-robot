@@ -628,8 +628,12 @@ public class EnvModel extends Observable implements TableModel {
 		@Override
 		public String toString() {
 			if (isRobotPresent)
-				return "R"+lightIntensity.toString();
-			return content.toString()+lightIntensity.toString();
+				return "R";
+			if (content == ECellContent.CLEAR && getLightIntensity() == ELightSensorState.LIGHT) {
+				return getLightIntensity().toString();
+			} else {
+				return getContent().toString();
+			}
 		}
 
 	}

@@ -49,6 +49,7 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 			setDestination(order.getExpectedEnd());
 			addToQueue(order);
 		} else if (isBallHeld) {
+			stateQueue.clear();
 			setDestination(envModel.getBallDestination());
 			Order order = pathToDestination();
 			addToQueue(order);
@@ -100,7 +101,18 @@ public class GPS extends Observable implements Observer, StateCompleteListener {
 		}
 		else if (isBallHeld && order.getExpectedEnd().equals(destination)) {
 			stateQueue.add(new RobotState_DropBall());
-		}	
+		}
+		
+		if (isBallHeld) {
+			System.out.println("Expected end: " + order.getExpectedEnd());
+			System.out.println("Final destination: " + order.getFinalDestination());
+			System.out.println("Ball destination: " + envModel.getBallDestination());
+			System.out.println("Order: " + stateQueue);
+			System.out.println("\n");
+			for (IndexPair cell: order.getPath()) {
+				System.out.println("Path: " + cell);
+			}
+		}
 	}
 	
 	private boolean hasDestination() {

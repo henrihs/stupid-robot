@@ -64,6 +64,10 @@ public class Order {
 		return direction;
 	}
 	
+	public Stack<IndexPair> getPath() {
+		return path;
+	}
+	
 	/**
 	 * Generates the order based on the path given in constructor.
 	 */

@@ -36,6 +36,6 @@ public class IndexPair extends Object {
 	
 	@Override
 	public String toString() {
-		return "Row: " + String.valueOf(row) + ", Col: " + String.valueOf(col);
+		return "[" + String.valueOf(row) + ", " + String.valueOf(col) + "]";
 	}
 }

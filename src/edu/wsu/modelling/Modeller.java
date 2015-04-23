@@ -33,6 +33,5 @@ public class Modeller extends Observable implements Observer, TurnListener {
 	public void update(Observable arg0, Object arg1) {
 		envModel.moveRobotPresence();
 		envModel.drawSurroundings((SensorHandler)arg0);
-//		System.out.println(envModel);
 	}
 }
