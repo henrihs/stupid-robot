@@ -56,12 +56,30 @@ public class EnvModel extends Observable implements TableModel {
 					if (getCellContent(cell) == ECellContent.BALL && getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
 						ballReadyForPickup = true;
 					}
-					if (ballDestination == null && getCellContent(cell) == ECellContent.CLEAR && getCell(cell.row(), cell.col()).getLightIntensity() == ELightSensorState.LIGHT) {
+					if (possibleBallDestination(cell)) {
 						ballDestination = cell;
 					}
 				} catch (IndexOutOfBoundsException e) {}
 			}
 		}
+	}
+	
+	private boolean possibleBallDestination(IndexPair cell) {
+		if (ballDestination != null) {
+			return false;
+		}
+		if (getCellContent(cell) != ECellContent.CLEAR) {
+			return false;
+		}
+		if (getCell(cell.row(), cell.col()).getLightIntensity() != ELightSensorState.LIGHT) {
+			return false;
+		}
+		for (IndexPair neighbour: getNeighbourCells(cell)) {
+			if (getCellContent(neighbour) == ECellContent.BALL) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void removeBall(IndexPair ballPosition) {
