@@ -63,8 +63,6 @@ public class SensorHandler extends Observable implements Observer {
 		EDistanceSensorState state;
 		if (inInterval(value, getClearLowerBoundary(), getAngleClearUpperBoundary()))
 			state = EDistanceSensorState.CLEAR;
-		//		else if (inInterval(value, getCloseLowerBoundary(), getCloseUpperBoundary()))
-		//			state = EDistanceSensorState.CLOSE;
 		else if (inInterval(value, getAngleObstacleLowerBoundary(), getObstacleUpperBoundary()))
 			state = EDistanceSensorState.OBSTACLE;
 		else
@@ -76,8 +74,6 @@ public class SensorHandler extends Observable implements Observer {
 		EDistanceSensorState state;
 		if (inInterval(value, getClearLowerBoundary(), getClearUpperBoundary()))
 			state = EDistanceSensorState.CLEAR;
-		//		else if (inInterval(value, getCloseLowerBoundary(), getCloseUpperBoundary()))
-		//			state = EDistanceSensorState.CLOSE;
 		else if (inInterval(value, getObstacleLowerBoundary(), getObstacleUpperBoundary()))
 			state = EDistanceSensorState.OBSTACLE;
 		else
